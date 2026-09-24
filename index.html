@@ -992,8 +992,7 @@ let CATEGORIES_MATERIEL = [
     {label:"Fillain", qty:0},
   ]},
   { id:"peinture", nom:"Peinture", fournisseur:"BCL", items:[
-    {label:"Velours 15L", qty:2},
-    {label:"Velours 15L (pot global, en plus)", qty:1, global:true},
+    {label:"Velours 15L", qty:2, extra:1},
     {label:"Velours Isola", qty:2},
     {label:"Ragréage", qty:1},
     {label:"Primaire", qty:1},
@@ -1004,7 +1003,6 @@ let CATEGORIES_MATERIEL = [
     {label:"Enduit gros", qty:1},
     {label:"Enduit fin", qty:1},
     {label:"Enduit rebouchage", qty:1, global:true},
-    {label:"Impression acrylique", qty:1.5, roundUp:true},
     {label:"Carton acrylique", qty:1},
     {label:"Carton scotch peintre", qty:1, global:true},
     {label:"Chiffons (kg)", qty:10, global:true},
@@ -1045,6 +1043,7 @@ function updateMaterielLogements(value){
 }
 function computeMaterielItemTotal(item, mult){
   let total = item.global ? (item.qty||0) : (item.qty||0)*mult;
+  total += item.extra||0;
   if(item.roundUp) total = Math.ceil(total);
   return total;
 }
@@ -1078,17 +1077,23 @@ function generateMateriel(){
   let html = "";
   const suppliers = Object.keys(groups).sort();
   const mult = Math.max(1, parseInt(materielState.nombreLogements)||1);
+  const sectionTitle = (txt)=> '<h2 style="font-size:21px;font-weight:800;color:#fff;background:var(--accent);padding:10px 14px;border-radius:8px;margin:26px 0 14px;">'+esc(txt)+'</h2>';
 
-  if(materielState.genOptions.listes){
-    html += '<h3 style="font-size:15px;margin:18px 0 10px;">Listes par fournisseur'+(mult>1?" (× "+mult+" logements)":"")+'</h3>';
-    suppliers.forEach(f=>{
-      const lines = groups[f].map(it=>"- "+it.label+" : "+it.qty).join("\n");
-      const text = "Fournisseur : "+f+(materielState.chantierRef?"\nChantier / réf. : "+materielState.chantierRef:"")+"\n\n"+lines;
-      html += outputBlockListMateriel(f, text);
+  if(materielState.genOptions.recap){
+    html += sectionTitle("① Récapitulatif — validation sous-traitant"+(mult>1?" (× "+mult+" logements)":""));
+    const lignes = [];
+    CATEGORIES_MATERIEL.forEach(cat=>{
+      const itemsAvecQte = cat.items.filter(it=>computeMaterielItemTotal(it, mult)>0);
+      if(!itemsAvecQte.length) return;
+      lignes.push(cat.nom.toUpperCase());
+      itemsAvecQte.forEach(it=> lignes.push("- "+it.label+" : "+computeMaterielItemTotal(it, mult)));
+      lignes.push("");
     });
+    const text = "Récapitulatif matériel"+(materielState.chantierRef?" — "+materielState.chantierRef:"")+"\nMerci de valider les quantités ci-dessous.\n\n"+lignes.join("\n").trim();
+    html += outputBlockListMateriel("Récapitulatif (à valider par le sous-traitant)", text);
   }
   if(materielState.genOptions.emails){
-    html += '<h3 style="font-size:15px;margin:18px 0 10px;">Mails de demande de prix'+(mult>1?" (× "+mult+" logements)":"")+'</h3>';
+    html += sectionTitle("② Mails de demande de prix"+(mult>1?" (× "+mult+" logements)":""));
     suppliers.forEach(f=>{
       const lines = groups[f].map(it=>"- "+it.label+" : "+it.qty).join("\n");
       const subject = "Demande de prix"+(materielState.chantierRef?" — chantier "+materielState.chantierRef:"");
@@ -1097,18 +1102,13 @@ function generateMateriel(){
       html += outputBlockEmailMateriel(f, subject, body);
     });
   }
-  if(materielState.genOptions.recap){
-    html += '<h3 style="font-size:15px;margin:18px 0 10px;">Récapitulatif global — validation sous-traitant'+(mult>1?" (× "+mult+" logements)":"")+'</h3>';
-    const lignes = [];
-    CATEGORIES_MATERIEL.forEach(cat=>{
-      const itemsAvecQte = cat.items.filter(it=>(it.qty||0)*mult>0);
-      if(!itemsAvecQte.length) return;
-      lignes.push(cat.nom.toUpperCase());
-      itemsAvecQte.forEach(it=> lignes.push("- "+it.label+" : "+((it.qty||0)*mult)));
-      lignes.push("");
+  if(materielState.genOptions.listes){
+    html += sectionTitle("③ Listes par fournisseur"+(mult>1?" (× "+mult+" logements)":""));
+    suppliers.forEach(f=>{
+      const lines = groups[f].map(it=>"- "+it.label+" : "+it.qty).join("\n");
+      const text = "Fournisseur : "+f+(materielState.chantierRef?"\nChantier / réf. : "+materielState.chantierRef:"")+"\n\n"+lines;
+      html += outputBlockListMateriel(f, text);
     });
-    const text = "Récapitulatif matériel"+(materielState.chantierRef?" — "+materielState.chantierRef:"")+"\nMerci de valider les quantités ci-dessous.\n\n"+lignes.join("\n").trim();
-    html += outputBlockListMateriel("Récapitulatif (à valider par le sous-traitant)", text);
   }
   if(!materielState.genOptions.listes && !materielState.genOptions.emails && !materielState.genOptions.recap){
     html = '<p style="color:var(--muted);font-size:13px;">Cochez au moins une option avant de générer.</p>';
