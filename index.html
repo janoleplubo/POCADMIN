@@ -905,7 +905,7 @@ function renderGate(){
     '<img src="data:image/png;base64,'+LOGO_B64+'" alt="Paris Ouest">'+
     '<h2 style="margin:0 0 6px;font-size:16px;">Accès réservé à l\'équipe CASVP</h2>'+
     '<p style="font-size:13px;color:var(--muted);margin:0 0 14px;">Code d\'accès fourni par Paris Ouest.</p>'+
-    '<input type="text" placeholder="Code d\'accès" value="'+esc(gateInput)+'" oninput="updateGateInput(this.value)" onkeydown="if(event.key===\'Enter\')submitGate()">'+
+    '<input type="password" placeholder="Code d\'accès" value="'+esc(gateInput)+'" oninput="updateGateInput(this.value)" onkeydown="if(event.key===\'Enter\')submitGate()">'+
     (gateError? '<div class="error-msg">'+esc(gateError)+'</div>' : '')+
     '<div style="margin-top:14px;"><button class="btn" style="width:100%;" onclick="submitGate()">Entrer</button></div>'+
     '<p style="font-size:11px;color:var(--muted);margin:16px 0 0;">Outil créé par Jean Bourdel pour l\'équipe CASVP — usage interne, à ne pas diffuser en dehors de l\'équipe.</p>'+
@@ -930,7 +930,7 @@ function renderStepSelect(){
   ];
   opts.forEach(([key,label,desc])=>{
     h += '<label class="check-item" style="align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">'+
-      '<input type="checkbox" '+(dossier.docs[key]?"checked":"")+' '+(dossier.docs.materiel?"disabled":"")+' onchange="toggleDocOther(\''+key+'\', this.checked)" style="margin-top:3px;">'+
+      '<input type="checkbox" '+(dossier.docs[key]?"checked":"")+' onchange="toggleDocOther(\''+key+'\', this.checked)" style="margin-top:3px;">'+
       '<span><strong>'+esc(label)+'</strong><br><span style="color:var(--muted);font-size:12.5px;">'+esc(desc)+'</span></span></label>';
   });
   h += '<label class="check-item" style="align-items:flex-start;padding:10px 0;">'+
@@ -992,17 +992,26 @@ let CATEGORIES_MATERIEL = [
     {label:"Fillain", qty:0},
   ]},
   { id:"peinture", nom:"Peinture", fournisseur:"BCL", items:[
-    {label:"Peinture", qty:1},
-    {label:"Enduit", qty:1},
+    {label:"Velours 15L", qty:2},
+    {label:"Velours 15L (pot global, en plus)", qty:1, global:true},
+    {label:"Velours Isola", qty:2},
     {label:"Ragréage", qty:1},
     {label:"Primaire", qty:1},
-    {label:"Bâche autocollante", qty:2},
+    {label:"Bâche 50m", qty:3, global:true},
     {label:"Sacs à gravats", qty:20},
-    {label:"Colle lino", qty:1},
-    {label:"Silicone sanitaire", qty:3},
-    {label:"Enduit GROS", qty:2},
-    {label:"Velours Isola", qty:2},
-    {label:"Impression acrylique", qty:1},
+    {label:"Colle lino", qty:0.65, roundUp:true},
+    {label:"Tube silicone sanitaire", qty:3},
+    {label:"Enduit gros", qty:1},
+    {label:"Enduit fin", qty:1},
+    {label:"Enduit rebouchage", qty:1, global:true},
+    {label:"Impression acrylique", qty:1.5, roundUp:true},
+    {label:"Carton acrylique", qty:1},
+    {label:"Carton scotch peintre", qty:1, global:true},
+    {label:"Chiffons (kg)", qty:10, global:true},
+    {label:"Boîte ponçage 120 (main)", qty:1, global:true},
+    {label:"Boîte ponçage 150 (machine)", qty:1, global:true},
+    {label:"Sachet brosses", qty:1, global:true},
+    {label:"Barre de seuil", qty:2},
   ]},
   { id:"carrelage", nom:"Carrelage / faïence", fournisseur:"Point P", items:[
     {label:"Carroplâtre hydro (m²)", qty:2},
@@ -1016,25 +1025,35 @@ let CATEGORIES_MATERIEL = [
     {label:"Butée de porte", fournisseur:"Foussier", qty:2},
     {label:"Miroir 40x60", fournisseur:"Glace et Miroir", qty:1},
     {label:"Sol souple Tradiflor 2S3 Valençay Doré (réf. Forbo 2087)", fournisseur:"Gerflor", qty:1},
+    {label:"Baguette d'angle en bois", fournisseur:"Point P", qty:2},
+    {label:"Tube silicone coloré", fournisseur:"Gerflor", qty:0.65, roundUp:true},
   ]},
 ];
 let materielState = { nombreLogements:1, chantierRef:"", outputHtml:"", genOptions:{listes:true, emails:true, recap:true} };
 
 function updateMaterielItem(catIdx, itemIdx, field, value){
-  CATEGORIES_MATERIEL[catIdx].items[itemIdx][field] = field==="qty" ? (parseFloat(value)||0) : value;
-  if(field==="qty") recomputeMaterielTotals();
+  const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
+  if(field==="qty") item[field] = parseFloat(value)||0;
+  else if(field==="global" || field==="roundUp") item[field] = !!value;
+  else item[field] = value;
+  if(field==="qty" || field==="global" || field==="roundUp") recomputeMaterielTotals();
 }
 function updateMaterielCatFournisseur(catIdx, value){ CATEGORIES_MATERIEL[catIdx].fournisseur = value; }
 function updateMaterielLogements(value){
   materielState.nombreLogements = parseInt(value)||1;
   recomputeMaterielTotals();
 }
+function computeMaterielItemTotal(item, mult){
+  let total = item.global ? (item.qty||0) : (item.qty||0)*mult;
+  if(item.roundUp) total = Math.ceil(total);
+  return total;
+}
 function recomputeMaterielTotals(){
   const mult = Math.max(1, parseInt(materielState.nombreLogements)||1);
   CATEGORIES_MATERIEL.forEach((cat,catIdx)=>{
     cat.items.forEach((item,itemIdx)=>{
       const el = document.getElementById("mtot_"+catIdx+"_"+itemIdx);
-      if(el) el.textContent = (item.qty||0)*mult;
+      if(el) el.textContent = computeMaterielItemTotal(item, mult);
     });
   });
 }
@@ -1045,7 +1064,7 @@ function groupBySupplierMateriel(){
   CATEGORIES_MATERIEL.forEach(cat=>{
     cat.items.forEach(item=>{
       const fournisseur = (cat.fournisseurParItem ? item.fournisseur : cat.fournisseur) || "Fournisseur à préciser";
-      const totalQty = (item.qty||0) * mult;
+      const totalQty = computeMaterielItemTotal(item, mult);
       if(totalQty<=0) return;
       if(!groups[fournisseur]) groups[fournisseur] = [];
       groups[fournisseur].push({label:item.label, qty:totalQty});
@@ -1144,15 +1163,19 @@ function renderCategoryMateriel(cat, catIdx){
     h += '<div style="font-size:12.5px;color:var(--muted);margin:6px 0 10px;">Fournisseur : <input type="text" value="'+esc(cat.fournisseur||"")+'" oninput="updateMaterielCatFournisseur('+catIdx+', this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:12.5px;width:200px;" placeholder="ex. REXEL"></div>';
   }
   h += '<table style="width:100%;border-collapse:collapse;margin-top:8px;"><tr>'+
-    '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:50%;">Article</th>'+
-    '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:70px;">Qté / lgt</th>'+
-    '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:70px;">Total</th>'+
+    '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:40%;">Article</th>'+
+    '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:65px;">Qté</th>'+
+    '<th style="text-align:center;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:50px;" title="Fixe, indépendant du nombre de logements">Global</th>'+
+    '<th style="text-align:center;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:50px;" title="Arrondir le total au nombre entier supérieur">Arrondi ↑</th>'+
+    '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:65px;">Total</th>'+
     (cat.fournisseurParItem?'<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);">Fournisseur</th>':'')+
     '</tr>';
   cat.items.forEach((item,itemIdx)=>{
     h += '<tr><td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.label)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'label\',this.value)" style="width:100%;border:1px solid transparent;border-radius:6px;padding:4px 6px;font-size:13.5px;"></td>';
-    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="number" min="0" value="'+esc(item.qty)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'qty\',this.value)" style="width:64px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;text-align:center;"></td>';
-    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;font-weight:600;color:var(--accent-dark);" id="mtot_'+catIdx+'_'+itemIdx+'">'+((item.qty||0)*mult)+'</td>';
+    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="number" min="0" step="0.05" value="'+esc(item.qty)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'qty\',this.value)" style="width:60px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;text-align:center;"></td>';
+    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;text-align:center;"><input type="checkbox" '+(item.global?"checked":"")+' onchange="updateMaterielItem('+catIdx+','+itemIdx+',\'global\',this.checked)"></td>';
+    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;text-align:center;"><input type="checkbox" '+(item.roundUp?"checked":"")+' onchange="updateMaterielItem('+catIdx+','+itemIdx+',\'roundUp\',this.checked)"></td>';
+    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;font-weight:600;color:var(--accent-dark);" id="mtot_'+catIdx+'_'+itemIdx+'">'+computeMaterielItemTotal(item, mult)+'</td>';
     if(cat.fournisseurParItem){
       h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.fournisseur||"")+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'fournisseur\',this.value)" style="width:130px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;"></td>';
     }
