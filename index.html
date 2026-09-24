@@ -973,7 +973,10 @@ let CATEGORIES_MATERIEL = [
     {label:"Interrupteurs va-et-vient", qty:2},
   ]},
   { id:"plomberie", nom:"Plomberie", fournisseur:"SFCP / CEDEO", items:[
-    {label:"Lavabo + pied + siphon + mitigeur", qty:1},
+    {label:"Lavabo", qty:1},
+    {label:"Pied de lavabo", qty:1},
+    {label:"Siphon", qty:2},
+    {label:"Mitigeur lavabo", qty:1},
     {label:"Mitigeur douche", qty:1},
     {label:"WC complet + fixation", qty:1},
     {label:"Robinet 1/4 de tour", qty:1},
@@ -990,10 +993,13 @@ let CATEGORIES_MATERIEL = [
     {label:"Sèche-serviettes", qty:1},
     {label:"Radiateur", qty:0},
     {label:"Fillain", qty:0},
+    {label:"Manchon 40", qty:4},
+    {label:"Manchon 32", qty:4},
+    {label:"Boîte de joints 12/17, 15/21, 20/27", qty:1, global:true},
+    {label:"Colle PVC", qty:1, global:true},
   ]},
   { id:"peinture", nom:"Peinture", fournisseur:"BCL", items:[
     {label:"Velours 15L", qty:2, extra:1},
-    {label:"Velours Isola", qty:2},
     {label:"Ragréage", qty:1},
     {label:"Primaire", qty:1},
     {label:"Bâche 50m", qty:3, global:true},
@@ -1010,6 +1016,8 @@ let CATEGORIES_MATERIEL = [
     {label:"Boîte ponçage 150 (machine)", qty:1, global:true},
     {label:"Sachet brosses", qty:1, global:true},
     {label:"Barre de seuil", qty:2},
+    {label:"Scotch lino", qty:2},
+    {label:"Remontées plinthes (ml)", qty:30},
   ]},
   { id:"carrelage", nom:"Carrelage / faïence", fournisseur:"Point P", items:[
     {label:"Carroplâtre hydro (m²)", qty:2},
@@ -1085,7 +1093,7 @@ function generateMateriel(){
     CATEGORIES_MATERIEL.forEach(cat=>{
       const itemsAvecQte = cat.items.filter(it=>computeMaterielItemTotal(it, mult)>0);
       if(!itemsAvecQte.length) return;
-      lignes.push(cat.nom.toUpperCase());
+      lignes.push("**"+cat.nom.toUpperCase()+"**");
       itemsAvecQte.forEach(it=> lignes.push("- "+it.label+" : "+computeMaterielItemTotal(it, mult)));
       lignes.push("");
     });
