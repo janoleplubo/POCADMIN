@@ -1086,7 +1086,6 @@ let CATEGORIES_MATERIEL = [
 ];
 let materielState = { nombreLogements:1, chantierRef:"", outputHtml:"", genOptions:{listes:true, emails:true, recap:true, precommande:false}, codePrecommande:"", devisPdfUrl:null, devisPdfFilename:null };
 const PRECOMMANDE_CODE = "2510";
-const PRECOMMANDE_TVA_TAUX = 0.10; // TVA travaux rénovation logement — à confirmer
 
 function updateMaterielItem(catIdx, itemIdx, field, value){
   const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
@@ -1236,20 +1235,15 @@ function generateDevisPlomberiePDF(mult){
     ["left","left","right","right","right"]
   );
 
-  const tva = totalHT*PRECOMMANDE_TVA_TAUX;
-  const totalTTC = totalHT+tva;
   D.y += 2;
-  D.ensureSpace(24);
+  D.ensureSpace(15);
   const p = pdf;
   const boxW = 74, boxX = D.margin+D.contentW-boxW;
   p.setDrawColor(210,206,199);
-  p.rect(boxX, D.y, boxW, 22, "S");
-  p.setFont("helvetica","normal"); p.setFontSize(SZ.body); p.setTextColor(30,30,30);
-  p.text("Total HT", boxX+4, D.y+6.5); p.text(totalHT.toFixed(2)+" €", boxX+boxW-4, D.y+6.5, {align:"right"});
-  p.text("TVA ("+(PRECOMMANDE_TVA_TAUX*100).toFixed(0)+"%)", boxX+4, D.y+12.5); p.text(tva.toFixed(2)+" €", boxX+boxW-4, D.y+12.5, {align:"right"});
-  p.setFont("helvetica","bold");
-  p.text("Total TTC", boxX+4, D.y+19); p.text(totalTTC.toFixed(2)+" €", boxX+boxW-4, D.y+19, {align:"right"});
-  D.y += 26;
+  p.rect(boxX, D.y, boxW, 11, "S");
+  p.setFont("helvetica","bold"); p.setFontSize(SZ.body); p.setTextColor(30,30,30);
+  p.text("Total HT", boxX+4, D.y+7); p.text(totalHT.toFixed(2)+" €", boxX+boxW-4, D.y+7, {align:"right"});
+  D.y += 15;
 
   const safeRef = (materielState.chantierRef||"chantier").replace(/[^a-z0-9\-]/gi,"_");
   const filename = "Precommande_plomberie_"+safeRef+".pdf";
