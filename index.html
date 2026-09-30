@@ -611,6 +611,48 @@ class Doc{
       this.y += rowH;
     }
   }
+  // Tableau générique (en-tête + lignes), avec retour à la ligne et pagination automatique.
+  // headers: string[] ; rows: string[][] ; colW: number[] (mm, somme <= contentW) ; aligns: ("left"|"right")[] optionnel
+  table(headers, rows, colW, aligns){
+    const p=this.pdf; const headerH=7.2;
+    const totalW = colW.reduce((a,b)=>a+b,0);
+    const drawHeader = ()=>{
+      this.ensureSpace(headerH+6);
+      let cx=this.margin;
+      headers.forEach((h,i)=>{
+        p.setFillColor(234,79,0); p.setDrawColor(234,79,0);
+        p.rect(cx,this.y,colW[i],headerH,"FD");
+        p.setFont("helvetica","bold"); p.setFontSize(SZ.body-0.5); p.setTextColor(255,255,255);
+        const align = aligns&&aligns[i];
+        if(align==="right") p.text(String(h), cx+colW[i]-2.5, this.y+5.0, {align:"right"});
+        else p.text(String(h), cx+2.5, this.y+5.0);
+        cx+=colW[i];
+      });
+      this.y += headerH; p.setTextColor(30,30,30); p.setDrawColor(210,206,199);
+    };
+    drawHeader();
+    p.setFont("helvetica","normal"); p.setFontSize(SZ.body-0.5);
+    rows.forEach((row,r)=>{
+      const wrapped = row.map((cell,i)=> p.splitTextToSize(String(cell===undefined||cell===null?"":cell), colW[i]-5));
+      const maxLines = Math.max(1, ...wrapped.map(w=>w.length));
+      const rowH = 4.6*maxLines + 2.4;
+      if(this.y + rowH > this.pageH - 20){ this.newPage(); drawHeader(); p.setFont("helvetica","normal"); p.setFontSize(SZ.body-0.5); }
+      let cx=this.margin;
+      if(r%2===1){ p.setFillColor(250,244,238); p.rect(this.margin,this.y,totalW,rowH,"F"); }
+      wrapped.forEach((lines,i)=>{
+        p.setDrawColor(210,206,199); p.rect(cx,this.y,colW[i],rowH,"S");
+        const align = aligns&&aligns[i];
+        lines.forEach((line,li)=>{
+          const ty = this.y+4.4+li*4.6;
+          if(align==="right") p.text(line, cx+colW[i]-2.5, ty, {align:"right"});
+          else p.text(line, cx+2.5, ty);
+        });
+        cx+=colW[i];
+      });
+      this.y += rowH;
+    });
+    this.y += 2;
+  }
 }
 function splitLinesArr(text){ return String(text||"").split("\n").map(s=>s.trim()).filter(Boolean); }
 function splitCommaArr(text){ return String(text||"").split(",").map(s=>s.trim()).filter(Boolean); }
@@ -974,36 +1016,36 @@ let CATEGORIES_MATERIEL = [
     {label:"Radiateur électrique 1500W", qty:0},
   ]},
   { id:"plomberie", nom:"Plomberie", fournisseur:"SFCP / CEDEO", items:[
-    {label:"Lavabo", qty:1},
-    {label:"Pied de lavabo", qty:1},
-    {label:"Siphon", qty:2},
-    {label:"Mitigeur lavabo", qty:1},
-    {label:"Mitigeur douche", qty:1},
-    {label:"Flexible de douchette", qty:1},
-    {label:"Pommeau de douchette", qty:1},
-    {label:"Barre rideau de douche", qty:1},
-    {label:"WC complet + fixation", qty:1},
-    {label:"Robinet 1/4 de tour", qty:1},
-    {label:"Vanne papillon 12/17", qty:4},
-    {label:"Grille accès sous douche", qty:1},
-    {label:"Kitchenette métal", qty:1},
-    {label:"Plaque avec minuteur", qty:1},
-    {label:"Évier", qty:1},
-    {label:"Pipe coudée toilettes", qty:1},
-    {label:"Porte papier toilette", qty:1},
-    {label:"Tablette céramique", qty:1},
-    {label:"Coude PVC 90° en 40", qty:5},
-    {label:"Coude PVC 90° en 32", qty:3},
-    {label:"Sèche-serviettes", qty:1},
-    {label:"Bouche VMC cuisine", qty:1},
-    {label:"Bouche VMC SdB", qty:1},
-    {label:"Radiateur", qty:0},
-    {label:"Groupe de sécurité BECS", qty:0},
-    {label:"Fillain", qty:0},
-    {label:"Manchon 40", qty:4},
-    {label:"Manchon 32", qty:4},
-    {label:"Boîte de joints 12/17, 15/21, 20/27", qty:1, global:true},
-    {label:"Colle PVC", qty:1, global:true},
+    {label:"Lavabo", qty:1, ref:"", prix:0},
+    {label:"Pied de lavabo", qty:1, ref:"", prix:0},
+    {label:"Siphon", qty:2, ref:"", prix:0},
+    {label:"Mitigeur lavabo", qty:1, ref:"", prix:0},
+    {label:"Mitigeur douche", qty:1, ref:"", prix:0},
+    {label:"Flexible de douchette", qty:1, ref:"", prix:0},
+    {label:"Pommeau de douchette", qty:1, ref:"", prix:0},
+    {label:"Barre rideau de douche", qty:1, ref:"", prix:0},
+    {label:"WC complet + fixation", qty:1, ref:"", prix:0},
+    {label:"Robinet 1/4 de tour", qty:1, ref:"", prix:0},
+    {label:"Vanne papillon 12/17", qty:4, ref:"", prix:0},
+    {label:"Grille accès sous douche", qty:1, ref:"", prix:0},
+    {label:"Kitchenette métal", qty:1, ref:"", prix:0},
+    {label:"Plaque avec minuteur", qty:1, ref:"", prix:0},
+    {label:"Évier", qty:1, ref:"", prix:0},
+    {label:"Pipe coudée toilettes", qty:1, ref:"", prix:0},
+    {label:"Porte papier toilette", qty:1, ref:"", prix:0},
+    {label:"Tablette céramique", qty:1, ref:"", prix:0},
+    {label:"Coude PVC 90° en 40", qty:5, ref:"", prix:0},
+    {label:"Coude PVC 90° en 32", qty:3, ref:"", prix:0},
+    {label:"Sèche-serviettes", qty:1, ref:"", prix:0},
+    {label:"Bouche VMC cuisine", qty:1, ref:"", prix:0},
+    {label:"Bouche VMC SdB", qty:1, ref:"", prix:0},
+    {label:"Radiateur", qty:0, ref:"", prix:0},
+    {label:"Groupe de sécurité BECS", qty:0, ref:"", prix:0},
+    {label:"Fillain", qty:0, ref:"", prix:0},
+    {label:"Manchon 40", qty:4, ref:"", prix:0},
+    {label:"Manchon 32", qty:4, ref:"", prix:0},
+    {label:"Boîte de joints 12/17, 15/21, 20/27", qty:1, global:true, ref:"", prix:0},
+    {label:"Colle PVC", qty:1, global:true, ref:"", prix:0},
   ]},
   { id:"peinture", nom:"Peinture", fournisseur:"BCL", items:[
     {label:"Velours 15L", qty:2, extra:1},
@@ -1042,7 +1084,9 @@ let CATEGORIES_MATERIEL = [
     {label:"Tube silicone coloré", fournisseur:"Gerflor", qty:0.65, roundUp:true},
   ]},
 ];
-let materielState = { nombreLogements:1, chantierRef:"", outputHtml:"", genOptions:{listes:true, emails:true, recap:true} };
+let materielState = { nombreLogements:1, chantierRef:"", outputHtml:"", genOptions:{listes:true, emails:true, recap:true, precommande:false}, codePrecommande:"", devisPdfUrl:null, devisPdfFilename:null };
+const PRECOMMANDE_CODE = "2510";
+const PRECOMMANDE_TVA_TAUX = 0.10; // TVA travaux rénovation logement — à confirmer
 
 function updateMaterielItem(catIdx, itemIdx, field, value){
   const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
@@ -1052,6 +1096,14 @@ function updateMaterielItem(catIdx, itemIdx, field, value){
   if(field==="qty" || field==="global" || field==="roundUp") recomputeMaterielTotals();
 }
 function updateMaterielCatFournisseur(catIdx, value){ CATEGORIES_MATERIEL[catIdx].fournisseur = value; }
+function toggleMaterielPrecommande(checked){
+  materielState.genOptions.precommande = checked;
+  if(!checked){
+    materielState.codePrecommande = "";
+    if(materielState.devisPdfUrl){ URL.revokeObjectURL(materielState.devisPdfUrl); materielState.devisPdfUrl = null; materielState.devisPdfFilename = null; }
+  }
+  render();
+}
 function updateMaterielLogements(value){
   materielState.nombreLogements = parseInt(value)||1;
   recomputeMaterielTotals();
@@ -1125,12 +1177,86 @@ function generateMateriel(){
       html += outputBlockListMateriel(f, text);
     });
   }
-  if(!materielState.genOptions.listes && !materielState.genOptions.emails && !materielState.genOptions.recap){
+  if(materielState.genOptions.precommande){
+    html += sectionTitle("④ Précommande plomberie (devis)");
+    if(materielState.codePrecommande !== PRECOMMANDE_CODE){
+      html += '<div class="st-card" style="border-color:#C0392B;"><strong style="color:#C0392B;">Code incorrect.</strong>'+
+        '<p style="font-size:13px;color:var(--muted);margin-top:6px;">Saisissez le code d\'accès ci-dessus pour générer le devis plomberie.</p></div>';
+    } else {
+      try{
+        generateDevisPlomberiePDF(mult);
+        html += '<div class="st-card"><strong>Devis précommande plomberie prêt</strong>'+
+          '<p style="font-size:13px;color:var(--muted);margin:6px 0 10px;">Chantier : '+esc(materielState.chantierRef||"—")+(mult>1?" — × "+mult+" logements":"")+'</p>'+
+          '<a class="btn" style="display:inline-block;text-decoration:none;" href="'+materielState.devisPdfUrl+'" download="'+esc(materielState.devisPdfFilename)+'" target="_blank" rel="noopener">⬇ Ouvrir / télécharger le devis PDF</a></div>';
+      }catch(e){
+        console.error(e);
+        html += '<div class="st-card" style="border-color:#C0392B;"><strong style="color:#C0392B;">Erreur lors de la génération du devis :</strong> '+esc(e.message)+'</div>';
+      }
+    }
+  }
+  if(!materielState.genOptions.listes && !materielState.genOptions.emails && !materielState.genOptions.recap && !materielState.genOptions.precommande){
     html = '<p style="color:var(--muted);font-size:13px;">Cochez au moins une option avant de générer.</p>';
   }
   materielState.outputHtml = html;
   render();
   setTimeout(()=>{ const el=document.getElementById("materiel-resultats"); if(el) el.scrollIntoView({behavior:"smooth"}); }, 50);
+}
+
+function generateDevisPlomberiePDF(mult){
+  if(!window.jspdf) throw new Error("Bibliothèque PDF non chargée — vérifiez la connexion et réessayez.");
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit:"mm", format:"a4" });
+  const D = new Doc(pdf);
+  D.newPage();
+  D.header("PRÉCOMMANDE PLOMBERIE", "Document interne — préparation de commande, à usage exclusif Paris Ouest Construction");
+
+  const today = new Date();
+  const dateStr = String(today.getDate()).padStart(2,"0")+"/"+String(today.getMonth()+1).padStart(2,"0")+"/"+today.getFullYear();
+  D.keyValueRow([["Chantier / réf.", materielState.chantierRef||"—"], ["Date", dateStr]]);
+  D.keyValueRow([["Fournisseur", "SFCP / CEDEO"], ["Logements", String(mult)]]);
+  D.y += 2;
+
+  const plomberie = CATEGORIES_MATERIEL.find(c=>c.id==="plomberie");
+  const rows = [];
+  let totalHT = 0;
+  (plomberie ? plomberie.items : []).forEach(item=>{
+    const qty = computeMaterielItemTotal(item, mult);
+    if(qty<=0) return;
+    const pu = item.prix||0;
+    const ligneHT = qty*pu;
+    totalHT += ligneHT;
+    rows.push([item.ref||"—", item.label, String(qty), pu.toFixed(2), ligneHT.toFixed(2)]);
+  });
+
+  D.subheading("Détail des articles");
+  D.table(
+    ["Réf.","Désignation","Qté","PU HT (€)","Total HT (€)"],
+    rows,
+    [26, D.contentW-26-16-28-28, 16, 28, 28],
+    ["left","left","right","right","right"]
+  );
+
+  const tva = totalHT*PRECOMMANDE_TVA_TAUX;
+  const totalTTC = totalHT+tva;
+  D.y += 2;
+  D.ensureSpace(24);
+  const p = pdf;
+  const boxW = 74, boxX = D.margin+D.contentW-boxW;
+  p.setDrawColor(210,206,199);
+  p.rect(boxX, D.y, boxW, 22, "S");
+  p.setFont("helvetica","normal"); p.setFontSize(SZ.body); p.setTextColor(30,30,30);
+  p.text("Total HT", boxX+4, D.y+6.5); p.text(totalHT.toFixed(2)+" €", boxX+boxW-4, D.y+6.5, {align:"right"});
+  p.text("TVA ("+(PRECOMMANDE_TVA_TAUX*100).toFixed(0)+"%)", boxX+4, D.y+12.5); p.text(tva.toFixed(2)+" €", boxX+boxW-4, D.y+12.5, {align:"right"});
+  p.setFont("helvetica","bold");
+  p.text("Total TTC", boxX+4, D.y+19); p.text(totalTTC.toFixed(2)+" €", boxX+boxW-4, D.y+19, {align:"right"});
+  D.y += 26;
+
+  const safeRef = (materielState.chantierRef||"chantier").replace(/[^a-z0-9\-]/gi,"_");
+  const filename = "Precommande_plomberie_"+safeRef+".pdf";
+  const blob = pdf.output("blob");
+  if(materielState.devisPdfUrl) URL.revokeObjectURL(materielState.devisPdfUrl);
+  materielState.devisPdfUrl = URL.createObjectURL(blob);
+  materielState.devisPdfFilename = filename;
 }
 
 function outputBlockListMateriel(title, text){
@@ -1217,11 +1343,18 @@ function renderStepMateriel(){
   CATEGORIES_MATERIEL.forEach((cat,i)=> h += renderCategoryMateriel(cat, i));
 
   h += '<div class="card"><h2 style="font-size:15px;">Génération</h2>';
-  h += '<div class="check-row" style="display:flex;gap:22px;margin:14px 0;">'+
+  h += '<div class="check-row" style="display:flex;gap:22px;margin:14px 0;flex-wrap:wrap;">'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.listes?"checked":"")+' onchange="materielState.genOptions.listes=this.checked"> Listes par fournisseur</label>'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.emails?"checked":"")+' onchange="materielState.genOptions.emails=this.checked"> Mails de demande de prix</label>'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.recap?"checked":"")+' onchange="materielState.genOptions.recap=this.checked"> Récapitulatif global (validation sous-traitant)</label>'+
+    '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.precommande?"checked":"")+' onchange="toggleMaterielPrecommande(this.checked)"> Précommande plomberie (devis)</label>'+
     '</div>';
+  if(materielState.genOptions.precommande){
+    h += '<div style="background:#FAF4EE;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px;max-width:280px;">'+
+      '<label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:5px;">Code d\'accès précommande</label>'+
+      '<input type="password" value="'+esc(materielState.codePrecommande)+'" oninput="materielState.codePrecommande=this.value" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-size:13.5px;" placeholder="Code">'+
+      '</div>';
+  }
   h += '<button class="btn" onclick="generateMateriel()">Valider et générer →</button>';
   h += '</div>';
 
