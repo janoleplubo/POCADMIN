@@ -1184,7 +1184,7 @@ function generateMateriel(){
     });
   }
   if(materielState.genOptions.precommande){
-    html += sectionTitle("④ Bon de commande plomberie");
+    html += sectionTitle("④ Liste de commande plomberie");
     if(materielState.codePrecommande !== PRECOMMANDE_CODE){
       html += '<div class="st-card" style="border-color:#C0392B;"><strong style="color:#C0392B;">Code incorrect.</strong>'+
         '<p style="font-size:13px;color:var(--muted);margin-top:6px;">Saisissez le code d\'accès ci-dessus pour générer le bon de commande plomberie.</p></div>';
@@ -1196,7 +1196,7 @@ function generateMateriel(){
           missingWarning = '<div class="st-card" style="border-color:#C45A00;background:#FFF6E9;margin-bottom:10px;"><strong style="color:#C45A00;">⚠ Prix manquant pour '+materielState.devisMissingPrix.length+' article(s)</strong>'+
             '<p style="font-size:13px;color:var(--muted);margin:6px 0 0;">Le bon de commande est généré mais incomplet (marqué "MANQUANT") pour : '+esc(materielState.devisMissingPrix.join(", "))+'.</p></div>';
         }
-        html += missingWarning+'<div class="st-card"><strong>Bon de commande plomberie prêt</strong>'+
+        html += missingWarning+'<div class="st-card"><strong>Liste de commande plomberie prête</strong>'+
           '<p style="font-size:13px;color:var(--muted);margin:6px 0 10px;">Chantier : '+esc(materielState.chantierRef||"—")+(mult>1?" — × "+mult+" logements":"")+'</p>'+
           '<a class="btn" style="display:inline-block;text-decoration:none;" href="'+materielState.devisPdfUrl+'" download="'+esc(materielState.devisPdfFilename)+'" target="_blank" rel="noopener">⬇ Ouvrir / télécharger le PDF</a></div>';
       }catch(e){
@@ -1220,7 +1220,7 @@ function generateDevisPlomberiePDF(mult){
   const D = new Doc(pdf);
   D.showFooter = false;
   D.newPage();
-  D.header("BON DE COMMANDE PLOMBERIE", "Chantier "+(materielState.chantierRef||"—")+" — à transmettre au fournisseur pour chiffrage du total");
+  D.header("LISTE DE COMMANDE PLOMBERIE", "Chantier "+(materielState.chantierRef||"—")+" — à transmettre au fournisseur pour chiffrage du total");
 
   const today = new Date();
   const dateStr = String(today.getDate()).padStart(2,"0")+"/"+String(today.getMonth()+1).padStart(2,"0")+"/"+today.getFullYear();
@@ -1384,7 +1384,7 @@ function renderStepMateriel(){
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.listes?"checked":"")+' onchange="materielState.genOptions.listes=this.checked"> Listes par fournisseur</label>'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.emails?"checked":"")+' onchange="materielState.genOptions.emails=this.checked"> Mails de demande de prix</label>'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.recap?"checked":"")+' onchange="materielState.genOptions.recap=this.checked"> Récapitulatif global (validation sous-traitant)</label>'+
-    '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.precommande?"checked":"")+' onchange="toggleMaterielPrecommande(this.checked)"> Bon de commande plomberie</label>'+
+    '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.precommande?"checked":"")+' onchange="toggleMaterielPrecommande(this.checked)"> Liste de commande plomberie</label>'+
     '</div>';
   if(materielState.genOptions.precommande){
     h += '<div style="background:#FAF4EE;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px;max-width:280px;">'+
