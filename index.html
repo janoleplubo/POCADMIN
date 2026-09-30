@@ -457,7 +457,7 @@ class Doc{
     this.pageNum++; this.y = this.margin;
     const p=this.pdf;
     p.setFillColor(234,79,0); p.rect(0, 0, 3, this.pageH, "F");
-    this.footer();
+    if(this.showFooter!==false) this.footer();
   }
   footer(){
     const p=this.pdf;
@@ -1015,41 +1015,44 @@ let CATEGORIES_MATERIEL = [
     {label:"Interrupteurs va-et-vient", qty:2},
     {label:"Radiateur électrique 1500W", qty:0},
   ]},
-  { id:"plomberie", nom:"Plomberie", fournisseur:"SFCP / CEDEO", items:[
-    {label:"Lavabo", qty:1, ref:"S09326", prix:21},
-    {label:"Pied de lavabo", qty:1, ref:"S09327", prix:16.37},
-    {label:"Siphon", qty:2, ref:"P001KQ", prix:1.4},
-    {label:"Mitigeur lavabo", qty:1, ref:"R26483", prix:51.95},
-    {label:"Mitigeur douche", qty:1, ref:"R26490", prix:55.86},
-    {label:"Flexible de douchette", qty:1, ref:"R0757B", prix:25.92},
-    {label:"Pommeau de douchette", qty:1, ref:"R00TMU", prix:17.95},
-    {label:"Barre rideau de douche", qty:1, ref:"R13491", prix:47.47},
-    {label:"WC complet", qty:1, ref:"S09332", prix:60.95},
-    {label:"Fixation WC", qty:1, ref:"P00O19", prix:1.25},
-    {label:"Robinet 1/4 de tour", qty:1, ref:"P04362", prix:2.02},
-    {label:"Vanne papillon 12/17", qty:4, ref:"P001OA", prix:3.04},
-    {label:"Flexible inox", qty:1, ref:"C00PYR", prix:1.33},
-    {label:"Grille accès sous douche", qty:1, ref:"", prix:0},
-    {label:"Grille siphon douche", qty:0, ref:"PC1260", prix:8.24},
-    {label:"Kitchenette métal", qty:1, ref:"", prix:0},
-    {label:"Plaque avec minuteur", qty:1, ref:"", prix:0},
-    {label:"Évier", qty:1, ref:"", prix:0},
-    {label:"Pipe coudée toilettes", qty:1, ref:"P001L0", prix:5.83},
-    {label:"Porte papier toilette", qty:1, ref:"R54926", prix:16.23},
-    {label:"Tablette céramique", qty:1, ref:"S31821", prix:32.38},
-    {label:"Coude PVC 90° en 40", qty:5, ref:"P03918", prix:0.85},
-    {label:"Coude PVC 90° en 32", qty:3, ref:"P03917", prix:0.63},
-    {label:"Sèche-serviettes", qty:1, ref:"C53949", prix:126.64},
-    {label:"Bouche VMC cuisine", qty:1, ref:"", prix:0},
-    {label:"Bouche VMC SdB", qty:1, ref:"", prix:0},
-    {label:"Radiateur", qty:0, ref:"", prix:0},
-    {label:"Groupe de sécurité BECS", qty:0, ref:"", prix:0},
-    {label:"Fillain", qty:0, ref:"P12541", prix:2.22},
-    {label:"Manchon 40", qty:4, ref:"P03843", prix:0.34},
-    {label:"Manchon 32", qty:4, ref:"", prix:0},
-    {label:"Bouchons laiton", qty:4, ref:"P04906", prix:0.42},
-    {label:"Boîte de joints 12/17, 15/21, 20/27", qty:1, global:true, ref:"PC5968", prix:2.06},
-    {label:"Colle PVC", qty:1, global:true, ref:"P00216", prix:12.91},
+  { id:"plomberie", nom:"Plomberie", fournisseurParItem:true, items:[
+    {label:"Lavabo", qty:1, ref:"S09326", prix:21, fournisseur:"SFCP"},
+    {label:"Pied de lavabo", qty:1, ref:"S09327", prix:16.37, fournisseur:"SFCP"},
+    {label:"Siphon", qty:2, ref:"P001KQ", prix:1.4, fournisseur:"SFCP"},
+    {label:"Mitigeur lavabo", qty:1, ref:"R26483", prix:51.95, fournisseur:"SFCP"},
+    {label:"Mitigeur douche", qty:1, ref:"R26490", prix:55.86, fournisseur:"SFCP"},
+    {label:"Flexible de douchette", qty:1, ref:"R0757B", prix:25.92, fournisseur:"SFCP"},
+    {label:"Pommeau de douchette", qty:1, ref:"R00TMU", prix:17.95, fournisseur:"SFCP"},
+    {label:"Barre rideau de douche", qty:1, ref:"R13491", prix:47.47, fournisseur:"SFCP"},
+    {label:"WC complet", qty:1, ref:"S09332", prix:60.95, fournisseur:"SFCP"},
+    {label:"Fixation WC", qty:1, ref:"P00O19", prix:1.25, fournisseur:"SFCP"},
+    {label:"Robinet 1/4 de tour", qty:1, ref:"P04362", prix:2.02, fournisseur:"SFCP"},
+    {label:"Vanne papillon 12/17", qty:4, ref:"P001OA", prix:3.04, fournisseur:"SFCP"},
+    {label:"Flexible inox", qty:1, ref:"C00PYR", prix:1.33, fournisseur:"SFCP"},
+    {label:"Grille accès sous douche", qty:1, ref:"", prix:0, fournisseur:"SFCP"},
+    {label:"Grille siphon douche", qty:0, ref:"PC1260", prix:8.24, fournisseur:"SFCP"},
+    {label:"Kitchenette métal", qty:1, ref:"", prix:0, fournisseur:"CEDEO"},
+    {label:"Portes kitchenette", qty:1, ref:"", prix:0, fournisseur:"CEDEO"},
+    {label:"Mitigeur évier", qty:1, ref:"", prix:0, fournisseur:"CEDEO"},
+    {label:"Évier", qty:1, ref:"", prix:0, fournisseur:"CEDEO"},
+    {label:"Plaque avec minuteur", qty:1, ref:"", prix:0, fournisseur:"CEDEO"},
+    {label:"Frigo", qty:1, ref:"", prix:0, fournisseur:"CEDEO"},
+    {label:"Pipe coudée toilettes", qty:1, ref:"P001L0", prix:5.83, fournisseur:"SFCP"},
+    {label:"Porte papier toilette", qty:1, ref:"R54926", prix:16.23, fournisseur:"SFCP"},
+    {label:"Tablette céramique", qty:1, ref:"S31821", prix:32.38, fournisseur:"SFCP"},
+    {label:"Coude PVC 90° en 40", qty:5, ref:"P03918", prix:0.85, fournisseur:"SFCP"},
+    {label:"Coude PVC 90° en 32", qty:3, ref:"P03917", prix:0.63, fournisseur:"SFCP"},
+    {label:"Sèche-serviettes", qty:1, ref:"C53949", prix:126.64, fournisseur:"SFCP"},
+    {label:"Bouche VMC cuisine", qty:1, ref:"", prix:0, fournisseur:"SFCP"},
+    {label:"Bouche VMC SdB", qty:1, ref:"", prix:0, fournisseur:"SFCP"},
+    {label:"Radiateur", qty:0, ref:"", prix:0, fournisseur:"SFCP"},
+    {label:"Groupe de sécurité BECS", qty:0, ref:"", prix:0, fournisseur:"SFCP"},
+    {label:"Fillain", qty:0, ref:"P12541", prix:2.22, fournisseur:"SFCP"},
+    {label:"Manchon 40", qty:4, ref:"P03843", prix:0.34, fournisseur:"SFCP"},
+    {label:"Manchon 32", qty:4, ref:"", prix:0, fournisseur:"SFCP"},
+    {label:"Bouchons laiton", qty:4, ref:"P04906", prix:0.42, fournisseur:"SFCP"},
+    {label:"Boîte de joints 12/17, 15/21, 20/27", qty:1, global:true, ref:"PC5968", prix:2.06, fournisseur:"SFCP"},
+    {label:"Colle PVC", qty:1, global:true, ref:"P00216", prix:12.91, fournisseur:"SFCP"},
   ]},
   { id:"peinture", nom:"Peinture", fournisseur:"BCL", items:[
     {label:"Velours 15L", qty:2, extra:1},
@@ -1181,24 +1184,24 @@ function generateMateriel(){
     });
   }
   if(materielState.genOptions.precommande){
-    html += sectionTitle("④ Précommande plomberie (devis)");
+    html += sectionTitle("④ Bon de commande plomberie");
     if(materielState.codePrecommande !== PRECOMMANDE_CODE){
       html += '<div class="st-card" style="border-color:#C0392B;"><strong style="color:#C0392B;">Code incorrect.</strong>'+
-        '<p style="font-size:13px;color:var(--muted);margin-top:6px;">Saisissez le code d\'accès ci-dessus pour générer le devis plomberie.</p></div>';
+        '<p style="font-size:13px;color:var(--muted);margin-top:6px;">Saisissez le code d\'accès ci-dessus pour générer le bon de commande plomberie.</p></div>';
     } else {
       try{
         generateDevisPlomberiePDF(mult);
         let missingWarning = "";
         if(materielState.devisMissingPrix && materielState.devisMissingPrix.length){
           missingWarning = '<div class="st-card" style="border-color:#C45A00;background:#FFF6E9;margin-bottom:10px;"><strong style="color:#C45A00;">⚠ Prix manquant pour '+materielState.devisMissingPrix.length+' article(s)</strong>'+
-            '<p style="font-size:13px;color:var(--muted);margin:6px 0 0;">Le devis est généré mais incomplet (marqué "MANQUANT") pour : '+esc(materielState.devisMissingPrix.join(", "))+'.</p></div>';
+            '<p style="font-size:13px;color:var(--muted);margin:6px 0 0;">Le bon de commande est généré mais incomplet (marqué "MANQUANT") pour : '+esc(materielState.devisMissingPrix.join(", "))+'.</p></div>';
         }
-        html += missingWarning+'<div class="st-card"><strong>Devis précommande plomberie prêt</strong>'+
+        html += missingWarning+'<div class="st-card"><strong>Bon de commande plomberie prêt</strong>'+
           '<p style="font-size:13px;color:var(--muted);margin:6px 0 10px;">Chantier : '+esc(materielState.chantierRef||"—")+(mult>1?" — × "+mult+" logements":"")+'</p>'+
-          '<a class="btn" style="display:inline-block;text-decoration:none;" href="'+materielState.devisPdfUrl+'" download="'+esc(materielState.devisPdfFilename)+'" target="_blank" rel="noopener">⬇ Ouvrir / télécharger le devis PDF</a></div>';
+          '<a class="btn" style="display:inline-block;text-decoration:none;" href="'+materielState.devisPdfUrl+'" download="'+esc(materielState.devisPdfFilename)+'" target="_blank" rel="noopener">⬇ Ouvrir / télécharger le PDF</a></div>';
       }catch(e){
         console.error(e);
-        html += '<div class="st-card" style="border-color:#C0392B;"><strong style="color:#C0392B;">Erreur lors de la génération du devis :</strong> '+esc(e.message)+'</div>';
+        html += '<div class="st-card" style="border-color:#C0392B;"><strong style="color:#C0392B;">Erreur lors de la génération :</strong> '+esc(e.message)+'</div>';
       }
     }
   }
@@ -1215,13 +1218,14 @@ function generateDevisPlomberiePDF(mult){
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({ unit:"mm", format:"a4" });
   const D = new Doc(pdf);
+  D.showFooter = false;
   D.newPage();
-  D.header("PRÉCOMMANDE PLOMBERIE", "Document interne — préparation de commande, à usage exclusif Paris Ouest Construction");
+  D.header("BON DE COMMANDE PLOMBERIE", "Chantier "+(materielState.chantierRef||"—")+" — à transmettre au fournisseur pour chiffrage du total");
 
   const today = new Date();
   const dateStr = String(today.getDate()).padStart(2,"0")+"/"+String(today.getMonth()+1).padStart(2,"0")+"/"+today.getFullYear();
   D.keyValueRow([["Chantier / réf.", materielState.chantierRef||"—"], ["Date", dateStr]]);
-  D.keyValueRow([["Fournisseur", "SFCP / CEDEO"], ["Logements", String(mult)]]);
+  D.keyValueRow([["Logements", String(mult)]]);
   D.y += 2;
 
   const plomberie = CATEGORIES_MATERIEL.find(c=>c.id==="plomberie");
@@ -1236,30 +1240,31 @@ function generateDevisPlomberiePDF(mult){
     if(missingPrix) missing.push(item.label);
     const ligneHT = qty*pu;
     totalHT += ligneHT;
-    rows.push([item.ref||"—", item.label, String(qty), missingPrix?"MANQUANT":pu.toFixed(2), ligneHT.toFixed(2)]);
+    rows.push([item.ref||"—", item.label, item.fournisseur||"—", String(qty), missingPrix?"MANQUANT":pu.toFixed(2), ligneHT.toFixed(2)]);
   });
   materielState.devisMissingPrix = missing;
 
   if(missing.length){
-    const msg = "⚠ Prix manquant pour "+missing.length+" article(s) — devis incomplet tant qu'ils ne sont pas renseignés : "+missing.join(", ");
-    pdf.setFont("helvetica","bold"); pdf.setFontSize(SZ.body-0.5);
-    const lines = pdf.splitTextToSize(msg, D.contentW-6);
-    const boxH = 4.4*lines.length + 5;
+    const msg = "ATTENTION — Prix manquant pour "+missing.length+" article(s) : devis incomplet tant qu'ils ne sont pas renseignés : "+missing.join(", ");
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(SZ.body-1);
+    const innerW = D.contentW-10;
+    const lines = pdf.splitTextToSize(msg, innerW);
+    const boxH = 4.6*lines.length + 6;
     D.ensureSpace(boxH+4);
-    pdf.setFillColor(255,235,205); pdf.setDrawColor(196,90,0);
+    pdf.setFillColor(255,235,235); pdf.setDrawColor(210,0,0);
     pdf.rect(D.margin, D.y, D.contentW, boxH, "FD");
-    pdf.setTextColor(150,60,0);
-    lines.forEach((l,i)=> pdf.text(l, D.margin+3, D.y+5+i*4.4));
+    pdf.setTextColor(210,0,0);
+    lines.forEach((l,i)=> pdf.text(l, D.margin+5, D.y+5.2+i*4.6));
     D.y += boxH + 4;
     pdf.setTextColor(30,30,30); pdf.setFont("helvetica","normal");
   }
 
   D.subheading("Détail des articles");
   D.table(
-    ["Réf.","Désignation","Qté","PU HT (€)","Total HT (€)"],
+    ["Réf.","Désignation","Fournisseur","Qté","PU HT (EUR)","Total HT (EUR)"],
     rows,
-    [26, D.contentW-26-16-28-28, 16, 28, 28],
-    ["left","left","right","right","right"]
+    [22, 66, 24, 14, 26, 26],
+    ["left","left","left","right","right","right"]
   );
 
   D.y += 2;
@@ -1269,11 +1274,11 @@ function generateDevisPlomberiePDF(mult){
   p.setDrawColor(210,206,199);
   p.rect(boxX, D.y, boxW, 11, "S");
   p.setFont("helvetica","bold"); p.setFontSize(SZ.body); p.setTextColor(30,30,30);
-  p.text("Total HT", boxX+4, D.y+7); p.text(totalHT.toFixed(2)+" €", boxX+boxW-4, D.y+7, {align:"right"});
+  p.text("Total HT", boxX+4, D.y+7); p.text(totalHT.toFixed(2)+" EUR", boxX+boxW-4, D.y+7, {align:"right"});
   D.y += 15;
 
   const safeRef = (materielState.chantierRef||"chantier").replace(/[^a-z0-9\-]/gi,"_");
-  const filename = "Precommande_plomberie_"+safeRef+".pdf";
+  const filename = "Commande_plomberie_"+safeRef+".pdf";
   const blob = pdf.output("blob");
   if(materielState.devisPdfUrl) URL.revokeObjectURL(materielState.devisPdfUrl);
   materielState.devisPdfUrl = URL.createObjectURL(blob);
@@ -1379,11 +1384,11 @@ function renderStepMateriel(){
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.listes?"checked":"")+' onchange="materielState.genOptions.listes=this.checked"> Listes par fournisseur</label>'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.emails?"checked":"")+' onchange="materielState.genOptions.emails=this.checked"> Mails de demande de prix</label>'+
     '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.recap?"checked":"")+' onchange="materielState.genOptions.recap=this.checked"> Récapitulatif global (validation sous-traitant)</label>'+
-    '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.precommande?"checked":"")+' onchange="toggleMaterielPrecommande(this.checked)"> Précommande plomberie (devis)</label>'+
+    '<label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;"><input type="checkbox" '+(materielState.genOptions.precommande?"checked":"")+' onchange="toggleMaterielPrecommande(this.checked)"> Bon de commande plomberie</label>'+
     '</div>';
   if(materielState.genOptions.precommande){
     h += '<div style="background:#FAF4EE;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px;max-width:280px;">'+
-      '<label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:5px;">Code d\'accès précommande</label>'+
+      '<label style="font-size:12.5px;font-weight:600;display:block;margin-bottom:5px;">Code d\'accès</label>'+
       '<input type="password" value="'+esc(materielState.codePrecommande)+'" oninput="materielState.codePrecommande=this.value" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-size:13.5px;" placeholder="Code">'+
       '</div>';
   }
