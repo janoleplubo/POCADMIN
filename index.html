@@ -1028,6 +1028,7 @@ let CATEGORIES_MATERIEL = [
     {label:"Robinet 1/4 de tour", qty:1, ref:"", prix:0},
     {label:"Vanne papillon 12/17", qty:4, ref:"", prix:0},
     {label:"Grille accès sous douche", qty:1, ref:"", prix:0},
+    {label:"Grille siphon douche", qty:0, ref:"", prix:0},
     {label:"Kitchenette métal", qty:1, ref:"", prix:0},
     {label:"Plaque avec minuteur", qty:1, ref:"", prix:0},
     {label:"Évier", qty:1, ref:"", prix:0},
@@ -1044,6 +1045,7 @@ let CATEGORIES_MATERIEL = [
     {label:"Fillain", qty:0, ref:"", prix:0},
     {label:"Manchon 40", qty:4, ref:"", prix:0},
     {label:"Manchon 32", qty:4, ref:"", prix:0},
+    {label:"Bouchons laiton", qty:4, ref:"", prix:0},
     {label:"Boîte de joints 12/17, 15/21, 20/27", qty:1, global:true, ref:"", prix:0},
     {label:"Colle PVC", qty:1, global:true, ref:"", prix:0},
   ]},
@@ -1089,7 +1091,7 @@ const PRECOMMANDE_CODE = "2510";
 
 function updateMaterielItem(catIdx, itemIdx, field, value){
   const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
-  if(field==="qty") item[field] = parseFloat(value)||0;
+  if(field==="qty" || field==="prix") item[field] = parseFloat(value)||0;
   else if(field==="global" || field==="roundUp") item[field] = !!value;
   else item[field] = value;
   if(field==="qty" || field==="global" || field==="roundUp") recomputeMaterielTotals();
@@ -1184,7 +1186,12 @@ function generateMateriel(){
     } else {
       try{
         generateDevisPlomberiePDF(mult);
-        html += '<div class="st-card"><strong>Devis précommande plomberie prêt</strong>'+
+        let missingWarning = "";
+        if(materielState.devisMissingPrix && materielState.devisMissingPrix.length){
+          missingWarning = '<div class="st-card" style="border-color:#C45A00;background:#FFF6E9;margin-bottom:10px;"><strong style="color:#C45A00;">⚠ Prix manquant pour '+materielState.devisMissingPrix.length+' article(s)</strong>'+
+            '<p style="font-size:13px;color:var(--muted);margin:6px 0 0;">Le devis est généré mais incomplet (marqué "MANQUANT") pour : '+esc(materielState.devisMissingPrix.join(", "))+'.</p></div>';
+        }
+        html += missingWarning+'<div class="st-card"><strong>Devis précommande plomberie prêt</strong>'+
           '<p style="font-size:13px;color:var(--muted);margin:6px 0 10px;">Chantier : '+esc(materielState.chantierRef||"—")+(mult>1?" — × "+mult+" logements":"")+'</p>'+
           '<a class="btn" style="display:inline-block;text-decoration:none;" href="'+materielState.devisPdfUrl+'" download="'+esc(materielState.devisPdfFilename)+'" target="_blank" rel="noopener">⬇ Ouvrir / télécharger le devis PDF</a></div>';
       }catch(e){
@@ -1217,15 +1224,33 @@ function generateDevisPlomberiePDF(mult){
 
   const plomberie = CATEGORIES_MATERIEL.find(c=>c.id==="plomberie");
   const rows = [];
+  const missing = [];
   let totalHT = 0;
   (plomberie ? plomberie.items : []).forEach(item=>{
     const qty = computeMaterielItemTotal(item, mult);
     if(qty<=0) return;
     const pu = item.prix||0;
+    const missingPrix = !pu;
+    if(missingPrix) missing.push(item.label);
     const ligneHT = qty*pu;
     totalHT += ligneHT;
-    rows.push([item.ref||"—", item.label, String(qty), pu.toFixed(2), ligneHT.toFixed(2)]);
+    rows.push([item.ref||"—", item.label, String(qty), missingPrix?"MANQUANT":pu.toFixed(2), ligneHT.toFixed(2)]);
   });
+  materielState.devisMissingPrix = missing;
+
+  if(missing.length){
+    const msg = "⚠ Prix manquant pour "+missing.length+" article(s) — devis incomplet tant qu'ils ne sont pas renseignés : "+missing.join(", ");
+    pdf.setFont("helvetica","bold"); pdf.setFontSize(SZ.body-0.5);
+    const lines = pdf.splitTextToSize(msg, D.contentW-6);
+    const boxH = 4.4*lines.length + 5;
+    D.ensureSpace(boxH+4);
+    pdf.setFillColor(255,235,205); pdf.setDrawColor(196,90,0);
+    pdf.rect(D.margin, D.y, D.contentW, boxH, "FD");
+    pdf.setTextColor(150,60,0);
+    lines.forEach((l,i)=> pdf.text(l, D.margin+3, D.y+5+i*4.4));
+    D.y += boxH + 4;
+    pdf.setTextColor(30,30,30); pdf.setFont("helvetica","normal");
+  }
 
   D.subheading("Détail des articles");
   D.table(
@@ -1297,11 +1322,13 @@ function renderCategoryMateriel(cat, catIdx){
   if(!cat.fournisseurParItem){
     h += '<div style="font-size:12.5px;color:var(--muted);margin:6px 0 10px;">Fournisseur : <input type="text" value="'+esc(cat.fournisseur||"")+'" oninput="updateMaterielCatFournisseur('+catIdx+', this.value)" style="border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:12.5px;width:200px;" placeholder="ex. REXEL"></div>';
   }
+  const showRefPrix = cat.id==="plomberie";
   h += '<table style="width:100%;border-collapse:collapse;margin-top:8px;"><tr>'+
     '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:55%;">Article</th>'+
     '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:65px;">Qté</th>'+
     '<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:65px;">Total</th>'+
     (cat.fournisseurParItem?'<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);">Fournisseur</th>':'')+
+    (showRefPrix?'<th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:90px;">Réf.</th><th style="text-align:left;font-size:11px;color:var(--muted);padding:4px 6px;border-bottom:1px solid var(--border);width:90px;">Prix HT (€)</th>':'')+
     '</tr>';
   cat.items.forEach((item,itemIdx)=>{
     h += '<tr><td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.label)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'label\',this.value)" style="width:100%;border:1px solid transparent;border-radius:6px;padding:4px 6px;font-size:13.5px;"></td>';
@@ -1309,6 +1336,14 @@ function renderCategoryMateriel(cat, catIdx){
     h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;font-weight:600;color:var(--accent-dark);" id="mtot_'+catIdx+'_'+itemIdx+'">'+computeMaterielItemTotal(item, mult)+'</td>';
     if(cat.fournisseurParItem){
       h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.fournisseur||"")+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'fournisseur\',this.value)" style="width:130px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;"></td>';
+    }
+    if(showRefPrix){
+      if(item.custom){
+        h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.ref||"")+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'ref\',this.value)" style="width:100%;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13px;" placeholder="Code article"></td>';
+        h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="number" min="0" step="0.01" value="'+esc(item.prix||0)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'prix\',this.value)" style="width:80px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13px;text-align:right;"></td>';
+      } else {
+        h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;color:var(--muted);font-size:12.5px;">—</td><td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;color:var(--muted);font-size:12.5px;">—</td>';
+      }
     }
     h += '</tr>';
   });
@@ -1321,6 +1356,7 @@ function addMaterielItem(catIdx){
   const cat = CATEGORIES_MATERIEL[catIdx];
   const newItem = { label:"Nouvel article", qty:1 };
   if(cat.fournisseurParItem) newItem.fournisseur = "";
+  if(cat.id==="plomberie"){ newItem.ref = ""; newItem.prix = 0; newItem.custom = true; }
   cat.items.push(newItem);
   render();
 }
