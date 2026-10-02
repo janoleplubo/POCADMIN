@@ -236,7 +236,8 @@ function defaultConfig(){
       "Débrancher tous les appareils électriques et éteindre la lumière en fin de journée (prévention incendie).",
       "Porte du logement fermée pendant le chantier, et à clef chaque soir.",
       "Zone de stockage toujours protégée et délimitée (rubalise).",
-      "Nettoyage quotidien obligatoire du chantier et des parties communes."
+      "Nettoyage quotidien obligatoire du chantier et des parties communes.",
+      "Rallonges électriques en bon état uniquement : jamais de rallonge rafistolée ou raccordée avec des dominos/Wago."
     ],
     textes: {
       contraintesSite:
@@ -935,7 +936,7 @@ function esc(s){ return String(s===undefined||s===null?"":s).replace(/&/g,"&amp;
 
 function renderTopbar(){
   return '<div class="topbar">'+
-    '<div class="brand"><img src="data:image/png;base64,'+LOGO_B64+'" alt="Paris Ouest">'+
+    '<div class="brand"><img src="data:image/png;base64,'+LOGO_B64+'" alt="Paris Ouest" style="cursor:pointer;" title="Retour au menu" onclick="goStep(\'select\')">'+
       '<div><div class="brand-text">Démarrage de chantier</div><div class="brand-sub">Paris Ouest Construction</div></div>'+
     '</div>'+
     (unlocked? '<div style="display:flex;gap:8px;"><button class="icon-btn" onclick="toggleSettings()">⚙ Réglages</button><button class="icon-btn" onclick="newDossier()">＋ Nouveau dossier</button></div>' : '')+
