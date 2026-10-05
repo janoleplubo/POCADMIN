@@ -1097,9 +1097,24 @@ let CATEGORIES_MATERIEL = [
 let materielState = { nombreLogements:1, chantierRef:"", outputHtml:"", genOptions:{listes:true, emails:true, recap:true, precommande:false}, codePrecommande:"", devisPdfUrl:null, devisPdfFilename:null };
 const PRECOMMANDE_CODE = "2510";
 
+function parseQtyMateriel(v){
+  let t = String(v==null?"":v).trim().replace(",",".");
+  if(t.indexOf("/")>0){
+    const p = t.split("/"); const a = parseFloat(p[0]), b = parseFloat(p[1]);
+    return (b>0 && isFinite(a)) ? Math.max(0,a/b) : 0;
+  }
+  const n = parseFloat(t); return (isFinite(n)&&n>0)?n:0;
+}
+function stepMaterielQty(catIdx, itemIdx, delta){
+  const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
+  const n = Math.max(0, Math.round(((item.qty||0)+delta)*1e6)/1e6);
+  item.qty = n; item.qtyTxt = String(n);
+  render();
+}
 function updateMaterielItem(catIdx, itemIdx, field, value){
   const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
-  if(field==="qty" || field==="prix") item[field] = parseFloat(value)||0;
+  if(field==="qty"){ item.qtyTxt = String(value); item.qty = parseQtyMateriel(value); }
+  else if(field==="prix") item[field] = parseFloat(value)||0;
   else if(field==="global" || field==="roundUp") item[field] = !!value;
   else item[field] = value;
   if(field==="qty" || field==="global" || field==="roundUp") recomputeMaterielTotals();
@@ -1124,6 +1139,7 @@ function updateMaterielLogements(value){
 function computeMaterielItemTotal(item, mult){
   let total = item.global ? (item.qty||0) : (item.qty||0)*mult;
   total += item.extra||0;
+  total = Math.round(total*1e6)/1e6;
   if(item.roundUp) total = Math.ceil(total);
   return total;
 }
@@ -1357,7 +1373,7 @@ function renderCategoryMateriel(cat, catIdx){
     '</tr>';
   cat.items.forEach((item,itemIdx)=>{
     h += '<tr><td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.label)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'label\',this.value)" style="width:100%;border:1px solid transparent;border-radius:6px;padding:4px 6px;font-size:13.5px;"></td>';
-    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="number" min="0" step="1" value="'+esc(item.qty)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'qty\',this.value)" style="width:60px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;text-align:center;"></td>';
+    h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><div style="display:flex;align-items:center;gap:3px;"><button type="button" onclick="stepMaterielQty('+catIdx+','+itemIdx+',-1)" style="width:26px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:15px;">−</button><input type="text" inputmode="decimal" value="'+esc(item.qtyTxt!==undefined?item.qtyTxt:item.qty)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'qty\',this.value)" style="width:58px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;text-align:center;"><button type="button" onclick="stepMaterielQty('+catIdx+','+itemIdx+',1)" style="width:26px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:15px;">+</button></div></td>';
     h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;font-weight:600;color:var(--accent-dark);" id="mtot_'+catIdx+'_'+itemIdx+'">'+computeMaterielItemTotal(item, mult)+'</td>';
     if(cat.fournisseurParItem){
       h += '<td style="padding:5px 6px;border-bottom:1px solid #F0EEE9;"><input type="text" value="'+esc(item.fournisseur||"")+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'fournisseur\',this.value)" style="width:130px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:13.5px;"></td>';
