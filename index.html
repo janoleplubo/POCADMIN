@@ -475,7 +475,7 @@ const STEP_LABELS = {
 function activeStepKeys(){
   if(dossier.docs.materiel) return ["select","materiel"];
   const keys = ["select","chantier"];
-  if(dossier.docs.fiche || dossier.docs.quartHeure) keys.push("sous-traitants");
+  if(dossier.docs.fiche) keys.push("sous-traitants");
   if(dossier.docs.fiche || dossier.docs.quartHeure) keys.push("apercu");
   keys.push("pdf");
   return keys;
@@ -1632,18 +1632,22 @@ function renderStepMateriel(){
 }
 
 function renderStep1(){
-  let h = '<div class="card"><h2>Informations chantier</h2><p class="hint">Ces informations seront reprises sur toutes les fiches du dossier.</p>';
+  let h = '<div class="card"><h2>Informations chantier</h2><p class="hint">Ces informations seront reprises sur les documents du dossier.</p>';
   h += '<div class="grid2">';
   h += field("Nom du chantier", dossier.nomChantier, "nomChantier", "ex. Résidence Les Lilas");
   h += field("Numéro affaire / code", dossier.affaire, "affaire", "ex. 1466-102");
   h += '</div>';
   h += field("Conducteur de travaux (votre nom)", dossier.cdtNom, "cdtNom", "ex. Jean Bourdel");
   h += field("Adresse du site d'intervention", dossier.adresse, "adresse", "ex. 12 rue de la Résidence, 75015 Paris");
-  h += '<div class="grid3">';
-  h += field("Code d'accès du chantier (porte)", dossier.codeAcces, "codeAcces", "ex. 3B45");
-  h += field("Date de début", dossier.dateDebut, "dateDebut", "", "date");
-  h += field("Date de fin (estimée)", dossier.dateFin, "dateFin", "", "date");
-  h += '</div>';
+  if(dossier.docs.fiche){
+    h += '<div class="grid3">';
+    h += field("Code d'accès du chantier (porte)", dossier.codeAcces, "codeAcces", "ex. 3B45");
+    h += field("Date de début", dossier.dateDebut, "dateDebut", "", "date");
+    h += field("Date de fin (estimée)", dossier.dateFin, "dateFin", "", "date");
+    h += '</div>';
+  } else if(dossier.docs.quartHeure){
+    h += '<div class="grid2">'+field("Date du 1/4h sécurité", dossier.dateDebut, "dateDebut", "", "date")+'</div>';
+  }
   if(dossier.docs.affichages){
     h += '<div class="field" style="max-width:220px;"><label>Nombre de zones (signalétique)</label><input type="number" min="0" value="'+esc(dossier.nbZones===undefined?1:dossier.nbZones)+'" oninput="updateDossier(\'nbZones\', Math.max(0, parseInt(this.value)||0))"></div>';
     h += '<p class="small-note">Chaque zone reçoit son propre panneau « interdit au public » et « EPI obligatoires ». Mettez 0 si aucun de ces deux panneaux n\'est nécessaire pour ce chantier — la base vie et la zone de stockage restent générées, elles, une seule fois pour tout le chantier.</p>';
@@ -1857,7 +1861,7 @@ function render(){
     if(currentStep==="pdf") html += renderStep4();
     if(currentStep==="materiel") html += renderStepMateriel();
     html += '</main>';
-    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version du 07/10 · mobile v4</span></div>';
+    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version du 07/10 · mobile v5</span></div>';
   }
   app.innerHTML = html;
 }
