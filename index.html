@@ -120,6 +120,64 @@
   .tile-chk{margin-left:auto; width:22px; height:22px; border-radius:50%; border:1.5px solid #CFC9BF; flex:none;}
   label.tile.sel .tile-chk{background:var(--accent); border-color:var(--accent); box-shadow:inset 0 0 0 4px #FFF3EC;}
   .tile-sep{grid-column:1/-1; font-size:12px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin:6px 0 -4px;}
+
+  .tb-menu{display:none; position:relative;}
+  .menu-btn{width:44px; height:44px; border-radius:12px; border:1.5px solid var(--border); background:#fff; font-size:22px; line-height:1; cursor:pointer; color:var(--ink);}
+  .menu-pop{position:absolute; right:0; top:50px; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,.16); padding:6px; z-index:50; min-width:210px;}
+  .menu-pop button{display:block; width:100%; text-align:left; background:none; border:none; padding:14px; font-size:16px; border-radius:8px; cursor:pointer; color:var(--ink);}
+  .menu-pop button:active{background:#FFF3EC;}
+  .stepper-m{display:none;}
+  @media (max-width:640px){
+    .topbar{padding:0 16px; height:60px; position:sticky; top:0; z-index:40;}
+    .brand img{height:30px !important;}
+    .brand-text{font-size:16px;} .brand-sub{display:none;}
+    .tb-actions{display:none !important;} .tb-menu{display:block;}
+    main{padding:0 0 24px; max-width:none;}
+    .stepper{display:none;}
+    .stepper-m{display:block; padding:14px 20px 6px;}
+    .stepper-m small{font-size:14px; color:var(--muted); font-weight:600;}
+    .stepper-m .pb{height:6px; background:#F0ECE6; border-radius:3px; margin-top:8px; overflow:hidden;}
+    .stepper-m .pb i{display:block; height:100%; background:var(--accent); border-radius:3px;}
+    .card, .pick-card{border:none; border-radius:0; box-shadow:none; padding:14px 20px 0; margin-bottom:0; background:transparent;}
+    .pick-card{padding:0; overflow:visible;}
+    .card h2{font-size:25px; margin-bottom:6px; letter-spacing:-.3px;}
+    .card .hint{font-size:15px; line-height:1.45;}
+    label{font-size:15px; color:var(--ink); margin-bottom:6px;}
+    input[type=text], input[type=tel], input[type=number], input[type=date], textarea, select{padding:14px; font-size:17px; border:2px solid var(--border); border-radius:12px;}
+    .grid2, .grid3, .check-grid{grid-template-columns:1fr;}
+    .field{margin-bottom:16px;}
+    .check-item{font-size:16px; padding:8px 0;}
+    .check-item input{width:22px; height:22px;}
+    .btn{font-size:16px; border-radius:12px; padding:14px 18px;}
+    .row-actions{position:sticky; bottom:0; z-index:30; background:#fff; border-top:1px solid #ECE8E2; margin:22px -20px 0; padding:10px 20px calc(14px + env(safe-area-inset-bottom)); display:grid; grid-template-columns:1fr 2fr; gap:10px;}
+    .row-actions > span:empty{display:none;}
+    main > .row-actions{margin-left:0; margin-right:0;}
+    .row-actions .btn{height:46px; padding:0; display:flex; align-items:center; justify-content:center; font-size:16px; border-radius:12px;}
+    .row-actions .btn:only-of-type{grid-column:1/-1; height:52px; font-size:18px;}
+    .pick-card .hero-band{border-top:none; padding:8px 20px 6px; gap:14px;}
+    .pick-card .hero-band .logo-chip{display:none;}
+    .gate-top{display:none !important;}
+    .hero-band h2{font-size:25px;} .hero-band p{font-size:15px; line-height:1.4;}
+    .pick-body{padding:6px 20px 0;}
+    .tile-grid{gap:11px;}
+    label.tile{padding:16px; border-width:2px; border-radius:16px; margin:0;}
+    .tile-ico{width:54px; height:54px; border-radius:14px;} .tile-ico svg{width:28px; height:28px;}
+    .tile-txt b{font-size:17px;} .tile-txt small{font-size:14px;}
+    .tile-chk{width:26px; height:26px; border-width:2px;}
+    label.tile.sel .tile-chk{box-shadow:inset 0 0 0 5px #FFF3EC;}
+    .gate-wrap{padding:0; align-items:stretch;}
+    .gate-card{border:none; border-radius:0; box-shadow:none; max-width:none; display:flex; flex-direction:column; min-height:100vh; min-height:100dvh;}
+    .gate-card .hero-band{flex-direction:column; align-items:flex-start; padding:34px 22px 6px; gap:16px;}
+    .gate-card .hero-band .logo-chip img{height:64px;}
+    .gate-card .hero-band h2{font-size:32px; letter-spacing:-.5px;}
+    .gate-body{flex:1; padding:12px 22px calc(18px + env(safe-area-inset-bottom)); gap:16px;}
+    .gate-body .gate-hint{font-size:16px; line-height:1.45;}
+    .gate-body input{font-size:30px; letter-spacing:12px; padding:16px; border-width:2px; border-radius:14px;}
+    .gate-body input::placeholder{font-size:17px; letter-spacing:0;}
+    .gate-foot{order:1; margin-top:auto; font-size:12.5px;}
+    .gate-body .btn{order:2; padding:17px; font-size:18px; border-radius:14px;}
+    .footer-note{padding:12px 20px 24px;}
+  }
   .error-msg{color:var(--danger); font-size:13px; margin-top:8px;}
   .settings-tabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap;}
   .tab-btn{padding:7px 13px; border-radius:7px; border:1px solid var(--border); background:#fff; font-size:13px; cursor:pointer;}
@@ -297,6 +355,8 @@ let gateInput = "";
 let gateError = "";
 let currentStep = "select"; // clé parmi activeStepKeys()
 let settingsOpen = false;
+let menuOpen = false;
+function toggleMenu(){ menuOpen = !menuOpen; render(); }
 let settingsTab = "metiers";
 let genMessage = null;
 
@@ -980,11 +1040,14 @@ function submitGate(){
 function esc(s){ return String(s===undefined||s===null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
 function renderTopbar(){
-  return '<div class="topbar">'+
+  return '<div class="topbar'+(unlocked?'':' gate-top')+'">'+
     '<div class="brand"><img src="data:image/png;base64,'+LOGO_BOX_B64+'" alt="Paris Ouest" style="cursor:pointer;height:28px;width:auto;" title="Retour au menu" onclick="goStep(\'select\')">'+
       '<div><div class="brand-text">Démarrage de chantier</div><div class="brand-sub">Paris Ouest Construction</div></div>'+
     '</div>'+
-    (unlocked? '<div style="display:flex;gap:8px;"><button class="icon-btn" onclick="toggleSettings()">⚙ Réglages</button><button class="icon-btn" onclick="newDossier()">＋ Nouveau dossier</button></div>' : '')+
+    (unlocked? '<div class="tb-actions" style="display:flex;gap:8px;"><button class="icon-btn" onclick="toggleSettings()">⚙ Réglages</button><button class="icon-btn" onclick="newDossier()">＋ Nouveau dossier</button></div>'+
+      '<div class="tb-menu"><button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">⋯</button>'+
+      (menuOpen? '<div class="menu-pop"><button onclick="menuOpen=false;toggleSettings()">⚙ Réglages</button><button onclick="menuOpen=false;newDossier()">＋ Nouveau dossier</button></div>' : '')+
+      '</div>' : '')+
   '</div>';
 }
 
@@ -1005,7 +1068,8 @@ function renderGate(){
 function renderStepper(){
   const keys = activeStepKeys();
   const currentIdx = keys.indexOf(currentStep);
-  return '<div class="stepper">'+keys.map((key,i)=>{
+  const mob = '<div class="stepper-m"><small>Étape '+(currentIdx+1)+' sur '+keys.length+' · '+STEP_LABELS[currentStep]+'</small><div class="pb"><i style="width:'+Math.round((currentIdx+1)/keys.length*100)+'%"></i></div></div>';
+  return mob+'<div class="stepper">'+keys.map((key,i)=>{
     const n=i+1; const cls = key===currentStep?"active":(i<currentIdx?"done":"");
     return '<div class="step-pill '+cls+'" style="cursor:pointer;" onclick="goStep(\''+key+'\')"><span class="num">'+n+'</span>'+STEP_LABELS[key]+'</div>';
   }).join('')+'</div>';
