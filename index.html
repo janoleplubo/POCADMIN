@@ -127,7 +127,8 @@
   .menu-pop button{display:block; width:100%; text-align:left; background:none; border:none; padding:14px; font-size:16px; border-radius:8px; cursor:pointer; color:var(--ink);}
   .menu-pop button:active{background:#FFF3EC;}
   .stepper-m{display:none;}
-  @media (max-width:640px){
+  @media (max-width:640px), (hover:none) and (pointer:coarse) and (max-width:1100px){
+    .tile-grid{grid-template-columns:1fr;}
     .topbar{padding:0 16px; height:60px; position:sticky; top:0; z-index:40;}
     .brand img{height:30px !important;}
     .brand-text{font-size:16px;} .brand-sub{display:none;}
@@ -1778,7 +1779,7 @@ function render(){
     if(currentStep==="pdf") html += renderStep4();
     if(currentStep==="materiel") html += renderStepMateriel();
     html += '</main>';
-    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe.</div>';
+    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version du 07/10 · mobile v2</span></div>';
   }
   app.innerHTML = html;
 }
