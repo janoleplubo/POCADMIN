@@ -808,6 +808,15 @@ function renderSignagePages(pdf, isFirstContent){
   }
 }
 
+function autoOpenPdf(url, filename){
+  try{
+    const a = document.createElement("a");
+    a.href = url; a.download = filename||"document.pdf"; a.style.display="none";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }catch(e){}
+  try{ window.open(url, "_blank"); }catch(e){}
+}
+
 function generatePdf(){
   try{
     if(!window.jspdf){ genMessage = {type:"error", text:"La bibliothèque PDF ne s'est pas chargée (vérifiez la connexion), réessayez."}; render(); return; }
@@ -831,8 +840,9 @@ function generatePdf(){
     if(lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
     lastPdfUrl = URL.createObjectURL(blob);
     lastPdfFilename = filename;
+    autoOpenPdf(lastPdfUrl, filename);
 
-    genMessage = {type:"success", text:"PDF prêt. Cliquez sur le bouton ci-dessous pour l'ouvrir/télécharger."};
+    genMessage = {type:"success", text:"PDF téléchargé et ouvert. S'il ne s'est pas ouvert, utilisez le bouton ci-dessous."};
   }catch(e){
     console.error(e);
     genMessage = {type:"error", text:"Une erreur est survenue pendant la génération : "+e.message};
@@ -1218,6 +1228,7 @@ function generateMateriel(){
     } else {
       try{
         generateDevisPlomberiePDF(mult);
+        autoOpenPdf(materielState.devisPdfUrl, materielState.devisPdfFilename);
         let missingWarning = "";
         if(materielState.devisMissingPrix && materielState.devisMissingPrix.length){
           missingWarning = '<div class="st-card" style="border-color:#C45A00;background:#FFF6E9;margin-bottom:10px;"><strong style="color:#C45A00;">⚠ Prix manquant pour '+materielState.devisMissingPrix.length+' article(s)</strong>'+
