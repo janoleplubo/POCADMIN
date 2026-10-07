@@ -314,7 +314,7 @@ function makeSousTraitant(){
 function makeDossier(){
   return {
     docs:{ fiche:true, quartHeure:true, affichages:true, materiel:false },
-    affaire:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:"", dateFin:"", nbZones:1,
+    affaire:"", nomChantier:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:"", dateFin:"", nbZones:1,
     sousTraitants:[ makeSousTraitant() ],
     quartHeure:{ presentateur:"", supportPar:"", themesText:"" }
   };
@@ -710,10 +710,15 @@ function fitThemeFont(pdf, items, maxWidth, availableHeight){
   return THEME_FIT_SIZES[THEME_FIT_SIZES.length-1];
 }
 
+function chantierLabel(){
+  const n = (dossier.nomChantier||"").trim(), a = (dossier.affaire||"").trim();
+  return (n && a) ? n+" — n° "+a : (n || a || "");
+}
 function renderFicheIntervention(D, st, index){
   if(!st.preview) st.preview = computePreview(st);
   D.newPage();
   D.header("FICHE DE 1ère INTERVENTION SOUS-TRAITANT", "Présentation / validation des modes opératoires et consignes de sécurité");
+  D.keyValue("Chantier", dossier.nomChantier);
   D.keyValue("Affaire / Code", dossier.affaire);
   D.keyValue("Adresse du site", dossier.adresse);
   D.keyValue("Conducteur de travaux / Responsable Paris Ouest", dossier.cdtNom);
@@ -758,7 +763,7 @@ function renderFicheIntervention(D, st, index){
 function renderQuartHeure(D){
   D.newPage();
   D.header("ÉMARGEMENT 1/4 D'HEURE SÉCURITÉ", "");
-  D.keyValueRow([["Date", computeChantierDate()], ["Chantier", dossier.adresse || "—"]]);
+  D.keyValueRow([["Date", computeChantierDate()], ["Chantier", chantierLabel() || dossier.adresse || "—"]]);
   D.keyValueRow([["Présentateur", dossier.quartHeure.presentateur || dossier.cdtNom || "—"], ["Support fait par", dossier.quartHeure.supportPar || dossier.cdtNom || "—"]]);
   D.y += 3;
   D.subheading("Thèmes abordés");
@@ -865,7 +870,7 @@ function generatePdf(){
     if(dossier.docs.quartHeure) renderQuartHeure(D);
     if(dossier.docs.affichages) renderSignagePages(pdf, D.pageNum===0);
 
-    const safeAffaire = (dossier.affaire||"chantier").replace(/[^a-z0-9\-]/gi,"_");
+    const safeAffaire = ([dossier.affaire, dossier.nomChantier].filter(x=>x&&x.trim()).join("_")||"chantier").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\-]+/gi,"_").replace(/^_+|_+$/g,"");
     const filename = "Demarrage_chantier_"+safeAffaire+".pdf";
     const blob = pdf.output("blob");
     if(lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
@@ -1351,7 +1356,7 @@ function generateDevisPlomberiePDF(mult){
   p.text("Total HT", boxX+4, D.y+7); p.text(totalHT.toFixed(2)+" EUR", boxX+boxW-4, D.y+7, {align:"right"});
   D.y += 15;
 
-  const safeRef = (materielState.chantierRef||"chantier").replace(/[^a-z0-9\-]/gi,"_");
+  const safeRef = (materielState.chantierRef||"chantier").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\-]+/gi,"_").replace(/^_+|_+$/g,"");
   const filename = "Commande_plomberie_"+safeRef+".pdf";
   const blob = pdf.output("blob");
   if(materielState.devisPdfUrl) URL.revokeObjectURL(materielState.devisPdfUrl);
@@ -1458,7 +1463,7 @@ function renderStepMateriel(){
     '<input type="number" min="1" value="'+esc(materielState.nombreLogements)+'" oninput="updateMaterielLogements(this.value)"></div>'+
     '<p class="small-note">Quantités saisies pour 1 logement — multipliées par ce nombre à la génération.</p></div>';
 
-  h += '<div class="card"><div class="field" style="margin-bottom:0;"><label>Chantier / référence</label><input type="text" value="'+esc(materielState.chantierRef)+'" oninput="materielState.chantierRef=this.value" placeholder="ex. 1466-102"></div></div>';
+  h += '<div class="card"><div class="field" style="margin-bottom:0;"><label>Nom et n° du chantier</label><input type="text" value="'+esc(materielState.chantierRef)+'" oninput="materielState.chantierRef=this.value" placeholder="ex. Résidence Les Lilas — 1466-102"></div></div>';
 
   CATEGORIES_MATERIEL.forEach((cat,i)=> h += renderCategoryMateriel(cat, i));
 
@@ -1487,9 +1492,10 @@ function renderStepMateriel(){
 function renderStep1(){
   let h = '<div class="card"><h2>Informations chantier</h2><p class="hint">Ces informations seront reprises sur toutes les fiches du dossier.</p>';
   h += '<div class="grid2">';
+  h += field("Nom du chantier", dossier.nomChantier, "nomChantier", "ex. Résidence Les Lilas");
   h += field("Numéro affaire / code", dossier.affaire, "affaire", "ex. 1466-102");
-  h += field("Conducteur de travaux (votre nom)", dossier.cdtNom, "cdtNom", "ex. Jean Bourdel");
   h += '</div>';
+  h += field("Conducteur de travaux (votre nom)", dossier.cdtNom, "cdtNom", "ex. Jean Bourdel");
   h += field("Adresse du site d'intervention", dossier.adresse, "adresse", "ex. 12 rue de la Résidence, 75015 Paris");
   h += '<div class="grid3">';
   h += field("Code d'accès du chantier (porte)", dossier.codeAcces, "codeAcces", "ex. 3B45");
