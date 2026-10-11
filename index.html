@@ -447,10 +447,17 @@ function makeSousTraitant(){
   };
 }
 
+function defaultStartDate(){
+  const d = new Date(); d.setHours(12,0,0,0);
+  const wd = d.getDay(); // 0 dim, 5 ven, 6 sam
+  d.setDate(d.getDate() + (wd===5 ? 3 : wd===6 ? 2 : 1)); // lendemain, sinon lundi suivant
+  const p = n=>String(n).padStart(2,"0");
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+}
 function makeDossier(){
   return {
     docs:{ fiche:true, quartHeure:true, affichages:true, materiel:false },
-    affaire:"", nomChantier:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:"", dateFin:"", nbZones:1,
+    affaire:"", nomChantier:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:defaultStartDate(), dateFin:"", nbZones:1,
     sousTraitants:[ makeSousTraitant() ],
     quartHeure:{ presentateur:"", supportPar:"", themesText:"", groupe:"", sig:"" },
     risquesSpec:{ amiante:false, plomb:false, coactivite:false, chaleur:false }
