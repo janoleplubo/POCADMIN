@@ -1433,8 +1433,6 @@ function renderFicheIntervention(D, st, index){
   D.listBlock(st.preview.produits);
   D.subheading("Outillage et matériel utilisé");
   D.listBlock(st.preview.outillage);
-  D.subheading("Contraintes de site, organisation et accès");
-  D.bullets(splitLinesArr(CONFIG.textes.contraintesSite.replace("[variable]", dossier.codeAcces||"—")));
 
   D.banner("2. MODE OPÉRATOIRE / CONSIGNES TECHNIQUES");
   D.subheading("Étapes d'intervention");
@@ -1445,7 +1443,10 @@ function renderFicheIntervention(D, st, index){
   D.paragraph(st.preview.epiText);
   D.subheading("Précautions particulières");
   D.bullets(splitLinesArr(st.preview.precautionsText));
+  D.subheading("Contraintes de site, organisation et accès");
+  D.bullets(splitLinesArr(CONFIG.textes.contraintesSite.replace("[variable]", dossier.codeAcces||"—")));
 
+  D.ensureSpace(66); // bloc validation + signature toujours d'un seul tenant
   D.banner("4. VALIDATION DES CONSIGNES — COMPAGNONS");
   D.paragraph(CONFIG.textes.attestation);
   D.y += 4;
