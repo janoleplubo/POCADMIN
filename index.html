@@ -532,6 +532,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   .mt th.c-art{width:55%;} .mt th.c-qty, .mt th.c-tot{width:65px;} .mt th.c-ref{width:90px;}
   .mt td{padding:5px 6px; border-bottom:1px solid #F0EEE9;}
   .mt td.tot{font-weight:600; color:var(--accent-dark);}
+  .mt td.tot input.ti{width:100%; border:0; outline:0; background:transparent; padding:0; margin:0; font:inherit; color:inherit; cursor:default; box-shadow:none; border-radius:0;}
   .mt td.dash{color:var(--muted); font-size:12.5px;}
   .mt input.i-lab{width:100%; border:1px solid transparent; border-radius:6px; padding:4px 6px; font-size:13.5px;}
   .mt input.i-sm{width:100%; min-width:80px; border:1px solid var(--border); border-radius:6px; padding:4px 6px; font-size:13px;}
@@ -575,7 +576,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     .mt tr{display:grid; grid-template-columns:1fr auto; gap:.55rem .75rem; align-items:center; padding:.9rem 0; border-bottom:1px solid #E4E0D9;}
     .mt td{display:block; padding:0; border:none;}
     .mt td.art{grid-column:1/-1;}
-    .mt td.qty{grid-column:1;} .mt td.tot{grid-column:2; font-size:1.2rem; text-align:right;}
+    .mt td.qty{grid-column:1;} .mt td.tot{grid-column:2; font-size:1.2rem; text-align:right; display:flex; align-items:center; justify-content:flex-end; gap:.23rem;}
+    .mt td.tot input.ti{box-sizing:content-box; width:var(--w,2ch); padding:.5rem; margin:-.5rem; text-align:right; font-size:1.2rem;}
     .mt td.tot::before{content:"Total "; font-size:.85rem; font-weight:500; color:var(--muted);}
     .mt td.fo, .mt td.rf{grid-column:1/-1;}
     .mt td.dash{display:none;}
@@ -1877,7 +1879,16 @@ function updateMaterielItem(catIdx, itemIdx, field, value){
   else if(field==="prix") item[field] = parseFloat(value)||0;
   else if(field==="global" || field==="roundUp") item[field] = !!value;
   else item[field] = value;
-  if(field==="qty" || field==="global" || field==="roundUp") recomputeMaterielTotals();
+  if(field==="qty" || field==="global" || field==="roundUp"){ delete item.totalOverride; recomputeMaterielTotals(); }
+}
+// Total modifiable à la main (même apparence qu'un texte) : remplace le calcul pour cette ligne.
+// Un champ vidé redonne le calcul automatique ; modifier la quantité ou le nombre de logements l'annule aussi.
+function updateMaterielTotal(catIdx, itemIdx, value){
+  const item = CATEGORIES_MATERIEL[catIdx].items[itemIdx];
+  const t = String(value||"").trim();
+  if(!t){ delete item.totalOverride; return; }
+  if(!/^[0-9.,\/\s]+$/.test(t)) return;
+  item.totalOverride = parseQtyMateriel(t);
 }
 function updateMaterielCatFournisseur(catIdx, value){ CATEGORIES_MATERIEL[catIdx].fournisseur = value; }
 function toggleMaterielPrecommande(checked){
@@ -1894,9 +1905,11 @@ function toggleMaterielCatActive(catIdx, checked){
 }
 function updateMaterielLogements(value){
   materielState.nombreLogements = parseInt(value)||1;
+  CATEGORIES_MATERIEL.forEach(c=>c.items.forEach(it=>{ delete it.totalOverride; }));
   recomputeMaterielTotals();
 }
 function computeMaterielItemTotal(item, mult){
+  if(item.totalOverride!==undefined && item.totalOverride!==null) return item.totalOverride; // total saisi à la main
   let total = item.global ? (item.qty||0) : (item.qty||0)*mult;
   total += item.extra||0;
   total = Math.round(total*1e6)/1e6;
@@ -1908,7 +1921,7 @@ function recomputeMaterielTotals(){
   CATEGORIES_MATERIEL.forEach((cat,catIdx)=>{
     cat.items.forEach((item,itemIdx)=>{
       const el = document.getElementById("mtot_"+catIdx+"_"+itemIdx);
-      if(el) el.textContent = computeMaterielItemTotal(item, mult);
+      if(el && el!==document.activeElement){ el.value = computeMaterielItemTotal(item, mult); el.style.setProperty("--w", Math.max(1,el.value.length)+"ch"); }
     });
   });
 }
@@ -2133,7 +2146,7 @@ function renderCategoryMateriel(cat, catIdx){
   cat.items.forEach((item,itemIdx)=>{
     h += '<tr><td class="art"><input class="i-lab" type="text" value="'+esc(item.label)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'label\',this.value)"></td>';
     h += '<td class="qty"><div class="qwrap"><button type="button" class="qb" onclick="stepMaterielQty('+catIdx+','+itemIdx+',-1)">−</button><input class="qi" type="text" inputmode="decimal" value="'+esc(item.qtyTxt!==undefined?item.qtyTxt:item.qty)+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'qty\',this.value)"><button type="button" class="qb" onclick="stepMaterielQty('+catIdx+','+itemIdx+',1)">+</button></div></td>';
-    h += '<td class="tot" id="mtot_'+catIdx+'_'+itemIdx+'">'+computeMaterielItemTotal(item, mult)+'</td>';
+    h += '<td class="tot"><input class="ti" id="mtot_'+catIdx+'_'+itemIdx+'" type="text" inputmode="decimal" value="'+computeMaterielItemTotal(item, mult)+'" style="--w:'+String(computeMaterielItemTotal(item, mult)).length+'ch" onfocus="this.select()" oninput="this.style.setProperty(\'--w\',Math.max(1,this.value.length)+\'ch\');updateMaterielTotal('+catIdx+','+itemIdx+',this.value)" onblur="recomputeMaterielTotals()"></td>';
     if(cat.fournisseurParItem){
       h += '<td class="fo" data-l="Fournisseur"><input class="i-sm" type="text" value="'+esc(item.fournisseur||"")+'" oninput="updateMaterielItem('+catIdx+','+itemIdx+',\'fournisseur\',this.value)"></td>';
     }
