@@ -262,6 +262,7 @@
   .success-banner{background:#EAF6EE; border:1px solid var(--success); color:var(--success); padding:12px 16px; border-radius:8px; margin:14px 0; font-size:13px;}
   .inline-ai{border:1px dashed var(--border); border-radius:8px; padding:12px; margin-top:10px; background:#FCFBFA;}
   a.link-btn{color:var(--accent); text-decoration:none; font-weight:600; font-size:13px; cursor:pointer;}
+.rs-row{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;margin:.3rem 0}.rs-item{display:flex;align-items:center;gap:.4rem;font-weight:500;cursor:pointer}.rs-item input{width:1.15rem;height:1.15rem}
 </style>
 </head>
 <body>
@@ -389,12 +390,7 @@ function defaultConfig(){
        epi:["gants","masque"], risques:[]}
     ],
     socleQuartHeure: [
-      "Port des EPI obligatoire sur tout le site, adapté aux travaux du jour.",
-      "Débrancher tous les appareils électriques et éteindre la lumière en fin de journée (prévention incendie).",
-      "Porte du logement fermée pendant le chantier, et à clef chaque soir.",
-      "Zone de stockage toujours protégée et délimitée (rubalise).",
-      "Nettoyage quotidien obligatoire du chantier et des parties communes.",
-      "Rallonges électriques en bon état uniquement : jamais de rallonge rafistolée ou raccordée avec des dominos/Wago."
+      "Signaler immédiatement toute situation dangereuse ou tout presque-accident au conducteur de travaux."
     ],
     textes: {
       contraintesSite:
@@ -456,7 +452,8 @@ function makeDossier(){
     docs:{ fiche:true, quartHeure:true, affichages:true, materiel:false },
     affaire:"", nomChantier:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:"", dateFin:"", nbZones:1,
     sousTraitants:[ makeSousTraitant() ],
-    quartHeure:{ presentateur:"", supportPar:"", themesText:"" }
+    quartHeure:{ presentateur:"", supportPar:"", themesText:"", groupe:"", sig:"" },
+    risquesSpec:{ amiante:false, plomb:false, coactivite:false, chaleur:false }
   };
 }
 let dossier = makeDossier();
@@ -483,7 +480,7 @@ function activeStepKeys(){
 function goStep(key){
   if(key==="apercu"){
     if(dossier.docs.fiche) dossier.sousTraitants.forEach(st=>{ if(!st.preview) st.preview = computePreview(st); });
-    if(dossier.docs.quartHeure && !dossier.quartHeure.themesText) dossier.quartHeure.themesText = computeThemesText();
+    ensureThemes();
   }
   currentStep = key; genMessage=null; window.scrollTo(0,0); render();
 }
@@ -577,16 +574,139 @@ function uniqJoinList(strings){
   strings.forEach(s=>{ (s||"").split(",").forEach(p=>{ const t=p.trim(); if(t && !parts.includes(t)) parts.push(t); }); });
   return parts.join(", ");
 }
-function computeThemesText(){
-  const allRisqueIds = new Set();
-  dossier.sousTraitants.forEach(st => st.risques.forEach(r=>allRisqueIds.add(r)));
-  const socle = CONFIG.socleQuartHeure.slice();
-  const extra = [...allRisqueIds].map(id=>{
-    const r = CONFIG.risques.find(x=>x.id===id);
-    return (r && r.themeQuartHeure) ? r.themeQuartHeure : null;
-  }).filter(Boolean);
-  return [...socle, ...extra].join("\n");
+/* ---- 1/4h sécurité : rotation hebdomadaire de 5 groupes (2 risques par groupe) ---- */
+const DOTS = "...................................";
+const QH_GROUPS = [
+  { nom:"Chute de hauteur et chute d'objets", lines:[
+    "## Risque de chute de hauteur",
+    "- Escabeau interdit. Utiliser en priorité une gazelle (plateforme individuelle roulante) ou un échafaudage roulant.",
+    "- Échafaudage roulant : bloquer les freins, vérifier le montage avec la notice, montage fait par une personne formée, procès-verbal (PV) de réception affiché.",
+    "- Trémie de moins de 1 m² : la fermer avec un contreplaqué. Trémie plus grande : installer des garde-corps.",
+    "## Risque de chute d'objets et de heurts",
+    "- Casque obligatoire.",
+    "- Ne pas passer sous une zone où quelqu'un travaille en hauteur. Cette zone est balisée.",
+    "- Outils et matériaux posés au sol ou calés. Obstacle bas ou saillant : le signaler avec du ruban."
+  ]},
+  { nom:"Risque électrique et chute de plain-pied", lines:[
+    "## Risque électrique",
+    "- Ne jamais intervenir sous tension : couper, consigner, vérifier l'absence de tension. Personnel habilité uniquement.",
+    "- Rallonges et outils en bon état. Jamais de rallonge rafistolée ou raccordée avec des dominos/Wago.",
+    "- Rallonge déroulée en entier (risque de surchauffe).",
+    "## Risque de chute de plain-pied",
+    "- Câbles et rallonges au sol : les passer en hauteur ou les protéger. Les ranger en fin de journée.",
+    "- Gravats et emballages évacués au fur et à mesure. Passages dégagés.",
+    "- Sol mouillé ou poussiéreux : le nettoyer avant de passer."
+  ]},
+  { nom:"Outils et machines, poussières", lines:[
+    "## Risque lié aux outils et machines",
+    "- Capot de sécurité toujours en place sur la disqueuse. Vérifier l'état du disque avant usage.",
+    "- Débrancher l'outil avant de changer le disque. Porter lunettes et gants.",
+    "## Risque poussières",
+    "- En cas de découpe ou de percement : aspirer à la source ou humidifier. Ne pas balayer à sec.",
+    "- Masque FFP2 ou FFP3 pour poncer, découper ou carotter.",
+    "- Aérer la pièce après les travaux."
+  ]},
+  { nom:"Incendie, secours et alerte", lines:[
+    "## Risque d'incendie et de travaux par point chaud",
+    "- Brasage, soudure, meulage : écarter ou protéger ce qui peut brûler. Extincteur à portée de main.",
+    "- Surveiller la zone après la fin des travaux.",
+    "- Solvants et bombes rangés à l'écart. Chiffons gras dans un bac fermé.",
+    "## Secours et alerte",
+    "- Numéros d'urgence : 15 (SAMU), 18 (pompiers), 112.",
+    "- Adresse du chantier : @ADRESSE@",
+    "- La trousse de secours se trouve : "+DOTS,
+    "- Les extincteurs se trouvent : "+DOTS,
+    "- Accident : protéger, alerter, secourir. Ne pas déplacer le blessé sauf danger immédiat."
+  ]},
+  { nom:"Manutention et bruit", lines:[
+    "## Risque de manutention manuelle",
+    "- Charge lourde ou encombrante : à deux ou avec un chariot.",
+    "- Dos droit, genoux fléchis, charge près du corps. Pas de torsion.",
+    "- Sacs de colle ou d'enduit : porter à deux.",
+    "## Risque bruit",
+    "- Bouchons ou casque anti-bruit dès qu'il faut élever la voix pour se faire entendre.",
+    "- Une audition perdue ne revient pas."
+  ]}
+];
+const QH_SPECIAUX = {
+  amiante:{ label:"Amiante", lines:[
+    "## Risque amiante",
+    "- Ne jamais percer, poncer ou casser un matériau sans avoir vérifié le repérage amiante scotché sur la porte.",
+    "- Doute sur un matériau : arrêter le travail et prévenir le conducteur de travaux."
+  ]},
+  plomb:{ label:"Plomb", lines:[
+    "## Risque plomb",
+    "- Ne jamais percer, poncer ou casser un matériau sans avoir vérifié le repérage plomb scotché sur la porte.",
+    "- Se laver les mains avant de manger, boire ou fumer."
+  ]},
+  coactivite:{ label:"Coactivité", lines:[
+    "## Risque de coactivité",
+    "- Avant de couper l'eau ou l'électricité, prévenir les autres corps d'état.",
+    "- Prévenir les autres entreprises de sa zone de travail.",
+    "- Ne rien laisser dans les passages communs : matériel, câbles, gravats."
+  ]},
+  chaleur:{ label:"Fortes chaleurs", lines:[
+    "## Risque fortes chaleurs",
+    "- Boire de l'eau régulièrement, même sans soif.",
+    "- Malaise, crampes ou nausées : s'arrêter, aller à l'ombre, prévenir. Malaise grave : appeler le 15."
+  ]}
+};
+function qhDate(){
+  const d = computeChantierDate();
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d||"");
+  if(m) return new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+  const n = new Date();
+  return new Date(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()));
 }
+function isoWeek(dt){
+  const d = new Date(Date.UTC(dt.getUTCFullYear(),dt.getUTCMonth(),dt.getUTCDate()));
+  const day = d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-day);
+  const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil(((d-y0)/86400000+1)/7);
+}
+function qhAutoGroup(){ return (isoWeek(qhDate())-1)%5; }
+function qhGroupIndex(){
+  const g = dossier.quartHeure.groupe;
+  return (g===undefined||g===null||g==="") ? qhAutoGroup() : Number(g);
+}
+function qhFlags(){
+  const f = Object.assign({}, dossier.risquesSpec);
+  if(dossier.docs.fiche){
+    const ids = new Set();
+    dossier.sousTraitants.forEach(st=>st.risques.forEach(r=>ids.add(r)));
+    ["amiante","plomb","coactivite"].forEach(k=>{ if(ids.has(k)) f[k]=true; });
+  }
+  const dt = qhDate();
+  const mo = dt.getUTCMonth()+1;
+  if(mo>=6 && mo<=8 && dt.getUTCDate()<=7) f.chaleur = true; // 1 fois par mois en été (1re semaine du mois)
+  return f;
+}
+function computeThemesText(){
+  const g = QH_GROUPS[qhGroupIndex()];
+  const f = qhFlags();
+  const out = [];
+  g.lines.forEach(l=>out.push(l.replace("@ADRESSE@", (dossier.adresse||"").trim() || DOTS)));
+  Object.keys(QH_SPECIAUX).forEach(k=>{ if(f[k]) QH_SPECIAUX[k].lines.forEach(l=>out.push(l)); });
+  if(CONFIG.socleQuartHeure.length){
+    out.push("## Pour tous");
+    CONFIG.socleQuartHeure.forEach(l=>out.push("- "+l));
+  }
+  return out.join("\n");
+}
+function qhSignature(){
+  return JSON.stringify([qhGroupIndex(), qhFlags(), (dossier.adresse||"").trim(), CONFIG.socleQuartHeure]);
+}
+function ensureThemes(){
+  if(!dossier.docs.quartHeure) return;
+  const sig = qhSignature();
+  if(!dossier.quartHeure.themesText || dossier.quartHeure.sig!==sig){
+    dossier.quartHeure.themesText = computeThemesText();
+    dossier.quartHeure.sig = sig;
+  }
+}
+function setRisqueSpec(k, v){ dossier.risquesSpec[k]=v; }
+function setQhGroupe(v){ dossier.quartHeure.groupe = v===""?"":Number(v); dossier.quartHeure.themesText=""; ensureThemes(); render(); }
 
 /* =========================================================================
    MÉTIER PERSONNALISÉ (ajout manuel si un métier n'existe pas encore)
@@ -840,14 +960,37 @@ const THEME_FIT_SIZES = [
   {size:9.8, lh:4.6}, {size:9.3, lh:4.35}, {size:8.8, lh:4.1}, {size:8.3, lh:3.85},
   {size:7.8, lh:3.6}, {size:7.3, lh:3.35}, {size:6.8, lh:3.1}
 ];
+function qhHeight(pdf, items, maxWidth, opt){
+  let h = 0;
+  items.forEach((it,i)=>{
+    if(it.startsWith("## ")){
+      pdf.setFont("helvetica","bold"); pdf.setFontSize(opt.size+0.8);
+      h += (i>0?opt.lh*0.5:0) + pdf.splitTextToSize(it.slice(3), maxWidth).length*opt.lh;
+    } else {
+      pdf.setFont("helvetica","normal"); pdf.setFontSize(opt.size);
+      h += pdf.splitTextToSize(it.replace(/^-\s*/,""), maxWidth-5).length*opt.lh;
+    }
+  });
+  return h;
+}
 function fitThemeFont(pdf, items, maxWidth, availableHeight){
   for(const opt of THEME_FIT_SIZES){
-    pdf.setFont("helvetica","normal"); pdf.setFontSize(opt.size);
-    let totalLines = 0;
-    items.forEach(it=>{ totalLines += pdf.splitTextToSize(String(it), maxWidth).length; });
-    if(totalLines*opt.lh <= availableHeight) return opt;
+    if(qhHeight(pdf, items, maxWidth, opt) <= availableHeight) return opt;
   }
   return THEME_FIT_SIZES[THEME_FIT_SIZES.length-1];
+}
+function drawThemes(D, items, opt){
+  const p = D.pdf;
+  items.forEach((it,i)=>{
+    if(it.startsWith("## ")){
+      p.setFont("helvetica","bold"); p.setFontSize(opt.size+0.8); p.setTextColor(0,0,0);
+      if(i>0) D.y += opt.lh*0.5;
+      p.splitTextToSize(it.slice(3), D.contentW).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin, D.y); D.y += opt.lh; });
+    } else {
+      p.setFont("helvetica","normal"); p.setFontSize(opt.size); p.setTextColor(0,0,0);
+      p.splitTextToSize(it.replace(/^-\s*/,""), D.contentW-5).forEach((l,k)=>{ D.ensureSpace(opt.lh+0.4); p.text((k===0?"-":"")  , D.margin+1, D.y); p.text(l, D.margin+5, D.y); D.y += opt.lh; });
+    }
+  });
 }
 
 function chantierLabel(){
@@ -914,7 +1057,7 @@ function renderQuartHeure(D){
   const availableForThemes = bottomLimit - D.y - fixedAfterThemes;
   const fit = fitThemeFont(D.pdf, items, D.contentW-6, availableForThemes);
 
-  D.bullets(items, {size:fit.size, lh:fit.lh, gapAfter:2});
+  drawThemes(D, items, fit); D.y += 2;
   D.y += 2.5;
   D.subheading("Émargement");
   D.signatureTable(EMARGEMENT_ROWS);
@@ -1001,7 +1144,7 @@ function generatePdf(){
       render(); return;
     }
     if(dossier.docs.fiche) dossier.sousTraitants.forEach(st => { if(!st.preview) st.preview = computePreview(st); });
-    if(dossier.docs.quartHeure && !dossier.quartHeure.themesText) dossier.quartHeure.themesText = computeThemesText();
+    ensureThemes();
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ unit:"mm", format:"a4" });
@@ -1650,6 +1793,14 @@ function renderStep1(){
   } else if(dossier.docs.quartHeure){
     h += '<div class="grid2">'+field("Date du 1/4h sécurité", dossier.dateDebut, "dateDebut", "", "date")+'</div>';
   }
+  if(dossier.docs.quartHeure){
+    const f = dossier.risquesSpec;
+    h += '<div class="field"><label>Risques spécifiques à rappeler au 1/4h</label><div class="rs-row">';
+    [["amiante","Amiante"],["plomb","Plomb"],["coactivite","Coactivité"],["chaleur","Fortes chaleurs"]].forEach(([k,l])=>{
+      h += '<label class="rs-item"><input type="checkbox" '+(f[k]?'checked':'')+' onchange="setRisqueSpec(\''+k+'\', this.checked)"> '+l+'</label>';
+    });
+    h += '</div><p class="small-note">Le groupe de risques change chaque semaine. Les risques cochés ici s\'ajoutent. Fortes chaleurs : ajouté aussi automatiquement une fois par mois de juin à août.</p></div>';
+  }
   if(dossier.docs.affichages){
     h += '<div class="field" style="max-width:220px;"><label>Nombre de zones (signalétique)</label><input type="number" min="0" value="'+esc(dossier.nbZones===undefined?1:dossier.nbZones)+'" oninput="updateDossier(\'nbZones\', Math.max(0, parseInt(this.value)||0))"></div>';
     h += '<p class="small-note">Chaque zone reçoit son propre panneau « interdit au public » et « EPI obligatoires ». Mettez 0 si aucun de ces deux panneaux n\'est nécessaire pour ce chantier — la base vie et la zone de stockage restent générées, elles, une seule fois pour tout le chantier.</p>';
@@ -1746,7 +1897,8 @@ function renderStep3(){
     h += '<div class="field"><label>Présentateur</label><input type="text" value="'+esc(dossier.quartHeure.presentateur)+'" placeholder="'+esc(dossier.cdtNom||"")+'" oninput="dossier.quartHeure.presentateur=this.value"></div>';
     h += '<div class="field"><label>Support fait par</label><input type="text" value="'+esc(dossier.quartHeure.supportPar)+'" placeholder="'+esc(dossier.cdtNom||"")+'" oninput="dossier.quartHeure.supportPar=this.value"></div>';
     h += '</div>';
-    h += '<div class="field"><label>Thèmes abordés (un par ligne)</label><textarea rows="7" oninput="updateThemesText(this.value)">'+esc(dossier.quartHeure.themesText)+'</textarea></div>';
+    h += '<div class="field"><label>Groupe de la semaine (semaine '+isoWeek(qhDate())+')</label><select onchange="setQhGroupe(this.value)"><option value=""'+(dossier.quartHeure.groupe===""?' selected':'')+'>Automatique : groupe '+(qhAutoGroup()+1)+' - '+esc(QH_GROUPS[qhAutoGroup()].nom)+'</option>'+QH_GROUPS.map((g,i)=>'<option value="'+i+'"'+(dossier.quartHeure.groupe===i?' selected':'')+'>Groupe '+(i+1)+' - '+esc(g.nom)+'</option>').join('')+'</select></div>';
+    h += '<div class="field"><label>Thèmes abordés (## = titre en gras, - = tiret)</label><textarea rows="14" oninput="updateThemesText(this.value)">'+esc(dossier.quartHeure.themesText)+'</textarea></div>';
     h += '</div>';
   }
   h += '<div class="row-actions"><button class="btn secondary" onclick="goPrev()">← Retour</button><button class="btn" onclick="goNext()">Continuer →</button></div>';
@@ -1863,7 +2015,7 @@ function render(){
     if(currentStep==="pdf") html += renderStep4();
     if(currentStep==="materiel") html += renderStepMateriel();
     html += '</main>';
-    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version du 07/10 · mobile v5</span></div>';
+    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version du 07/10 · mobile v5 · 1/4h v1</span></div>';
   }
   app.innerHTML = html;
 }
