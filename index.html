@@ -733,6 +733,18 @@ function defaultConfig(){
        themeQuartHeure:null}
     ],
     corpsDeMetier: [
+      {id:"protection", nom:"Protection de début de chantier",
+       nature:"Mise en place de la signalisation et des protections avant travaux (sols, accès, parties communes).",
+       produits:"Bâches, rubalise, ruban adhésif",
+       outillage:"Adhésif",
+       etapes:["Mise en place de la signalisation du chantier","Repérage des zones à protéger","Pose des protections (bâches, plaques)"],
+       epi:["gants"], risques:["coactivite"]},
+      {id:"desamiantage", nom:"Déplombage / désamiantage",
+       nature:"Retrait ou encapsulage de matériaux contenant plomb ou amiante, selon procédure réglementaire spécifique.",
+       produits:"Matériel et consommables du protocole de retrait (selon fiche de l'entreprise certifiée)",
+       outillage:"Matériel de confinement / aspiration spécifique",
+       etapes:["Selon protocole réglementaire de l'entreprise certifiée (DTA, mode opératoire propre)"],
+       epi:["masque","gants"], risques:["amiante","plomb"]},
       {id:"curage", nom:"Curage / dépose",
        nature:"Dépose et évacuation des éléments existants (sanitaires, revêtements, cloisons non conservées, appareillages électriques). Curage complet avant travaux.",
        produits:"Sacs à gravats, bâches de protection",
@@ -763,6 +775,12 @@ function defaultConfig(){
        outillage:"Coupe-carreaux, pince à carreler, spatule crantée, malaxeur, niveau laser",
        etapes:["Préparation et nettoyage du support","Pose de la colle et des carreaux","Réalisation des joints","Nettoyage et finition"],
        epi:["gants","lunettes","masque"], risques:["poussiere"]},
+      {id:"peinture", nom:"Peinture",
+       nature:"Préparation des supports (rebouchage, ponçage léger) et mise en peinture des logements.",
+       produits:"Peinture, enduit de rebouchage, adhésif de protection, bâches",
+       outillage:"Rouleaux, pinceaux, bac à peinture, ponceuse",
+       etapes:["Protection des sols et du mobilier","Rebouchage et ponçage léger des supports","Application de la sous-couche","Application de la peinture de finition","Nettoyage du matériel"],
+       epi:["gants","masque"], risques:[]},
       {id:"serrurerie", nom:"Serrurerie",
        nature:"Dépose et pose de portes, serrures, garde-corps et éléments métalliques.",
        produits:"Serrures, gonds, profilés métalliques, visserie",
@@ -774,25 +792,7 @@ function defaultConfig(){
        produits:"Produits d'entretien, sacs déchets",
        outillage:"Aspirateur de chantier, matériel de nettoyage",
        etapes:["Évacuation des gravats résiduels","Nettoyage des surfaces","Nettoyage des parties communes"],
-       epi:["gants"], risques:["chimique"]},
-      {id:"protection", nom:"Protection de début de chantier",
-       nature:"Mise en place de la signalisation et des protections avant travaux (sols, accès, parties communes).",
-       produits:"Bâches, rubalise, ruban adhésif",
-       outillage:"Adhésif",
-       etapes:["Mise en place de la signalisation du chantier","Repérage des zones à protéger","Pose des protections (bâches, plaques)"],
-       epi:["gants"], risques:["coactivite"]},
-      {id:"desamiantage", nom:"Déplombage / désamiantage",
-       nature:"Retrait ou encapsulage de matériaux contenant plomb ou amiante, selon procédure réglementaire spécifique.",
-       produits:"Matériel et consommables du protocole de retrait (selon fiche de l'entreprise certifiée)",
-       outillage:"Matériel de confinement / aspiration spécifique",
-       etapes:["Selon protocole réglementaire de l'entreprise certifiée (DTA, mode opératoire propre)"],
-       epi:["masque","gants"], risques:["amiante","plomb"]},
-      {id:"peinture", nom:"Peinture",
-       nature:"Préparation des supports (rebouchage, ponçage léger) et mise en peinture des logements.",
-       produits:"Peinture, enduit de rebouchage, adhésif de protection, bâches",
-       outillage:"Rouleaux, pinceaux, bac à peinture, ponceuse",
-       etapes:["Protection des sols et du mobilier","Rebouchage et ponçage léger des supports","Application de la sous-couche","Application de la peinture de finition","Nettoyage du matériel"],
-       epi:["gants","masque"], risques:[]}
+       epi:["gants"], risques:["chimique"]}
     ],
     socleQuartHeure: [
       "Signaler immédiatement toute situation dangereuse ou tout presque-accident au conducteur de travaux."
@@ -1146,6 +1146,7 @@ function addCustomMetier(stId){
    GÉNÉRATION DU PDF
    ========================================================================= */
 const EMARGEMENT_ROWS = 11;
+const EMARGEMENT_MIN_ROWS = 8;
 const TABLE_ROW_H = 7.3;
 const TABLE_HEADER_H = 8.5;
 const SZ = { body:10.5, label:10.5, subhead:11.5, banner:12, title:16, subtitle:9.5, small:8 };
@@ -1467,14 +1468,16 @@ function renderQuartHeure(D){
 
   const items = splitLinesArr(dossier.quartHeure.themesText);
   const bottomLimit = D.pageH - 20;
-  const fixedAfterThemes = 2 + 2.5 + 6 + TABLE_HEADER_H + EMARGEMENT_ROWS*TABLE_ROW_H;
+  const fixedAfterThemes = 2 + 2.5 + 6 + TABLE_HEADER_H + EMARGEMENT_MIN_ROWS*TABLE_ROW_H;
   const availableForThemes = bottomLimit - D.y - fixedAfterThemes;
   const fit = fitThemeFont(D.pdf, items, D.contentW-6, availableForThemes);
 
   drawThemes(D, items, fit); D.y += 2;
   D.y += 2.5;
   D.subheading("Émargement");
-  D.signatureTable(EMARGEMENT_ROWS);
+  // le tableau descend jusqu'en bas de la page : autant de lignes que la place restante le permet
+  const restant = (D.pageH - 20) - D.y - TABLE_HEADER_H - 1;
+  D.signatureTable(Math.max(EMARGEMENT_MIN_ROWS, Math.floor(restant / TABLE_ROW_H)));
 }
 
 let lastPdfUrl = null;
