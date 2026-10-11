@@ -672,6 +672,8 @@ function isoWeek(dt){
   const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1));
   return Math.ceil(((d-y0)/86400000+1)/7);
 }
+function adresseVisible(){ return !!(dossier.docs.fiche || dossier.docs.affichages); }
+function qhAdresse(){ return adresseVisible() ? (dossier.adresse||"").trim() : ""; }
 function qhAutoGroup(){ return (isoWeek(qhDate())-1)%5; }
 function qhGroupIndex(){
   const g = dossier.quartHeure.groupe;
@@ -694,12 +696,12 @@ function computeThemesText(){
   const f = qhFlags();
   const out = [];
   CONFIG.socleQuartHeure.forEach(l=>out.push(l));
-  g.lines.forEach(l=>out.push(l.replace("@ADRESSE@", (dossier.adresse||"").trim() || DOTS)));
+  g.lines.forEach(l=>out.push(l.replace("@ADRESSE@", qhAdresse() || DOTS)));
   Object.keys(QH_SPECIAUX).forEach(k=>{ if(f[k]) QH_SPECIAUX[k].lines.forEach(l=>out.push(l)); });
   return out.join("\n");
 }
 function qhSignature(){
-  return JSON.stringify([qhGroupIndex(), qhFlags(), (dossier.adresse||"").trim(), CONFIG.socleQuartHeure]);
+  return JSON.stringify([qhGroupIndex(), qhFlags(), qhAdresse(), CONFIG.socleQuartHeure]);
 }
 function ensureThemes(){
   if(!dossier.docs.quartHeure) return;
@@ -1052,7 +1054,7 @@ function renderFicheIntervention(D, st, index){
 function renderQuartHeure(D){
   D.newPage();
   D.header("ÉMARGEMENT 1/4 D'HEURE SÉCURITÉ", "");
-  D.keyValueRow([["Date", computeChantierDate()], ["Chantier", chantierLabel() || dossier.adresse || "—"]]);
+  D.keyValueRow([["Date", computeChantierDate()], ["Chantier", chantierLabel() || qhAdresse() || "—"]]);
   D.keyValueRow([["Présentateur", dossier.quartHeure.presentateur || dossier.cdtNom || "—"], ["Support fait par", dossier.quartHeure.supportPar || dossier.cdtNom || "—"]]);
   D.y += 3;
   D.subheading("Thèmes abordés");
@@ -1789,7 +1791,9 @@ function renderStep1(){
   h += field("Numéro affaire / code", dossier.affaire, "affaire", "ex. 1466-102");
   h += '</div>';
   h += field("Conducteur de travaux (votre nom)", dossier.cdtNom, "cdtNom", "ex. Jean Bourdel");
-  h += field("Adresse du site d'intervention", dossier.adresse, "adresse", "ex. 12 rue de la Résidence, 75015 Paris");
+  if(adresseVisible()){
+    h += field("Adresse du site d'intervention", dossier.adresse, "adresse", "ex. 12 rue de la Résidence, 75015 Paris");
+  }
   if(dossier.docs.fiche){
     h += '<div class="grid3">';
     h += field("Code d'accès du chantier (porte)", dossier.codeAcces, "codeAcces", "ex. 3B45");
