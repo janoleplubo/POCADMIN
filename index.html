@@ -294,6 +294,10 @@ function defaultConfig(){
       {id:"auditives", nom:"Protections auditives", statut:"conditionnel"}
     ],
     risques: [
+      {id:"chaleur", nom:"Fortes chaleurs", declencheSi:"Travaux en période de forte chaleur (juin à août)",
+       epi:[], equipements:"—",
+       consignes:"Boire de l'eau régulièrement, même sans soif. Malaise, crampes ou nausées : s'arrêter, aller à l'ombre, prévenir.",
+       themeQuartHeure:null},
       {id:"hauteur", nom:"Travail en hauteur", declencheSi:"Échafaudage roulant, escabeau au-delà d'une hauteur donnée, intervention en toiture",
        epi:["casque"], equipements:"Gazelle, échafaudage roulant (ER)",
        consignes:"Gazelles autorisées, escabeaux interdits, échafaudage roulant (ER) monté par du personnel formé uniquement.",
@@ -684,7 +688,7 @@ function qhFlags(){
   if(dossier.docs.fiche){
     const ids = new Set();
     dossier.sousTraitants.forEach(st=>st.risques.forEach(r=>ids.add(r)));
-    ["amiante","plomb","coactivite"].forEach(k=>{ if(ids.has(k)) f[k]=true; });
+    ["amiante","plomb","coactivite","chaleur"].forEach(k=>{ if(ids.has(k)) f[k]=true; });
   }
   const dt = qhDate();
   const mo = dt.getUTCMonth()+1;
@@ -1186,13 +1190,14 @@ function updateST(id, field, value){
   const st = dossier.sousTraitants.find(s=>s.id===id);
   if(st){ st[field] = value; }
 }
+const RISQUES_FICHE = ["amiante","plomb","coactivite","chaleur"];
 function toggleMetier(id, metierId, checked){
   const st = dossier.sousTraitants.find(s=>s.id===id);
   if(!st) return;
   if(checked){
     if(!st.metiers.includes(metierId)) st.metiers.push(metierId);
     const m = CONFIG.corpsDeMetier.find(x=>x.id===metierId);
-    if(m) (m.risques||[]).forEach(r=>{ if(!st.risques.includes(r)) st.risques.push(r); });
+    if(m) (m.risques||[]).forEach(r=>{ if(RISQUES_FICHE.includes(r) && !st.risques.includes(r)) st.risques.push(r); });
   } else {
     st.metiers = st.metiers.filter(x=>x!==metierId);
   }
@@ -1803,7 +1808,7 @@ function renderStep1(){
   } else if(dossier.docs.quartHeure){
     h += '<div class="grid2">'+field("Date du 1/4h sécurité", dossier.dateDebut, "dateDebut", "", "date")+'</div>';
   }
-  if(dossier.docs.quartHeure){
+  if(dossier.docs.quartHeure && !dossier.docs.fiche){
     const f = dossier.risquesSpec;
     h += '<div class="field"><label>Risques spécifiques à rappeler au 1/4h</label><div class="rs-row">';
     [["amiante","Amiante"],["plomb","Plomb"],["coactivite","Coactivité"],["chaleur","Fortes chaleurs"]].forEach(([k,l])=>{
@@ -1866,7 +1871,7 @@ function renderStep2(){
 
 
     h += '<label style="margin-top:12px;">Risques présents</label><div class="check-grid">';
-    CONFIG.risques.forEach(r=>{
+    CONFIG.risques.filter(r=>RISQUES_FICHE.includes(r.id)).forEach(r=>{
       const checked = st.risques.includes(r.id);
       h += '<label class="check-item"><input type="checkbox" '+(checked?"checked":"")+' onchange="toggleRisque(\''+st.id+'\',\''+r.id+'\',this.checked)">'+esc(r.nom)+'</label>';
     });
