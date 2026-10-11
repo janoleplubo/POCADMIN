@@ -686,12 +686,9 @@ function computeThemesText(){
   const g = QH_GROUPS[qhGroupIndex()];
   const f = qhFlags();
   const out = [];
+  CONFIG.socleQuartHeure.forEach(l=>out.push(l));
   g.lines.forEach(l=>out.push(l.replace("@ADRESSE@", (dossier.adresse||"").trim() || DOTS)));
   Object.keys(QH_SPECIAUX).forEach(k=>{ if(f[k]) QH_SPECIAUX[k].lines.forEach(l=>out.push(l)); });
-  if(CONFIG.socleQuartHeure.length){
-    out.push("## Pour tous");
-    CONFIG.socleQuartHeure.forEach(l=>out.push("- "+l));
-  }
   return out.join("\n");
 }
 function qhSignature(){
@@ -968,7 +965,7 @@ function qhHeight(pdf, items, maxWidth, opt){
       h += (i>0?opt.lh*0.5:0) + pdf.splitTextToSize(it.slice(3), maxWidth).length*opt.lh;
     } else {
       pdf.setFont("helvetica","normal"); pdf.setFontSize(opt.size);
-      h += pdf.splitTextToSize(it.replace(/^-\s*/,""), maxWidth-5).length*opt.lh;
+      h += pdf.splitTextToSize(it.replace(/^-\s*/,""), it.startsWith("-")?maxWidth-5:maxWidth).length*opt.lh + (it.startsWith("-")?0:opt.lh*0.3);
     }
   });
   return h;
@@ -988,7 +985,9 @@ function drawThemes(D, items, opt){
       p.splitTextToSize(it.slice(3), D.contentW).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin, D.y); D.y += opt.lh; });
     } else {
       p.setFont("helvetica","normal"); p.setFontSize(opt.size); p.setTextColor(0,0,0);
-      p.splitTextToSize(it.replace(/^-\s*/,""), D.contentW-5).forEach((l,k)=>{ D.ensureSpace(opt.lh+0.4); p.text((k===0?"-":"")  , D.margin+1, D.y); p.text(l, D.margin+5, D.y); D.y += opt.lh; });
+      const dash = it.startsWith("-");
+      p.splitTextToSize(it.replace(/^-\s*/,""), dash?D.contentW-5:D.contentW).forEach((l,k)=>{ D.ensureSpace(opt.lh+0.4); if(dash&&k===0) p.text("-", D.margin+1, D.y); p.text(l, D.margin+(dash?5:0), D.y); D.y += opt.lh; });
+      if(!dash) D.y += opt.lh*0.3;
     }
   });
 }
