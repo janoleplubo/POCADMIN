@@ -2310,7 +2310,7 @@ function stField(id,label,key,value,type){
 }
 
 function renderStep3(){
-  let h = '<div class="card"><h2>Aperçu et validation des textes</h2><p class="hint">Modifiez librement les textes avant génération du PDF.</p>';
+  let h = '<div class="card"><h2>Aperçu et validation des textes</h2><p class="hint">Propositions de textes, à adapter à votre chantier.</p>';
   if(dossier.docs.fiche){
     dossier.sousTraitants.forEach((st,idx)=>{
       if(!st.preview) st.preview = computePreview(st);
