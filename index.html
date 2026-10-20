@@ -1545,8 +1545,12 @@ function drawUrgIcon(p, kind, cx, cy, bg){
     p.setLineWidth(0.9); p.circle(cx, cy, 7, "S");
     p.rect(cx-1.4, cy-4.6, 2.8, 9.2, "F"); p.rect(cx-4.6, cy-1.4, 9.2, 2.8, "F");
   } else {
-    p.setLineWidth(0.9); p.triangle(cx-8, cy+6.8, cx+8, cy+6.8, cx, cy-7.6, "S");
-    p.setFont("helvetica","bold"); p.setFontSize(15); p.text("!", cx, cy+5.4, {align:"center"});
+    // triangle d'avertissement plein, point d'exclamation en creux
+    p.setFillColor(255,255,255); p.setDrawColor(255,255,255); p.setLineWidth(1.6);
+    p.triangle(cx-8.2, cy+7, cx+8.2, cy+7, cx, cy-8.6, "FD");
+    p.setFillColor(bg[0],bg[1],bg[2]);
+    p.roundedRect(cx-1.1, cy-3.6, 2.2, 6.4, 0.9, 0.9, "F");
+    p.circle(cx, cy+4.6, 1.2, "F");
   }
   p.setLineWidth(0.2);
 }
@@ -1620,9 +1624,6 @@ function renderUrgence(D){
     y += rh;
   }
   D.y = y + 5;
-  // sur le chantier
-  D.subheading("Sur le chantier (à compléter à la main)");
-  ["Trousse de secours","Extincteur","Coupure eau, électricité et gaz","Point de rassemblement","Secouriste du chantier (SST)"].forEach(l=>dotLine(D,l));
 }
 
 /* Particularités du chantier (1/4h) : texte saisi, sinon 2 lignes pointillées à remplir à la main */
