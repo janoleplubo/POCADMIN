@@ -707,7 +707,7 @@ function defaultConfig(){
        themeQuartHeure:null},
       {id:"gazAlimente", nom:"Réseau gaz alimenté", declencheSi:"Réseau de gaz en service dans le bâtiment",
        epi:[], equipements:"—",
-       consignes:"Gaz en service : pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.\nNe pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.\nOdeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, appeler le 18.",
+       consignes:"Gaz en service : pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.\nNe pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.\nOdeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, puis appeler le 18 ou l'urgence gaz GRDF : 0 800 47 33 33.",
        themeQuartHeure:null},
       {id:"siteOccupe", nom:"Site occupé", declencheSi:"Des habitants sont présents dans le bâtiment pendant les travaux",
        epi:[], equipements:"—",
@@ -765,7 +765,7 @@ function defaultConfig(){
        nature:"Dépose et évacuation des éléments existants (sanitaires, revêtements, cloisons non conservées, appareillages électriques). Curage complet avant travaux.",
        produits:"",
        outillage:"Disqueuse, perforateur, masse",
-       risquesTexte:"## Poussières\n- Humidifier ou aspirer à la source. Ne pas balayer à sec.\n- Masque FFP2 minimum.\n## Disqueuse et perforateur\n- La protection de la disqueuse doit toujours être en place. Lunettes et gants.\n- Débrancher avant de changer le disque.\n## Bruit\n- Casque anti-bruit dès qu'il faut élever la voix pour se faire entendre.\n## Réseaux cachés\n- Avant de casser : repérer l'eau, l'électricité et le gaz. Un doute : arrêter et prévenir.\n## Chute d'objets\n- Casque obligatoire. Gravats mis en sac au fur et à mesure.",
+       risquesTexte:"## Poussières\n- Humidifier ou aspirer à la source. Ne pas balayer à sec.\n- Masque FFP2 minimum.\n## Disqueuse et perforateur\n- Le capot de protection de la disqueuse doit toujours être en place. Lunettes et gants.\n- Débrancher avant de changer le disque.\n## Bruit\n- Casque anti-bruit dès qu'il faut élever la voix pour se faire entendre.\n## Réseaux cachés\n- Avant de casser : repérer l'eau, l'électricité et le gaz. Un doute : arrêter et prévenir.\n## Chute d'objets\n- Casque obligatoire. Gravats mis en sac au fur et à mesure.",
        etapes:["Protection des zones adjacentes","Dépose des éléments","Mise en sac","Évacuation en déchetterie/benne"],
        epi:["casque","gants","masque","lunettes","auditives"], risques:["poussiere","coactivite"]},
       {id:"plomberie", nom:"Plomberie",
@@ -793,7 +793,7 @@ function defaultConfig(){
        nature:"Pose de carrelage au sol et de faïence murale (salles de bain, sanitaires).",
        produits:"Colle et mortier, joint ciment",
        outillage:"Disqueuse, malaxeur électrique",
-       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- La protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Ces produits irritent la peau et les yeux. Gants et lunettes.\n- Projection dans l'œil : rincer à l'eau pendant 15 minutes et prévenir.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
+       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Ces produits irritent la peau et les yeux. Gants et lunettes.\n- Projection dans l'œil : rincer à l'eau pendant 15 minutes et prévenir.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
        etapes:["Préparation et nettoyage du support","Pose de la colle et des carreaux","Réalisation des joints","Nettoyage et finition"],
        epi:["gants","lunettes","masque"], risques:["poussiere"]},
       {id:"peinture", nom:"Peinture",
@@ -807,7 +807,7 @@ function defaultConfig(){
        nature:"Dépose et pose de portes, serrures, garde-corps et éléments métalliques.",
        produits:"",
        outillage:"Disqueuse, perceuse, poste de soudure",
-       risquesTexte:"## Soudure et étincelles\n- Éloigner ce qui peut brûler ou le protéger. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux de gaz.\n- Surveiller la zone pendant 1 heure après.\n## Disqueuse\n- La protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
+       risquesTexte:"## Soudure et étincelles\n- Éloigner ce qui peut brûler ou le protéger. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux de gaz.\n- Surveiller la zone pendant 1 heure après.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
        etapes:["Dépose des éléments existants","Ajustement et pose des nouveaux éléments","Réglages"],
        epi:["gants","lunettes","casque","auditives"], risques:["poussiere","coactivite"]},
       {id:"nettoyage", nom:"Nettoyage",
@@ -830,7 +830,7 @@ function defaultConfig(){
         "Les ouvriers doivent être habilités et formés à l'utilisation des échafaudages et au travail en hauteur, aptes à utiliser les équipements de travail en toute sécurité et disposer des autorisations nécessaires.",
       precautions:
         "Maintien d'un poste de travail propre et dégagé (limiter le risque de chute).\n"+
-        "Avant chaque utilisation, regarder l'outil : fil sans coupure, prise non cassée, protection en place, disque non fendu. Un outil abîmé ne s'utilise pas : le signaler.\n"+
+        "Avant chaque utilisation, regarder l'outil : fil sans coupure, prise non cassée, capot de protection en place, disque non fendu. Un outil abîmé ne s'utilise pas : le signaler.\n"+
         "Utiliser chaque outil seulement pour le travail prévu.\n"+
         "Aérer la pièce pendant tout le travail (fenêtre ouverte), pas seulement à la fin.",
       attestation:
@@ -1042,7 +1042,7 @@ const QH_GROUPS = [
   ]},
   { nom:"Outils et machines, poussières", lines:[
     "## Risque lié aux outils et machines",
-    "- Capot de sécurité toujours en place sur la disqueuse. Vérifier l'état du disque avant usage.",
+    "- Capot de protection toujours en place sur la disqueuse. Vérifier l'état du disque avant usage.",
     "- Débrancher l'outil avant de changer le disque. Porter lunettes et gants.",
     "## Risque poussières",
     "- En cas de découpe ou de percement : aspirer à la source ou humidifier. Ne pas balayer à sec.",
@@ -1103,7 +1103,7 @@ const QH_SPECIAUX = {
     "## Risque gaz : le gaz est en service",
     "- Pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.",
     "- Ne pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.",
-    "- Odeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, appeler le 18."
+    "- Odeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, puis appeler le 18 ou l'urgence gaz GRDF : 0 800 47 33 33."
   ]},
   siteOccupe:{ label:"Site occupé", lines:[
     "## Site occupé : des habitants sont présents",
@@ -1534,17 +1534,19 @@ function dotLine(D, label){
   p.text(dotsFor(D, D.contentW-lw-3), D.margin+lw+1, D.y);
   D.y += 6.4;
 }
-function drawUrgIcon(p, kind, cx, cy){
+function drawUrgIcon(p, kind, cx, cy, bg){
   p.setFillColor(255,255,255); p.setDrawColor(255,255,255); p.setTextColor(255,255,255);
   if(kind==="flame"){
-    p.circle(cx, cy+2.2, 4.2, "F");
-    p.triangle(cx-3.9, cy+0.6, cx+3.9, cy+0.6, cx+0.8, cy-8, "F");
+    const P=[[0,-9],[2.5,-4.5],[4.2,-2],[4.8,1.5],[3.6,4.8],[1.5,6.8],[-1.5,6.8],[-3.6,4.8],[-4.8,1.5],[-4,-1.5],[-2.3,0],[-2.2,-3],[-0.6,-5.5]];
+    const poly=(sc,ox,oy)=>{ const d=[]; for(let i=1;i<P.length;i++) d.push([(P[i][0]-P[i-1][0])*sc,(P[i][1]-P[i-1][1])*sc]); p.lines(d, cx+P[0][0]*sc+ox, cy+P[0][1]*sc+oy, [1,1], "F", true); };
+    poly(1,0,0);
+    p.setFillColor(bg[0],bg[1],bg[2]); poly(0.42,0,5.4);
   } else if(kind==="cross"){
-    p.setLineWidth(0.9); p.circle(cx, cy, 7.5, "S");
-    p.rect(cx-1.5, cy-5, 3, 10, "F"); p.rect(cx-5, cy-1.5, 10, 3, "F");
+    p.setLineWidth(0.9); p.circle(cx, cy, 7, "S");
+    p.rect(cx-1.4, cy-4.6, 2.8, 9.2, "F"); p.rect(cx-4.6, cy-1.4, 9.2, 2.8, "F");
   } else {
-    p.setLineWidth(0.9); p.triangle(cx-8.5, cy+6.5, cx+8.5, cy+6.5, cx, cy-8, "S");
-    p.setFont("helvetica","bold"); p.setFontSize(17); p.text("!", cx, cy+5.6, {align:"center"});
+    p.setLineWidth(0.9); p.triangle(cx-8, cy+6.8, cx+8, cy+6.8, cx, cy-7.6, "S");
+    p.setFont("helvetica","bold"); p.setFontSize(15); p.text("!", cx, cy+5.4, {align:"center"});
   }
   p.setLineWidth(0.2);
 }
@@ -1557,27 +1559,33 @@ function renderUrgence(D){
   [{n:"18",l:"POMPIERS",c:[200,30,30],ic:"flame"},{n:"15",l:"SAMU",c:[20,84,166],ic:"cross"},{n:"112",l:"URGENCE (portable)",c:[45,45,45],ic:"alert"}].forEach((c,i)=>{
     const x=m+i*(cw+gap), y=D.y;
     p.setFillColor(c.c[0],c.c[1],c.c[2]); p.roundedRect(x, y, cw, ch, 3, 3, "F");
-    drawUrgIcon(p, c.ic, x+cw/2, y+9.5);
-    p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(38); p.text(c.n, x+cw/2, y+28.5, {align:"center"});
-    p.setFontSize(10.5); p.text(c.l, x+cw/2, y+35, {align:"center"});
+    drawUrgIcon(p, c.ic, x+cw/2, y+10.5, c.c);
+    p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(30); p.text(c.n, x+cw/2, y+29.5, {align:"center"});
+    p.setFontSize(10); p.text(c.l, x+cw/2, y+35, {align:"center"});
   });
-  p.setTextColor(30,30,30); D.y += ch+5;
+  p.setTextColor(30,30,30); D.y += ch+3;
+  // urgence gaz (GRDF)
+  p.setFillColor(255,205,0); p.roundedRect(m, D.y, W, 10, 2, 2, "F");
+  p.setTextColor(0,0,0); p.setFont("helvetica","bold"); p.setFontSize(12);
+  p.text("URGENCE GAZ (GRDF) :  0 800 47 33 33", m+W/2, D.y+6.6, {align:"center"});
+  p.setFont("helvetica","normal"); p.setFontSize(8); p.text("gratuit, 24 h sur 24", m+W-3, D.y+6.2, {align:"right"});
+  p.setTextColor(30,30,30); D.y += 13;
   // adresse
   const adr=(dossier.adresse||"").trim(), code=(dossier.codeAcces||"").trim();
-  const bh=24, y0=D.y;
+  const bh=22, y0=D.y;
   p.setDrawColor(30,30,30); p.setLineWidth(0.6); p.roundedRect(m, y0, W, bh, 2, 2, "S"); p.setLineWidth(0.2);
   p.setFont("helvetica","bold"); p.setFontSize(8.5); p.setTextColor(110,110,110);
   p.text("ADRESSE DU CHANTIER (à donner aux secours)", m+4, y0+6);
   p.setTextColor(0,0,0);
   if(adr){
-    p.setFontSize(13.5); const l=p.splitTextToSize(adr, W-8); p.text(l.slice(0,2), m+4, y0+13);
+    p.setFontSize(13.5); const l=p.splitTextToSize(adr, W-8); p.text(l.slice(0,2), m+4, y0+12.5);
   } else { p.setFont("helvetica","normal"); p.setFontSize(11); p.text(dotsFor(D, W-8), m+4, y0+14); }
   p.setFont("helvetica","normal"); p.setFontSize(9.5);
   const sub=[chantierLabel(), code?("Code d'accès : "+code):""].filter(Boolean).join("   —   ");
   if(sub) p.text(sub, m+4, y0+bh-3);
   p.setTextColor(30,30,30); D.y += bh+5;
   // 3 gestes
-  const gh=27;
+  const gh=25;
   [["1","PROTÉGER","Écarter le danger (courant, gaz, feu) sans se mettre en danger."],
    ["2","ALERTER","Appeler le 18, le 15 ou le 112. Prévenir ensuite le conducteur de travaux."],
    ["3","SECOURIR","Rester près du blessé. Ne pas le déplacer, sauf danger immédiat."]].forEach((g,i)=>{
