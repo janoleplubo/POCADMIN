@@ -701,6 +701,18 @@ function defaultConfig(){
        epi:[], equipements:"—",
        consignes:"Boire de l'eau régulièrement, même sans soif. Malaise, crampes ou nausées : s'arrêter, aller à l'ombre, prévenir.",
        themeQuartHeure:null},
+      {id:"elecNonConsigne", nom:"Électricité non consignée", declencheSi:"Travaux dans un logement ou un bâtiment où l'électricité n'est pas coupée",
+       epi:["gants"], equipements:"—",
+       consignes:"Courant non coupé : ne pas percer, casser ou couper un mur sans savoir où passent les fils.\nNe jamais toucher un fil que l'on ne connaît pas.\nSeul un électricien habilité travaille sur l'électricité. Outils isolés.",
+       themeQuartHeure:null},
+      {id:"gazAlimente", nom:"Réseau gaz alimenté", declencheSi:"Réseau de gaz en service dans le bâtiment",
+       epi:[], equipements:"—",
+       consignes:"Gaz en service : pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.\nNe pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.\nOdeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, appeler le 18.",
+       themeQuartHeure:null},
+      {id:"siteOccupe", nom:"Site occupé", declencheSi:"Des habitants sont présents dans le bâtiment pendant les travaux",
+       epi:[], equipements:"—",
+       consignes:"Des habitants sont présents : laisser les passages libres, fermer les portes derrière soi.\nNe jamais laisser sans surveillance un outil, un produit ou un câble.\nRespecter les horaires de bruit. Prévenir le conducteur de travaux en cas de problème avec un habitant.",
+       themeQuartHeure:null},
       {id:"hauteur", nom:"Travail en hauteur", declencheSi:"Échafaudage roulant, escabeau au-delà d'une hauteur donnée, intervention en toiture",
        epi:["casque"], equipements:"Gazelle, échafaudage roulant (ER)",
        consignes:"Gazelles autorisées, escabeaux interdits, échafaudage roulant (ER) monté par du personnel formé uniquement.",
@@ -806,9 +818,7 @@ function defaultConfig(){
        etapes:["Évacuation des gravats résiduels","Nettoyage des surfaces","Nettoyage des parties communes"],
        epi:["gants"], risques:["chimique"]}
     ],
-    socleQuartHeure: [
-      "Signaler immédiatement toute situation dangereuse ou tout presque-accident au conducteur de travaux."
-    ],
+    socleQuartHeure: [],
     textes: {
       contraintesSite:
         "Aucun élément ne doit bloquer le passage pour accéder à la résidence.\n"+
@@ -820,8 +830,9 @@ function defaultConfig(){
         "Les ouvriers doivent être habilités et formés à l'utilisation des échafaudages et au travail en hauteur, aptes à utiliser les équipements de travail en toute sécurité et disposer des autorisations nécessaires.",
       precautions:
         "Maintien d'un poste de travail propre et dégagé (limiter le risque de chute).\n"+
-        "Utilisation d'un outillage adapté et en bon état.\n"+
-        "La zone d'intervention doit être ventilée si elle n'est pas à l'air libre.",
+        "Avant chaque utilisation, regarder l'outil : fil sans coupure, prise non cassée, protection en place, disque non fendu. Un outil abîmé ne s'utilise pas : le signaler.\n"+
+        "Utiliser chaque outil seulement pour le travail prévu.\n"+
+        "Aérer la pièce pendant tout le travail (fenêtre ouverte), pas seulement à la fin.",
       attestation:
         "Je soussigné(e) ......................................................, atteste avoir reçu et compris les consignes techniques et de sécurité liées à cette intervention."
     }
@@ -881,8 +892,8 @@ function makeDossier(){
     siteIntervention: DEFAULT_SITE_INTERVENTION,
     affaire:"", nomChantier:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:defaultStartDate(), dateFin:"", nbZones:1,
     sousTraitants:[ makeSousTraitant() ],
-    quartHeure:{ presentateur:"", supportPar:"", themesText:"", groupe:"", sig:"" },
-    risquesSpec:{ amiante:false, plomb:false, coactivite:false, chaleur:false }
+    quartHeure:{ presentateur:"", supportPar:"", themesText:"", groupe:"", sig:"", siteLine:"" },
+    risquesSpec:{ amiante:false, plomb:false, coactivite:false, chaleur:false, elecNonConsigne:false, gazAlimente:false, siteOccupe:false }
   };
 }
 let dossier = makeDossier();
@@ -1036,7 +1047,7 @@ const QH_GROUPS = [
     "## Risque poussières",
     "- En cas de découpe ou de percement : aspirer à la source ou humidifier. Ne pas balayer à sec.",
     "- Masque FFP2 ou FFP3 pour poncer, découper ou carotter.",
-    "- Aérer la pièce après les travaux."
+    "- Aérer la pièce pendant tout le travail (fenêtre ouverte), pas seulement après."
   ]},
   { nom:"Incendie, secours et alerte", lines:[
     "## Risque d'incendie et de travaux par point chaud",
@@ -1081,6 +1092,24 @@ const QH_SPECIAUX = {
     "## Risque fortes chaleurs",
     "- Boire de l'eau régulièrement, même sans soif.",
     "- Malaise, crampes ou nausées : s'arrêter, aller à l'ombre, prévenir. Malaise grave : appeler le 15."
+  ]},
+  elecNonConsigne:{ label:"Électricité non consignée", lines:[
+    "## Risque électricité non coupée",
+    "- Le courant n'est pas coupé : ne pas percer, casser ou couper un mur sans savoir où passent les fils.",
+    "- Ne jamais toucher un fil que l'on ne connaît pas.",
+    "- Seul un électricien habilité travaille sur l'électricité. Outils isolés."
+  ]},
+  gazAlimente:{ label:"Réseau gaz alimenté", lines:[
+    "## Risque gaz : le gaz est en service",
+    "- Pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.",
+    "- Ne pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.",
+    "- Odeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, appeler le 18."
+  ]},
+  siteOccupe:{ label:"Site occupé", lines:[
+    "## Site occupé : des habitants sont présents",
+    "- Laisser les passages libres. Fermer les portes derrière soi.",
+    "- Ne jamais laisser sans surveillance un outil, un produit ou un câble.",
+    "- Respecter les horaires de bruit. Prévenir le conducteur de travaux en cas de problème avec un habitant."
   ]}
 };
 function qhDate(){
@@ -1109,7 +1138,7 @@ function qhFlags(){
   if(dossier.docs.fiche){
     const ids = new Set();
     dossier.sousTraitants.forEach(st=>st.risques.forEach(r=>ids.add(r)));
-    ["amiante","plomb","coactivite","chaleur"].forEach(k=>{ if(ids.has(k)) f[k]=true; });
+    Object.keys(QH_SPECIAUX).forEach(k=>{ if(ids.has(k)) f[k]=true; });
   }
   const dt = qhDate();
   const mo = dt.getUTCMonth()+1;
@@ -1588,6 +1617,28 @@ function renderUrgence(D){
   ["Trousse de secours","Extincteur","Coupure eau, électricité et gaz","Point de rassemblement","Secouriste du chantier (SST)"].forEach(l=>dotLine(D,l));
 }
 
+/* Particularités du chantier (1/4h) : texte saisi, sinon 2 lignes pointillées à remplir à la main */
+const QH_SITE_LH = 6;
+function qhSiteLines(D){
+  const t = (dossier.quartHeure.siteLine||"").trim();
+  if(!t) return null;
+  const p = D.pdf; p.setFont("helvetica","normal"); p.setFontSize(SZ.body);
+  return t.split(/\n/).flatMap(l=>p.splitTextToSize(l, D.contentW-6));
+}
+function qhSiteHeight(lines){ return 6 + Math.max(2, lines?lines.length:2)*QH_SITE_LH + 1; }
+function qhSiteBlock(D, lines){
+  D.subheading("Particularités du chantier");
+  const p = D.pdf; p.setFont("helvetica","normal"); p.setFontSize(SZ.body);
+  if(lines && lines.length){
+    lines.forEach(l=>{ p.text(l, D.margin+2, D.y); D.y += QH_SITE_LH; });
+    if(lines.length<2) D.y += QH_SITE_LH*(2-lines.length);
+  } else {
+    const dots = "."; const maxW = D.contentW-6; let str = "";
+    while(p.getTextWidth(str+dots) < maxW) str += dots;
+    for(let i=0;i<2;i++){ p.text(str, D.margin+2, D.y); D.y += QH_SITE_LH; }
+  }
+  D.y += 1;
+}
 function renderQuartHeure(D){
   D.newPage();
   D.header("ÉMARGEMENT 1/4 D'HEURE SÉCURITÉ", "");
@@ -1598,12 +1649,14 @@ function renderQuartHeure(D){
 
   const items = splitLinesArr(dossier.quartHeure.themesText);
   const bottomLimit = D.pageH - 20;
-  const fixedAfterThemes = 2 + 2.5 + 6 + TABLE_HEADER_H + EMARGEMENT_MIN_ROWS*TABLE_ROW_H;
+  const siteLines = qhSiteLines(D);
+  const fixedAfterThemes = 2 + 2.5 + qhSiteHeight(siteLines) + 6 + TABLE_HEADER_H + EMARGEMENT_MIN_ROWS*TABLE_ROW_H;
   const availableForThemes = bottomLimit - D.y - fixedAfterThemes;
   const fit = fitThemeFont(D.pdf, items, D.contentW-6, availableForThemes);
 
   drawThemes(D, items, fit); D.y += 2;
   D.y += 2.5;
+  qhSiteBlock(D, siteLines);
   D.subheading("Émargement");
   // le tableau descend jusqu'en bas de la page : autant de lignes que la place restante le permet
   const restant = (D.pageH - 20) - D.y - TABLE_HEADER_H - 1;
@@ -1726,7 +1779,7 @@ function updateST(id, field, value){
   const st = dossier.sousTraitants.find(s=>s.id===id);
   if(st){ st[field] = value; }
 }
-const RISQUES_FICHE = ["amiante","plomb","coactivite","chaleur"];
+const RISQUES_FICHE = ["amiante","plomb","coactivite","chaleur","elecNonConsigne","gazAlimente","siteOccupe"];
 function toggleMetier(id, metierId, checked){
   const st = dossier.sousTraitants.find(s=>s.id===id);
   if(!st) return;
@@ -2361,7 +2414,7 @@ function renderStep1(){
   if(dossier.docs.quartHeure && !dossier.docs.fiche){
     const f = dossier.risquesSpec;
     h += '<div class="field"><label>Risques spécifiques au chantier</label><div class="rs-row">';
-    [["amiante","Amiante"],["plomb","Plomb"],["coactivite","Coactivité"],["chaleur","Fortes chaleurs"]].forEach(([k,l])=>{
+    [["amiante","Amiante"],["plomb","Plomb"],["coactivite","Coactivité"],["chaleur","Fortes chaleurs"],["elecNonConsigne","Électricité non consignée"],["gazAlimente","Réseau gaz alimenté"],["siteOccupe","Site occupé"]].forEach(([k,l])=>{
       h += '<label class="rs-item"><input type="checkbox" '+(f[k]?'checked':'')+' onchange="setRisqueSpec(\''+k+'\', this.checked)"> '+l+'</label>';
     });
     h += '</div><p class="small-note">Le groupe de risques change chaque semaine. Les risques cochés ici s\'ajoutent. Fortes chaleurs : ajouté aussi automatiquement une fois par mois de juin à août.</p></div>';
@@ -2465,6 +2518,7 @@ function renderStep3(){
     h += '</div>';
     h += '<div class="field"><label>Groupe de la semaine (semaine '+isoWeek(qhDate())+')</label><select onchange="setQhGroupe(this.value)"><option value=""'+(dossier.quartHeure.groupe===""?' selected':'')+'>Automatique : groupe '+(qhAutoGroup()+1)+' - '+esc(QH_GROUPS[qhAutoGroup()].nom)+'</option>'+QH_GROUPS.map((g,i)=>'<option value="'+i+'"'+(dossier.quartHeure.groupe===i?' selected':'')+'>Groupe '+(i+1)+' - '+esc(g.nom)+'</option>').join('')+'</select></div>';
     h += '<div class="field"><label>Thèmes abordés (## = titre en gras, - = tiret)</label><textarea rows="14" oninput="updateThemesText(this.value)">'+esc(dossier.quartHeure.themesText)+'</textarea></div>';
+    h += '<div class="field"><label>Particularités du chantier (1 à 2 lignes)</label><textarea rows="2" placeholder="ex. Résidence occupée : prévenir le gardien avant de couper l\'eau." oninput="dossier.quartHeure.siteLine=this.value">'+esc(dossier.quartHeure.siteLine||"")+'</textarea><p class="small-note">Si vous laissez vide, le PDF imprime deux lignes pointillées à remplir à la main.</p></div>';
     h += '</div>';
   }
   h += '<div class="row-actions"><button class="btn secondary" onclick="goPrev()">← Retour</button><button class="btn" onclick="goNext()">Continuer →</button></div>';
