@@ -779,7 +779,7 @@ function defaultConfig(){
        nature:"Dépose de l'ancienne installation, reprise et mise aux normes (tableau, circuits, prises, éclairage).",
        produits:"",
        outillage:"Perforateur, rainureuse, tournevis isolés, détecteur de tension",
-       risquesTexte:"## Électricité\n- Couper le courant, mettre un cadenas, vérifier qu'il n'y a plus de courant. Seul un électricien habilité le fait.\n- Outils isolés. Rallonges en bon état.\n## Perçage et rainure dans le mur\n- Avant de percer ou de casser : chercher où passent les fils et les tuyaux.\n- Lunettes et gants.\n## Poussières\n- Aspirer à la source. Masque pour les rainures dans le mur.",
+       risquesTexte:"## Courant électrique\n- Couper le courant, mettre un cadenas, vérifier qu'il n'y a plus de courant. Seul un électricien habilité le fait.\n- Outils isolés. Rallonges en bon état.\n## Perçage et rainure dans le mur\n- Avant de percer ou de casser : chercher où passent les fils et les tuyaux.\n- Lunettes et gants.\n## Poussières\n- Aspirer à la source. Masque pour les rainures dans le mur.",
        etapes:["Coupure générale / consignation","Dépose de l'ancien réseau","Tirage des câbles","Pose de l'appareillage","Tests et mise en service"],
        epi:["gants","casque","lunettes"], risques:["electrique","coactivite"]},
       {id:"platrerie", nom:"Plâtrerie / placo",
@@ -1544,7 +1544,7 @@ function drawUrgIcon(p, kind, cx, cy){
     p.rect(cx-1.5, cy-5, 3, 10, "F"); p.rect(cx-5, cy-1.5, 10, 3, "F");
   } else {
     p.setLineWidth(0.9); p.triangle(cx-8.5, cy+6.5, cx+8.5, cy+6.5, cx, cy-8, "S");
-    p.setFont("helvetica","bold"); p.setFontSize(13); p.text("!", cx, cy+5, {align:"center"});
+    p.setFont("helvetica","bold"); p.setFontSize(17); p.text("!", cx, cy+5.6, {align:"center"});
   }
   p.setLineWidth(0.2);
 }
