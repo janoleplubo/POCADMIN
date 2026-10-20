@@ -737,62 +737,72 @@ function defaultConfig(){
     corpsDeMetier: [
       {id:"protection", nom:"Protection de début de chantier",
        nature:"Mise en place de la signalisation et des protections avant travaux (sols, accès, parties communes).",
-       produits:"Bâches, rubalise, ruban adhésif",
-       outillage:"Adhésif",
+       produits:"",
+       outillage:"Cutter",
+       risquesTexte:"## Chute (bâches et sols)\n- Fixer les bâches avec de l'adhésif. Une bâche qui bouge fait tomber.\n- Ne laisser aucun câble ni rouleau dans le passage.\n## Cutter\n- Couper en éloignant le cutter de son corps. Le ranger après chaque usage.",
        etapes:["Mise en place de la signalisation du chantier","Repérage des zones à protéger","Pose des protections (bâches, plaques)"],
        epi:["gants"], risques:["coactivite"]},
       {id:"desamiantage", nom:"Déplombage / désamiantage",
        nature:"Retrait ou encapsulage de matériaux contenant plomb ou amiante, selon procédure réglementaire spécifique.",
-       produits:"Matériel et consommables du protocole de retrait (selon fiche de l'entreprise certifiée)",
-       outillage:"Matériel de confinement / aspiration spécifique",
+       produits:"Produits et matériel du mode opératoire de l'entreprise certifiée",
+       outillage:"Aspirateur à filtre spécial et matériel de confinement (selon le mode opératoire de l'entreprise certifiée)",
+       risquesTexte:"## Poussières de plomb ou d'amiante\n- Seule une entreprise certifiée peut faire ce travail, avec son mode opératoire.\n- Zone fermée et balisée. Ne jamais balayer à sec.\n- Combinaison, masque et gants selon le mode opératoire.\n## Déchets\n- Sacs fermés, étiquetés, évacués par l'entreprise certifiée.",
        etapes:["Selon protocole réglementaire de l'entreprise certifiée (DTA, mode opératoire propre)"],
        epi:["masque","gants"], risques:["amiante","plomb"]},
       {id:"curage", nom:"Curage / dépose",
        nature:"Dépose et évacuation des éléments existants (sanitaires, revêtements, cloisons non conservées, appareillages électriques). Curage complet avant travaux.",
-       produits:"Sacs à gravats, bâches de protection",
-       outillage:"Disqueuse/meuleuse, perfo, masse",
+       produits:"",
+       outillage:"Disqueuse, perforateur, masse",
+       risquesTexte:"## Poussières\n- Humidifier ou aspirer à la source. Ne pas balayer à sec.\n- Masque FFP2 minimum.\n## Disqueuse et perforateur\n- La protection de la disqueuse doit toujours être en place. Lunettes et gants.\n- Débrancher avant de changer le disque.\n## Bruit\n- Casque anti-bruit dès qu'il faut élever la voix pour se faire entendre.\n## Réseaux cachés\n- Avant de casser : repérer l'eau, l'électricité et le gaz. Un doute : arrêter et prévenir.\n## Chute d'objets\n- Casque obligatoire. Gravats mis en sac au fur et à mesure.",
        etapes:["Protection des zones adjacentes","Dépose des éléments","Mise en sac","Évacuation en déchetterie/benne"],
        epi:["casque","gants","masque","lunettes","auditives"], risques:["poussiere","coactivite"]},
       {id:"plomberie", nom:"Plomberie",
        nature:"Dépose et pose des appareils sanitaires, raccordements eau et évacuation, mise en place des réseaux.",
-       produits:"Tuyauterie PER/cuivre/multicouche, raccords, joints, colle, mastic",
-       outillage:"Pinces, coupe tuyaux, colle à PVC, pince à sertir, clé à molette, niveau",
+       produits:"Colle et décapant PVC, produit de brasage",
+       outillage:"Chalumeau (brasage), sertisseuse, disqueuse",
+       risquesTexte:"## Colles et solvants\n- Aérer la pièce pendant tout le travail. Gants et lunettes.\n- Refermer le pot après chaque usage. Pas de flamme à côté.\n## Chalumeau (brasage)\n- Protéger le mur avec une plaque. Éloigner ce qui peut brûler.\n- Extincteur à portée de main. Surveiller la zone pendant 1 heure après.\n- Gaz en service : chalumeau interdit près des tuyaux de gaz.\n## Eau\n- Couper l'eau et prévenir les autres entreprises avant de démonter.\n- Sol mouillé : essuyer tout de suite.",
        etapes:["Coupure des arrivées d'eau","Dépose des anciens appareils","Pose des réseaux","Pose des appareils","Essais d'étanchéité"],
        epi:["gants","lunettes"], risques:["chimique","coactivite"]},
       {id:"electricite", nom:"Électricité",
        nature:"Dépose de l'ancienne installation, reprise et mise aux normes (tableau, circuits, prises, éclairage).",
-       produits:"Câbles, gaines, tableau électrique, appareillage (prises, interrupteurs)",
-       outillage:"Pince à dénuder, tournevis isolés, multimètre, perforateur",
+       produits:"",
+       outillage:"Perforateur, rainureuse, tournevis isolés, détecteur de tension",
+       risquesTexte:"## Électricité\n- Couper le courant, mettre un cadenas, vérifier qu'il n'y a plus de courant. Seul un électricien habilité le fait.\n- Outils isolés. Rallonges en bon état.\n## Perçage et rainure dans le mur\n- Avant de percer ou de casser : chercher où passent les fils et les tuyaux.\n- Lunettes et gants.\n## Poussières\n- Aspirer à la source. Masque pour les rainures dans le mur.",
        etapes:["Coupure générale / consignation","Dépose de l'ancien réseau","Tirage des câbles","Pose de l'appareillage","Tests et mise en service"],
        epi:["gants","casque","lunettes"], risques:["electrique","coactivite"]},
       {id:"platrerie", nom:"Plâtrerie / placo",
        nature:"Pose de cloisons, doublages, faux-plafonds, enduits ; encapsulage ponctuel de l'amiante par placo collé ou enduits si signalé.",
-       produits:"Plaques de plâtre, carroplâtres, montants, rails, enduit, colle, bande à joint",
-       outillage:"Visseuse, outils de découpe, niveau, malaxeur",
+       produits:"Enduit et plâtre en poudre, colle",
+       outillage:"Ponceuse, scie cloche, malaxeur électrique",
+       risquesTexte:"## Poussières\n- Poncer avec un aspirateur branché. Masque FFP2 minimum. Ne pas balayer à sec.\n## Charges lourdes\n- Plaque de plâtre : porter à deux. Dos droit, genoux fléchis.\n## Travail en hauteur\n- Escabeau interdit. Utiliser une gazelle ou un échafaudage roulant.\n## Projections\n- Lunettes pour poncer, percer ou visser au plafond.",
        etapes:["Traçage","Pose de l'ossature","Pose des plaques","Traitement des joints/enduit","Ponçage"],
        epi:["masque","lunettes","gants"], risques:["poussiere"]},
       {id:"carrelage", nom:"Carrelage / Faïence",
        nature:"Pose de carrelage au sol et de faïence murale (salles de bain, sanitaires).",
-       produits:"Carrelage, faïence, colle à carrelage, joints, croisillons, plinthes",
-       outillage:"Coupe-carreaux, pince à carreler, spatule crantée, malaxeur, niveau laser",
+       produits:"Colle et mortier, joint ciment",
+       outillage:"Disqueuse, malaxeur électrique",
+       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- La protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Ces produits irritent la peau et les yeux. Gants et lunettes.\n- Projection dans l'œil : rincer à l'eau pendant 15 minutes et prévenir.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
        etapes:["Préparation et nettoyage du support","Pose de la colle et des carreaux","Réalisation des joints","Nettoyage et finition"],
        epi:["gants","lunettes","masque"], risques:["poussiere"]},
       {id:"peinture", nom:"Peinture",
        nature:"Préparation des supports (rebouchage, ponçage léger) et mise en peinture des logements.",
-       produits:"Peinture, enduit de rebouchage, adhésif de protection, bâches",
-       outillage:"Rouleaux, pinceaux, bac à peinture, ponceuse",
+       produits:"Peinture, sous-couche, enduit de rebouchage, solvants",
+       outillage:"Ponceuse",
+       risquesTexte:"## Produits\n- Aérer la pièce pendant tout le travail. Gants. Masque si solvant.\n- Pas de flamme ni d'étincelle près des solvants.\n- Chiffons gras dans un bac fermé.\n## Poussières de ponçage\n- Aspirateur branché sur la ponceuse. Masque FFP2 minimum.\n## Travail en hauteur\n- Escabeau interdit. Utiliser une gazelle.\n## Glissade\n- Bâches bien fixées. Essuyer tout de suite une flaque de peinture.",
        etapes:["Protection des sols et du mobilier","Rebouchage et ponçage léger des supports","Application de la sous-couche","Application de la peinture de finition","Nettoyage du matériel"],
        epi:["gants","masque"], risques:[]},
       {id:"serrurerie", nom:"Serrurerie",
        nature:"Dépose et pose de portes, serrures, garde-corps et éléments métalliques.",
-       produits:"Serrures, gonds, profilés métalliques, visserie",
-       outillage:"Disqueuse, perceuse, poste de soudure ponctuel, niveau",
+       produits:"",
+       outillage:"Disqueuse, perceuse, poste de soudure",
+       risquesTexte:"## Soudure et étincelles\n- Éloigner ce qui peut brûler ou le protéger. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux de gaz.\n- Surveiller la zone pendant 1 heure après.\n## Disqueuse\n- La protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
        etapes:["Dépose des éléments existants","Ajustement et pose des nouveaux éléments","Réglages"],
        epi:["gants","lunettes","casque","auditives"], risques:["poussiere","coactivite"]},
       {id:"nettoyage", nom:"Nettoyage",
        nature:"Nettoyage de fin de chantier des logements et des parties communes.",
-       produits:"Produits d'entretien, sacs déchets",
-       outillage:"Aspirateur de chantier, matériel de nettoyage",
+       produits:"Produits d'entretien et produits toxiques (vitres, décapants)",
+       outillage:"",
+       risquesTexte:"## Produits d'entretien\n- Lire l'étiquette. Ne jamais mélanger deux produits.\n- Gants. Aérer la pièce pendant tout le travail.\n## Fenêtres\n- Escabeau interdit. Ne pas se pencher à l'extérieur. Utiliser une gazelle.\n## Sol mouillé\n- Mettre un panneau « sol glissant ». Essuyer ensuite.",
        etapes:["Évacuation des gravats résiduels","Nettoyage des surfaces","Nettoyage des parties communes"],
        epi:["gants"], risques:["chimique"]}
     ],
@@ -804,9 +814,9 @@ function defaultConfig(){
         "Aucun élément ne doit bloquer le passage pour accéder à la résidence.\n"+
         "Le code d'accès est : [variable]. (Porte d'entrée du chantier)\n"+
         "Stockage limité des matériaux sur site (interdit après la clôture du chantier).\n"+
-        "Port obligatoire des EPI selon travaux.\n"+
+        "Chaussures de sécurité : toujours. Les autres EPI : selon les travaux (voir la liste ci-dessus).\n"+
         "Pour la coordination avec les autres corps d'état, voir les chefs d'équipe et le conducteur de travaux.\n"+
-        "Évacuation régulière des gravats et déchets demandée.\n"+
+        "Gravats et déchets évacués toutes les semaines.\n"+
         "Les ouvriers doivent être habilités et formés à l'utilisation des échafaudages et au travail en hauteur, aptes à utiliser les équipements de travail en toute sécurité et disposer des autorisations nécessaires.",
       precautions:
         "Maintien d'un poste de travail propre et dégagé (limiter le risque de chute).\n"+
@@ -861,9 +871,14 @@ function defaultStartDate(){
   const p = n=>String(n).padStart(2,"0");
   return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
 }
+const DEFAULT_SITE_INTERVENTION =
+  "Opération coup de poing : rénovation d'appartements dans une résidence seniors occupée.\n"+
+  "Les travaux se font logement par logement. Les habitants sont présents dans l'immeuble.\n"+
+  "Chaque entreprise travaille dans le logement qui lui est donné et laisse les passages libres.";
 function makeDossier(){
   return {
-    docs:{ fiche:true, quartHeure:true, affichages:true, materiel:false },
+    docs:{ fiche:true, quartHeure:true, affichages:true, urgence:true, materiel:false },
+    siteIntervention: DEFAULT_SITE_INTERVENTION,
     affaire:"", nomChantier:"", adresse:"", cdtNom:"", codeAcces:"", dateDebut:defaultStartDate(), dateFin:"", nbZones:1,
     sousTraitants:[ makeSousTraitant() ],
     quartHeure:{ presentateur:"", supportPar:"", themesText:"", groupe:"", sig:"" },
@@ -971,15 +986,18 @@ function computePreview(st){
 
   const risqueObjs = st.risques.map(rid=>CONFIG.risques.find(r=>r.id===rid)).filter(Boolean);
   const consignesRisques = risqueObjs.map(r=>r.consignes).filter(Boolean);
+  const metiersR = metiers.filter(m=>m.risquesTexte && m.risquesTexte.trim());
+  const risquesMetierText = metiersR.map(m=>splitLinesArr(m.risquesTexte).map(l=> (metiersR.length>1 && l.startsWith("## ")) ? "## "+m.nom+" : "+l.slice(3) : l).join("\n")).join("\n");
   const precautionsText = [CONFIG.textes.precautions, ...consignesRisques].filter(Boolean).join("\n");
 
   return {
     nature: nature || "—",
-    produits: produits || "—",
-    outillage: outillage || "—",
+    produits: produits || "Aucun produit dangereux.",
+    outillage: outillage || "Aucun outil dangereux.",
     etapesText: etapesText || "—",
     epiText: epiNames.join(", ") || "Chaussures de sécurité",
     precautionsText: precautionsText || "—",
+    risquesMetierText: risquesMetierText,
     risquesNames: risqueObjs.map(r=>r.nom)
   };
 }
@@ -1079,7 +1097,7 @@ function isoWeek(dt){
   const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1));
   return Math.ceil(((d-y0)/86400000+1)/7);
 }
-function adresseVisible(){ return !!(dossier.docs.fiche || dossier.docs.affichages); }
+function adresseVisible(){ return !!(dossier.docs.fiche || dossier.docs.affichages || dossier.docs.urgence); }
 function qhAdresse(){ return adresseVisible() ? (dossier.adresse||"").trim() : ""; }
 function qhAutoGroup(){ return (isoWeek(qhDate())-1)%5; }
 function qhGroupIndex(){
@@ -1428,13 +1446,16 @@ function renderFicheIntervention(D, st, index){
   D.y += 3;
 
   D.banner("1. DESCRIPTION DE L'INTERVENTION");
+  D.subheading("Site et intervention");
+  { const si = splitLinesArr(dossier.siteIntervention||"");
+    if(si.length){ si.forEach(l=>D.paragraph(l,{gapAfter:1.5})); D.y += 1.5; } else { dottedLines(D, 3); } }
   D.subheading("Nature des travaux");
   D.paragraph(st.preview.nature);
   D.paragraph("Amiante dans le logement : " + (st.risques.includes("amiante") ? ("OUI"+(st.amianteNote?(" — "+st.amianteNote):"")) : "Non signalé"));
   D.y += 1;
-  D.subheading("Produits et matériaux utilisés");
+  D.subheading("Produits dangereux");
   D.listBlock(st.preview.produits);
-  D.subheading("Outillage et matériel utilisé");
+  D.subheading("Outils et machines dangereux");
   D.listBlock(st.preview.outillage);
 
   D.banner("2. MODE OPÉRATOIRE / CONSIGNES TECHNIQUES");
@@ -1444,6 +1465,11 @@ function renderFicheIntervention(D, st, index){
   D.banner("3. SÉCURITÉ ET ÉQUIPEMENT");
   D.subheading("EPI obligatoires");
   D.paragraph(st.preview.epiText);
+  if((st.preview.risquesMetierText||"").trim()){
+    D.subheading("Risques liés à vos travaux");
+    drawThemes(D, splitLinesArr(st.preview.risquesMetierText), {size:10, lh:5});
+    D.y += 2;
+  }
   D.subheading("Précautions particulières");
   D.bullets(splitLinesArr(st.preview.precautionsText));
   D.subheading("Contraintes de site, organisation et accès");
@@ -1458,6 +1484,108 @@ function renderFicheIntervention(D, st, index){
   D.y += 8;
   D.keyValue("Signature", "");
   D.keyValue("Date", "");
+}
+
+/* Lignes pointillées à remplir à la main */
+function dotsFor(D, maxW){
+  const p=D.pdf; let str=""; while(p.getTextWidth(str+".") < maxW) str += "."; return str;
+}
+function dottedLines(D, n){
+  const p=D.pdf; p.setFont("helvetica","normal"); p.setFontSize(SZ.body);
+  const str = dotsFor(D, D.contentW-6);
+  for(let i=0;i<n;i++){ D.ensureSpace(7); p.text(str, D.margin+2, D.y); D.y += 6.4; }
+  D.y += 1;
+}
+function dotLine(D, label){
+  const p=D.pdf; D.ensureSpace(7);
+  p.setFont("helvetica","bold"); p.setFontSize(SZ.label);
+  p.text(label+" :", D.margin, D.y);
+  const lw = p.getTextWidth(label+" :  ");
+  p.setFont("helvetica","normal");
+  p.text(dotsFor(D, D.contentW-lw-3), D.margin+lw+1, D.y);
+  D.y += 6.4;
+}
+function drawUrgIcon(p, kind, cx, cy){
+  p.setFillColor(255,255,255); p.setDrawColor(255,255,255); p.setTextColor(255,255,255);
+  if(kind==="flame"){
+    p.circle(cx, cy+2.2, 4.2, "F");
+    p.triangle(cx-3.9, cy+0.6, cx+3.9, cy+0.6, cx+0.8, cy-8, "F");
+  } else if(kind==="cross"){
+    p.setLineWidth(0.9); p.circle(cx, cy, 7.5, "S");
+    p.rect(cx-1.5, cy-5, 3, 10, "F"); p.rect(cx-5, cy-1.5, 10, 3, "F");
+  } else {
+    p.setLineWidth(0.9); p.triangle(cx-8.5, cy+6.5, cx+8.5, cy+6.5, cx, cy-8, "S");
+    p.setFont("helvetica","bold"); p.setFontSize(13); p.text("!", cx, cy+5, {align:"center"});
+  }
+  p.setLineWidth(0.2);
+}
+function renderUrgence(D){
+  D.newPage();
+  D.header("FICHE D'URGENCE", "À afficher à la base vie. En cas d'accident : protéger, alerter, secourir.");
+  const p=D.pdf, m=D.margin, W=D.contentW, gap=4, cw=(W-2*gap)/3;
+  // numéros d'urgence
+  const ch=38;
+  [{n:"18",l:"POMPIERS",c:[200,30,30],ic:"flame"},{n:"15",l:"SAMU",c:[20,84,166],ic:"cross"},{n:"112",l:"URGENCE (portable)",c:[45,45,45],ic:"alert"}].forEach((c,i)=>{
+    const x=m+i*(cw+gap), y=D.y;
+    p.setFillColor(c.c[0],c.c[1],c.c[2]); p.roundedRect(x, y, cw, ch, 3, 3, "F");
+    drawUrgIcon(p, c.ic, x+cw/2, y+9.5);
+    p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(38); p.text(c.n, x+cw/2, y+28.5, {align:"center"});
+    p.setFontSize(10.5); p.text(c.l, x+cw/2, y+35, {align:"center"});
+  });
+  p.setTextColor(30,30,30); D.y += ch+5;
+  // adresse
+  const adr=(dossier.adresse||"").trim(), code=(dossier.codeAcces||"").trim();
+  const bh=24, y0=D.y;
+  p.setDrawColor(30,30,30); p.setLineWidth(0.6); p.roundedRect(m, y0, W, bh, 2, 2, "S"); p.setLineWidth(0.2);
+  p.setFont("helvetica","bold"); p.setFontSize(8.5); p.setTextColor(110,110,110);
+  p.text("ADRESSE DU CHANTIER (à donner aux secours)", m+4, y0+6);
+  p.setTextColor(0,0,0);
+  if(adr){
+    p.setFontSize(13.5); const l=p.splitTextToSize(adr, W-8); p.text(l.slice(0,2), m+4, y0+13);
+  } else { p.setFont("helvetica","normal"); p.setFontSize(11); p.text(dotsFor(D, W-8), m+4, y0+14); }
+  p.setFont("helvetica","normal"); p.setFontSize(9.5);
+  const sub=[chantierLabel(), code?("Code d'accès : "+code):""].filter(Boolean).join("   —   ");
+  if(sub) p.text(sub, m+4, y0+bh-3);
+  p.setTextColor(30,30,30); D.y += bh+5;
+  // 3 gestes
+  const gh=27;
+  [["1","PROTÉGER","Écarter le danger (courant, gaz, feu) sans se mettre en danger."],
+   ["2","ALERTER","Appeler le 18, le 15 ou le 112. Prévenir ensuite le conducteur de travaux."],
+   ["3","SECOURIR","Rester près du blessé. Ne pas le déplacer, sauf danger immédiat."]].forEach((g,i)=>{
+    const x=m+i*(cw+gap), y=D.y;
+    p.setDrawColor(200,200,200); p.roundedRect(x, y, cw, gh, 2, 2, "S");
+    p.setFillColor(234,79,0); p.circle(x+6, y+6.5, 3.6, "F");
+    p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(10); p.text(g[0], x+6, y+8.2, {align:"center"});
+    p.setTextColor(196,67,0); p.setFontSize(11.5); p.text(g[1], x+12, y+8);
+    p.setTextColor(30,30,30); p.setFont("helvetica","normal"); p.setFontSize(9.5);
+    p.text(p.splitTextToSize(g[2], cw-6), x+3, y+14.5);
+  });
+  D.y += gh+5;
+  // message d'appel
+  D.subheading("Quand j'appelle, je dis :");
+  D.bullets(["Mon nom et mon numéro de téléphone.","L'adresse du chantier (ci-dessus).","Ce qui s'est passé : blessé, feu, gaz, malaise.","Combien de personnes sont touchées."], {size:10.5, lh:5.2, gapAfter:0});
+  D.paragraph("Je ne raccroche pas en premier.", {bold:true, gapAfter:2});
+  // à prévenir
+  D.subheading("À prévenir ensuite");
+  D.keyValue("Conducteur de travaux", (dossier.cdtNom||"").trim() ? (dossier.cdtNom.trim()+"      Tél. : ......................................") : "..........................................      Tél. : ......................................");
+  const sts = dossier.sousTraitants.filter(st=>(st.entreprise||"").trim() || (st.contactNom||"").trim() || (st.contactTel||"").trim());
+  const rows = Math.max(3, sts.length), rh=7, cwid=[64, 54, W-118];
+  D.ensureSpace(8+rows*rh+3);
+  let y=D.y;
+  p.setFillColor(234,79,0); p.rect(m, y, W, 7.5, "F");
+  p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(9.5);
+  let x=m; ["Entreprise sur le chantier","Contact","Téléphone"].forEach((t,i)=>{ p.text(t, x+2, y+5.2); x+=cwid[i]; });
+  y += 7.5; p.setTextColor(30,30,30); p.setFont("helvetica","normal"); p.setFontSize(10); p.setDrawColor(200,200,200);
+  for(let r=0;r<rows;r++){
+    if(r%2===1){ p.setFillColor(250,244,238); p.rect(m, y, W, rh, "F"); }
+    x=m; const st=sts[r]||{}; const vals=[st.entreprise||"", st.contactNom||"", st.contactTel||""];
+    for(let c=0;c<3;c++){ p.rect(x, y, cwid[c], rh, "S"); if(vals[c]) p.text(String(vals[c]), x+2, y+4.9, {maxWidth:cwid[c]-4}); x+=cwid[c]; }
+    y += rh;
+  }
+  D.y = y + 5;
+  // sur le chantier
+  D.subheading("Sur le chantier (à compléter à la main)");
+  ["Trousse de secours","Extincteur","Coupure eau, électricité et gaz","Point de rassemblement","Secouriste du chantier (SST)"].forEach(l=>dotLine(D,l));
 }
 
 function renderQuartHeure(D){
@@ -1558,7 +1686,7 @@ function autoOpenPdf(url, filename){
 function generatePdf(){
   try{
     if(!window.jspdf){ genMessage = {type:"error", text:"La bibliothèque PDF ne s'est pas chargée (vérifiez la connexion), réessayez."}; render(); return; }
-    if(!dossier.docs.fiche && !dossier.docs.quartHeure && !dossier.docs.affichages){
+    if(!dossier.docs.fiche && !dossier.docs.quartHeure && !dossier.docs.affichages && !dossier.docs.urgence){
       genMessage = {type:"error", text:"Aucun document sélectionné — retournez à l'étape « Documents » pour en cocher au moins un."};
       render(); return;
     }
@@ -1570,6 +1698,7 @@ function generatePdf(){
     const D = new Doc(pdf);
     if(dossier.docs.fiche) dossier.sousTraitants.forEach((st,i)=> renderFicheIntervention(D, st, i));
     if(dossier.docs.quartHeure) renderQuartHeure(D);
+    if(dossier.docs.urgence) renderUrgence(D);
     if(dossier.docs.affichages) renderSignagePages(pdf, D.pageNum===0);
 
     const safeAffaire = ([dossier.affaire, dossier.nomChantier].filter(x=>x&&x.trim()).join("_")||"chantier").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9\-]+/gi,"_").replace(/^_+|_+$/g,"");
@@ -1636,7 +1765,7 @@ function toggleSettings(){ settingsOpen = !settingsOpen; render(); }
 function setSettingsTab(tab){ settingsTab = tab; render(); }
 
 /* --- Réglages : Corps de métier --- */
-function addMetierRow(){ CONFIG.corpsDeMetier.push({id:uid("cm"), nom:"Nouveau métier", nature:"", produits:"", outillage:"", etapes:[], epi:[], risques:[]}); render(); }
+function addMetierRow(){ CONFIG.corpsDeMetier.push({id:uid("cm"), nom:"Nouveau métier", nature:"", produits:"", outillage:"", risquesTexte:"", etapes:[], epi:[], risques:[]}); render(); }
 function updateMetierField(id, field, value){
   const m = CONFIG.corpsDeMetier.find(x=>x.id===id); if(!m) return;
   if(field==="etapes") m.etapes = splitLinesArr(value);
@@ -1722,6 +1851,7 @@ function renderStepper(){
 }
 
 const TILE_ICONS = {
+  urgence:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v9M7.5 12h9"/></svg>',
   fiche:'<svg viewBox="0 0 24 24"><path d="M9 4h6v3H9z"/><path d="M8 5.5H6.5A1.5 1.5 0 0 0 5 7v12.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7a1.5 1.5 0 0 0-1.5-1.5H16"/><path d="M8.5 12h7M8.5 16h5"/></svg>',
   quartHeure:'<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.2-2.9 7.6-7 9.5-4.1-1.9-7-5.3-7-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>',
   affichages:'<svg viewBox="0 0 24 24"><path d="M12 3v18M7 21h10"/><rect x="5" y="4" width="14" height="9" rx="1.5"/><path d="M8.5 8.5h7"/></svg>',
@@ -1737,9 +1867,10 @@ function renderStepSelect(){
   h += tile("fiche","Fiche de 1ère intervention","Une fiche par sous-traitant (travaux, EPI, mode opératoire).",dossier.docs.fiche,"toggleDocOther('fiche', this.checked)");
   h += tile("quartHeure","1/4h sécurité","Thèmes et feuille d'émargement, communs au chantier.",dossier.docs.quartHeure,"toggleDocOther('quartHeure', this.checked)");
   h += tile("affichages","Affichages de chantier","Base vie, zone de stockage, et par zone : interdit au public + EPI.",dossier.docs.affichages,"toggleDocOther('affichages', this.checked)");
-  h += tile("materiel","Liste de matériel (OPC)","Commande par fournisseur pour une opération coup de poing. Incompatible avec les 3 documents ci-dessus.",dossier.docs.materiel,"toggleDocMateriel(this.checked)");
+  h += tile("urgence","Fiche d'urgence","Numéros d'urgence en gros, adresse du chantier, contacts. À afficher à la base vie.",dossier.docs.urgence,"toggleDocOther('urgence', this.checked)");
+  h += tile("materiel","Liste de matériel (OPC)","Commande par fournisseur pour une opération coup de poing. Incompatible avec les autres documents.",dossier.docs.materiel,"toggleDocMateriel(this.checked)");
   h += '</div>';
-  const noneChecked = !dossier.docs.fiche && !dossier.docs.quartHeure && !dossier.docs.affichages && !dossier.docs.materiel;
+  const noneChecked = !dossier.docs.fiche && !dossier.docs.quartHeure && !dossier.docs.affichages && !dossier.docs.urgence && !dossier.docs.materiel;
   if(noneChecked) h += '<div class="error-msg" style="margin-top:12px;">Cochez au moins un document à générer.</div>';
   h += '<div class="row-actions"><span></span><button class="btn" '+(noneChecked?"disabled":"")+' onclick="goNext()">Continuer →</button></div>';
   h += '</div></div>';
@@ -1752,7 +1883,7 @@ function toggleDocOther(key, checked){
 }
 function toggleDocMateriel(checked){
   dossier.docs.materiel = checked;
-  if(checked){ dossier.docs.fiche=false; dossier.docs.quartHeure=false; dossier.docs.affichages=false; }
+  if(checked){ dossier.docs.fiche=false; dossier.docs.quartHeure=false; dossier.docs.affichages=false; dossier.docs.urgence=false; }
   render();
 }
 
@@ -2223,6 +2354,7 @@ function renderStep1(){
     h += field("Date de début", dossier.dateDebut, "dateDebut", "", "date");
     h += field("Date de fin (estimée)", dossier.dateFin, "dateFin", "", "date");
     h += '</div>';
+    h += '<div class="field"><label>Site et intervention (à adapter à ce chantier)</label><textarea rows="5" placeholder="Décrivez le site et ce qui va se passer : type d\'immeuble, habitants, nombre de logements, déroulement…" oninput="dossier.siteIntervention=this.value">'+esc(dossier.siteIntervention||"")+'</textarea><p class="small-note">Texte proposé pour les opérations coup de poing : modifiez-le ou effacez-le. Vide, le PDF imprime des lignes pointillées à remplir à la main.</p></div>';
   } else if(dossier.docs.quartHeure){
     h += '<div class="grid2">'+field("Date du 1/4h sécurité", dossier.dateDebut, "dateDebut", "", "date")+'</div>';
   }
@@ -2320,6 +2452,7 @@ function renderStep3(){
       h += previewField(st.id,"Outillage et matériel","outillage",st.preview.outillage);
       h += previewField(st.id,"Étapes d'intervention","etapesText",st.preview.etapesText);
       h += previewField(st.id,"EPI obligatoires","epiText",st.preview.epiText);
+      h += '<div class="field"><label>Risques liés aux travaux (## = titre, - = consigne)</label><textarea rows="8" oninput="updatePreviewField(\''+st.id+'\',\'risquesMetierText\',this.value)">'+esc(st.preview.risquesMetierText||"")+'</textarea></div>';
       h += previewField(st.id,"Précautions particulières","precautionsText",st.preview.precautionsText);
       h += '</div>';
     });
@@ -2347,6 +2480,7 @@ function renderStep4(){
   const parts = [];
   if(dossier.docs.fiche) parts.push(dossier.sousTraitants.length+" fiche(s) de 1ère intervention");
   if(dossier.docs.quartHeure) parts.push("le 1/4h sécurité (avec émargement)");
+  if(dossier.docs.urgence) parts.push("la fiche d'urgence");
   if(dossier.docs.affichages){
     const nz = Math.max(0, parseInt(dossier.nbZones)||0);
     parts.push("les affichages (base vie, stockage"+(nz>0?", + "+nz+" zone(s) interdit/EPI":"")+")");
@@ -2371,13 +2505,14 @@ function renderSettings(){
   h += '<div class="settings-tabs">'+tabs.map(t=>'<button class="tab-btn '+(settingsTab===t[0]?"active":"")+'" onclick="setSettingsTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
 
   if(settingsTab==="metiers"){
-    h += '<table class="cfg"><tr><th>Nom</th><th>Nature</th><th>Produits</th><th>Outillage</th><th>Étapes (1/ligne)</th><th>EPI (noms, virgules)</th><th>Risques (noms, virgules)</th><th></th></tr>';
+    h += '<table class="cfg"><tr><th>Nom</th><th>Nature</th><th>Produits</th><th>Outillage</th><th>Risques et consignes (## titre, - consigne)</th><th>Étapes (1/ligne)</th><th>EPI (noms, virgules)</th><th>Risques (noms, virgules)</th><th></th></tr>';
     CONFIG.corpsDeMetier.forEach(m=>{
       h += '<tr>'+
         td('<input type="text" value="'+esc(m.nom)+'" oninput="updateMetierField(\''+m.id+'\',\'nom\',this.value)">')+
         td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'nature\',this.value)">'+esc(m.nature)+'</textarea>')+
         td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'produits\',this.value)">'+esc(m.produits)+'</textarea>')+
         td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'outillage\',this.value)">'+esc(m.outillage)+'</textarea>')+
+        td('<textarea rows="4" oninput="updateMetierField(\''+m.id+'\',\'risquesTexte\',this.value)">'+esc(m.risquesTexte||"")+'</textarea>')+
         td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'etapes\',this.value)">'+esc((m.etapes||[]).join("\n"))+'</textarea>')+
         td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'epi\',this.value)">'+esc(idsToNames(m.epi,CONFIG.epi))+'</textarea>')+
         td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'risques\',this.value)">'+esc(idsToNames(m.risques,CONFIG.risques))+'</textarea>')+
