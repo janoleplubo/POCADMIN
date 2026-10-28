@@ -772,7 +772,7 @@ function defaultConfig(){
        nature:"Dépose et pose des appareils sanitaires, raccordements eau et évacuation, mise en place des réseaux.",
        produits:"Colle et décapant PVC, produit de brasage",
        outillage:"Chalumeau (brasage), sertisseuse, disqueuse",
-       risquesTexte:"## Colles et solvants\n- Aérer la pièce pendant tout le travail. Gants et lunettes.\n- Refermer le pot après chaque usage. Pas de flamme à côté.\n## Chalumeau (brasage)\n- Protéger le mur avec une plaque. Éloigner ce qui peut brûler.\n- Extincteur à portée de main. Surveiller la zone pendant 1 heure après.\n- Gaz en service : chalumeau interdit près des tuyaux de gaz.\n## Eau\n- Couper l'eau et prévenir les autres entreprises avant de démonter.\n- Sol mouillé : essuyer tout de suite.",
+       risquesTexte:"## Colles et solvants\n- Aérer la pièce pendant tout le travail. Gants et lunettes.\n- Refermer le pot après chaque usage. Pas de flamme à côté.\n## Chalumeau (brasage)\n- Protéger le mur avec une plaque. Éloigner ce qui peut brûler.\n- Extincteur à portée de main. Surveiller la zone pendant 1 heure après la fin, puis la revérifier 3 heures plus tard.\n- Gaz en service : chalumeau interdit près des tuyaux de gaz.\n## Eau\n- Couper l'eau et prévenir les autres entreprises avant de démonter.\n- Sol mouillé : essuyer tout de suite.",
        etapes:["Coupure des arrivées d'eau","Dépose des anciens appareils","Pose des réseaux","Pose des appareils","Essais d'étanchéité"],
        epi:["gants","lunettes"], risques:["chimique","coactivite"]},
       {id:"electricite", nom:"Électricité",
@@ -793,7 +793,7 @@ function defaultConfig(){
        nature:"Pose de carrelage au sol et de faïence murale (salles de bain, sanitaires).",
        produits:"Colle et mortier, joint ciment",
        outillage:"Disqueuse, malaxeur électrique",
-       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Ces produits irritent la peau et les yeux. Gants et lunettes.\n- Projection dans l'œil : rincer à l'eau pendant 15 minutes et prévenir.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
+       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Ces produits irritent la peau et les yeux. Gants et lunettes.\n- Projection dans l'œil : rincer à l'eau au moins 15 minutes, puis voir un médecin.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
        etapes:["Préparation et nettoyage du support","Pose de la colle et des carreaux","Réalisation des joints","Nettoyage et finition"],
        epi:["gants","lunettes","masque"], risques:["poussiere"]},
       {id:"peinture", nom:"Peinture",
@@ -807,7 +807,7 @@ function defaultConfig(){
        nature:"Dépose et pose de portes, serrures, garde-corps et éléments métalliques.",
        produits:"",
        outillage:"Disqueuse, perceuse, poste de soudure",
-       risquesTexte:"## Soudure et étincelles\n- Éloigner ce qui peut brûler ou le protéger. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux de gaz.\n- Surveiller la zone pendant 1 heure après.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
+       risquesTexte:"## Soudure et étincelles\n- Éloigner ce qui peut brûler ou le protéger. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux de gaz.\n- Surveiller la zone pendant 1 heure après la fin, puis la revérifier 3 heures plus tard.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
        etapes:["Dépose des éléments existants","Ajustement et pose des nouveaux éléments","Réglages"],
        epi:["gants","lunettes","casque","auditives"], risques:["poussiere","coactivite"]},
       {id:"nettoyage", nom:"Nettoyage",
@@ -1466,6 +1466,18 @@ function drawThemes(D, items, opt){
   });
 }
 
+const FICHE_TH = {size:10, lh:5};
+/* texte "Métier :\nligne" -> "## Métier" + "- ligne" (un seul métier : tirets seuls) */
+function toThemes(text, splitComma){
+  const out = [];
+  splitLinesArr(text||"").forEach(l=>{
+    const t = l.trim(); if(!t || t==="—") return;
+    if(/ :$/.test(t) && !/^[-•\d]/.test(t)) out.push("## "+t.slice(0,-2));
+    else { const x = t.replace(/^[-•]\s*/,"").replace(/^\d+\.\s*/,""); (splitComma ? x.split(/\s*,\s*/) : [x]).forEach(y=>{ if(y) out.push("- "+y); }); }
+  });
+  if(out.filter(x=>x.startsWith("## ")).length===1 && out[0].startsWith("## ")) out.shift();
+  return out;
+}
 function chantierLabel(){
   const n = (dossier.nomChantier||"").trim(), a = (dossier.affaire||"").trim();
   return (n && a) ? n+" — n° "+a : (n || a || "");
@@ -1488,53 +1500,44 @@ function renderFicheIntervention(D, st, index){
   D.banner("1. LE CHANTIER ET L'INTERVENTION");
   D.subheading("Site et intervention");
   { const si = splitLinesArr(dossier.siteIntervention||"");
-    if(si.length){ si.forEach(l=>D.paragraph(l,{gapAfter:1.5})); D.y += 1.5; } else { dottedLines(D, 3); } }
+    if(si.length) drawThemes(D, si.map(l=>"- "+l.replace(/^-\s*/,"")), FICHE_TH); else dottedLines(D, 3);
+    D.y += 2; }
   D.subheading("Nature des travaux");
-  splitLinesArr(st.preview.nature).forEach(l=>D.paragraph(l,{gapAfter:1.5}));
-  D.y += 1;
+  drawThemes(D, toThemes(st.preview.nature), FICHE_TH); D.y += 2;
   D.subheading("Étapes d'intervention");
-  D.stepsBlock(st.preview.etapesText);
+  drawThemes(D, toThemes(st.preview.etapesText), FICHE_TH); D.y += 2;
 
   // 2. LES DANGERS
   D.banner("2. LES DANGERS");
   D.subheading("Risques du chantier");
-  D.paragraph("Amiante dans le logement : " + (st.risques.includes("amiante") ? ("OUI"+(st.amianteNote?(" — "+st.amianteNote):"")) : "Non signalé"), {gapAfter:1.5});
-  if((st.preview.risquesChantierText||"").trim()){ drawThemes(D, splitLinesArr(st.preview.risquesChantierText), {size:10, lh:5}); D.y += 2; }
+  drawThemes(D, ["- Amiante dans le logement : " + (st.risques.includes("amiante") ? ("OUI"+(st.amianteNote?(" — "+st.amianteNote):"")) : "Non signalé")], FICHE_TH);
+  if((st.preview.risquesChantierText||"").trim()) drawThemes(D, splitLinesArr(st.preview.risquesChantierText), FICHE_TH);
+  D.y += 2;
   if((st.preview.risquesMetierText||"").trim()){
-    // regroupement par métier : « ## Métier : Thème » -> titre métier + thèmes
-    const noms = CONFIG.corpsDeMetier.map(m=>m.nom);
-    const groupes = []; let cur = null;
-    splitLinesArr(st.preview.risquesMetierText).forEach(l=>{
-      let line = l;
-      if(l.startsWith("## ")){
-        const nm = noms.find(n=>l.slice(3).startsWith(n+" : "));
-        if(nm){ line = "## "+l.slice(3+nm.length+3); if(!cur || cur.nom!==nm){ cur = {nom:nm, lines:[]}; groupes.push(cur); } }
-        else if(!cur){ cur = {nom:"Risques liés à vos travaux", lines:[]}; groupes.push(cur); }
-      } else if(!cur){ cur = {nom:"Risques liés à vos travaux", lines:[]}; groupes.push(cur); }
-      cur.lines.push(line);
-    });
-    groupes.forEach(g=>{ D.subheading("Risques — "+g.nom); drawThemes(D, g.lines, {size:10, lh:5}); D.y += 2; });
+    D.subheading("Risques liés à vos travaux");
+    drawThemes(D, splitLinesArr(st.preview.risquesMetierText), FICHE_TH);
+    D.y += 2;
   }
   D.subheading("Produits dangereux");
-  D.listBlock(st.preview.produits);
+  drawThemes(D, toThemes(st.preview.produits,true), FICHE_TH); D.y += 2;
   D.subheading("Outils et machines dangereux");
-  D.listBlock(st.preview.outillage);
+  drawThemes(D, toThemes(st.preview.outillage,true), FICHE_TH); D.y += 2;
 
   // 3. SE PROTÉGER
   D.banner("3. SE PROTÉGER");
   D.subheading("EPI obligatoires");
-  D.bullets(splitLinesArr(st.preview.epiText));
+  drawThemes(D, toThemes(st.preview.epiText), FICHE_TH); D.y += 2;
   D.subheading("Précautions générales");
-  D.bullets(splitLinesArr(st.preview.precautionsText));
+  drawThemes(D, toThemes(st.preview.precautionsText), FICHE_TH); D.y += 2;
 
   // 4. RÈGLES DU CHANTIER
   D.banner("4. RÈGLES DU CHANTIER");
   { const regles = splitLinesArr(CONFIG.textes.contraintesSite.replace("[variable]", dossier.codeAcces||"—"));
     const estStock = l=>/stockage|gravats|déchets/i.test(l);
     D.subheading("Accès et organisation");
-    D.bullets(regles.filter(l=>!estStock(l)));
+    drawThemes(D, regles.filter(l=>!estStock(l)).map(l=>"- "+l), FICHE_TH); D.y += 2;
     const stock = regles.filter(estStock);
-    if(stock.length){ D.subheading("Stockage et gravats"); D.bullets(stock); } }
+    if(stock.length){ D.subheading("Stockage et gravats"); drawThemes(D, stock.map(l=>"- "+l), FICHE_TH); D.y += 2; } }
 
   D.ensureSpace(66); // bloc validation + signature toujours d'un seul tenant
   D.banner("5. VALIDATION DES CONSIGNES — COMPAGNONS");
