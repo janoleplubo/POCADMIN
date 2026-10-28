@@ -1631,7 +1631,7 @@ function renderUrgence(D){
     const x=m+i*(cw+gap), y=D.y;
     p.setDrawColor(200,200,200); p.roundedRect(x, y, cw, gh, 2, 2, "S");
     p.setFillColor(234,79,0); p.circle(x+6, y+6.5, 3.6, "F");
-    p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(10); p.text(g[0], x+6, y+8.2, {align:"center"});
+    p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(10); p.text(g[0], x+6, y+7.8, {align:"center"});
     p.setTextColor(196,67,0); p.setFontSize(11.5); p.text(g[1], x+12, y+8);
     p.setTextColor(30,30,30); p.setFont("helvetica","normal"); p.setFontSize(9.5);
     p.text(p.splitTextToSize(g[2], cw-6), x+3, y+14.5);
@@ -1639,7 +1639,13 @@ function renderUrgence(D){
   D.y += gh+5;
   // message d'appel
   D.subheading("Quand j'appelle, je dis :");
-  D.bullets(["Mon nom et mon numéro de téléphone.","L'adresse du chantier (ci-dessus).","Ce qui s'est passé : blessé, feu, gaz, malaise.","Combien de personnes sont touchées."], {size:10.5, lh:5.2, gapAfter:0});
+  D.bullets([
+    "L'adresse : "+(adr||"............................................")+".",
+    "Le code d'accès : "+(code||"............")+".",
+    "Ce qui s'est passé : chute, coupure, feu, gaz, malaise.",
+    "Combien de blessés (les secours disent « victimes »).",
+    "L'état de chaque blessé : conscient ou non, respire ou non, saigne ou non."
+  ], {size:10.5, lh:5.2, gapAfter:0});
   D.paragraph("Je ne raccroche pas en premier.", {bold:true, gapAfter:2});
   // à prévenir
   D.subheading("À prévenir ensuite");
