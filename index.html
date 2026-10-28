@@ -699,141 +699,141 @@ function defaultConfig(){
     risques: [
       {id:"chaleur", nom:"Fortes chaleurs", declencheSi:"Travaux en période de forte chaleur (juin à août)",
        epi:[], equipements:"—",
-       consignes:"Boire de l'eau régulièrement, même sans soif. Malaise, crampes ou nausées : s'arrêter, aller à l'ombre, prévenir.",
+       consignes:"Boire de l'eau souvent, même sans soif. Malaise, crampes, nausées : s'arrêter, aller à l'ombre, prévenir.",
        themeQuartHeure:null},
       {id:"elecNonConsigne", nom:"Électricité non consignée", declencheSi:"Travaux dans un logement ou un bâtiment où l'électricité n'est pas coupée",
        epi:["gants"], equipements:"—",
-       consignes:"Courant non coupé : ne pas percer, casser ou couper un mur sans savoir où passent les fils.\nNe jamais toucher un fil que l'on ne connaît pas.\nSeul un électricien habilité travaille sur l'électricité. Outils isolés.",
+       consignes:"Courant non coupé : ne pas percer ni casser un mur sans savoir où passent les fils.\nNe jamais toucher un fil inconnu.\nÉlectricien habilité uniquement. Outils isolés.",
        themeQuartHeure:null},
       {id:"gazAlimente", nom:"Réseau gaz alimenté", declencheSi:"Réseau de gaz en service dans le bâtiment",
        epi:[], equipements:"—",
-       consignes:"Gaz en service : pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.\nNe pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.\nOdeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, puis appeler le 18 ou l'urgence gaz GRDF : 0 800 47 33 33.",
+       consignes:"Gaz en service : pas de flamme, de soudure, d'étincelle ni de disqueuse près des tuyaux.\nNe pas percer ni casser un mur sans savoir où passent les tuyaux.\nOdeur de gaz : aucun interrupteur. Ouvrir les fenêtres. Sortir. Appeler le 18, puis GRDF : 0 800 47 33 33.",
        themeQuartHeure:null},
       {id:"siteOccupe", nom:"Site occupé", declencheSi:"Des habitants sont présents dans le bâtiment pendant les travaux",
        epi:[], equipements:"—",
-       consignes:"Des habitants sont présents : laisser les passages libres, fermer les portes derrière soi.\nNe jamais laisser sans surveillance un outil, un produit ou un câble.\nRespecter les horaires de bruit. Prévenir le conducteur de travaux en cas de problème avec un habitant.",
+       consignes:"Habitants présents. Passages libres. Portes fermées derrière vous.\nNe jamais laisser un outil, un produit ou un câble sans surveillance.\nRespecter les horaires de bruit. Problème avec un habitant : prévenir le conducteur de travaux.",
        themeQuartHeure:null},
       {id:"hauteur", nom:"Travail en hauteur", declencheSi:"Échafaudage roulant, escabeau au-delà d'une hauteur donnée, intervention en toiture",
        epi:["casque"], equipements:"Gazelle, échafaudage roulant (ER)",
-       consignes:"Gazelles autorisées, escabeaux interdits, échafaudage roulant (ER) monté par du personnel formé uniquement.",
+       consignes:"Escabeau interdit. Gazelle autorisée. Échafaudage roulant monté par du personnel formé uniquement.",
        themeQuartHeure:"Travail en hauteur : gazelles autorisées, escabeaux interdits, échafaudage roulant (ER) monté par du personnel formé."},
       {id:"amiante", nom:"Amiante", declencheSi:"Présence d'amiante signalée dans le logement",
        epi:["masque"], equipements:"—",
-       consignes:"Rappel : vérifier le DTA et le statut de l'entreprise avant toute intervention sur matériaux amiantés.",
+       consignes:"Avant d'intervenir : vérifier le DTA (dossier amiante) et la certification de l'entreprise.",
        themeQuartHeure:"Amiante : vérifier le DTA du logement et la certification de l'entreprise avant intervention."},
       {id:"plomb", nom:"Plomb", declencheSi:"Bâtiment ancien, présence de plomb signalée",
        epi:["masque","gants"], equipements:"—",
-       consignes:"Rappel réglementaire, entreprise qualifiée si retrait.",
+       consignes:"Retrait du plomb : entreprise qualifiée uniquement.",
        themeQuartHeure:"Plomb : vérifier la présence de plomb avant ponçage/décapage ; retrait par une entreprise qualifiée uniquement."},
       {id:"electrique", nom:"Électrique", declencheSi:"Intervention sur réseau électrique (dépose/pose/mise aux normes)",
        epi:["gants"], equipements:"—",
-       consignes:"Habilitation électrique requise, consignation avant intervention.",
+       consignes:"Habilitation électrique obligatoire. Couper et cadenasser avant d'intervenir.",
        themeQuartHeure:"Électrique : habilitation obligatoire et consignation avant toute intervention sur le réseau."},
       {id:"coactivite", nom:"Coactivité", declencheSi:"Plusieurs corps d'état présents simultanément sur le chantier",
        epi:["gilet"], equipements:"—",
-       consignes:"Coordination avec les autres équipes via le chef d'équipe / conducteur de travaux.",
+       consignes:"Prévenir le chef d'équipe ou le conducteur de travaux avant de travailler à côté d'une autre équipe.",
        themeQuartHeure:"Coactivité : coordonner toute intervention avec les autres équipes présentes sur le chantier."},
       {id:"chimique", nom:"Produits chimiques / CMR", declencheSi:"Usage de colles, résines, décapants, produits classés",
        epi:["masque","gants"], equipements:"—",
-       consignes:"Ventilation de la zone, fiches de données de sécurité disponibles.",
+       consignes:"Aérer la zone. Garder les fiches de sécurité des produits sur place.",
        themeQuartHeure:"Produits chimiques : stockage fermé à l'écart de la chaleur, zone ventilée pendant l'usage."},
       {id:"confine", nom:"Espace confiné", declencheSi:"Intervention en espace non ventilé ou de faible volume",
        epi:["masque"], equipements:"—",
-       consignes:"Ventilation obligatoire, ne jamais travailler seul.",
+       consignes:"Aération obligatoire. Ne jamais travailler seul.",
        themeQuartHeure:"Espace confiné : ventilation obligatoire, ne jamais travailler seul."},
       {id:"poussiere", nom:"Poussières / découpe", declencheSi:"Usage de disqueuse, meuleuse, carottage",
        epi:["masque","lunettes","auditives"], equipements:"Aspirateur de chantier",
-       consignes:"Arrosage/aspiration à la source si possible.",
+       consignes:"Arroser ou aspirer à la source.",
        themeQuartHeure:null}
     ],
     corpsDeMetier: [
       {id:"protection", nom:"Protection de début de chantier",
-       nature:"Mise en place de la signalisation et des protections avant travaux (sols, accès, parties communes).",
+       nature:"Poser la signalisation et les protections avant travaux : sols, accès, parties communes.",
        produits:"",
        outillage:"Cutter",
-       risquesTexte:"## Chute (bâches et sols)\n- Fixer les bâches avec de l'adhésif. Une bâche qui bouge fait tomber.\n- Ne laisser aucun câble ni rouleau dans le passage.\n## Cutter\n- Couper en éloignant le cutter de son corps. Le ranger après chaque usage.",
-       etapes:["Mise en place de la signalisation du chantier","Repérage des zones à protéger","Pose des protections (bâches, plaques)"],
+       risquesTexte:"## Chute (bâches et sols)\n- Fixer les bâches avec de l'adhésif. Une bâche qui bouge fait tomber.\n- Rien dans le passage : ni câble, ni rouleau.\n## Cutter\n- Couper en éloignant le cutter du corps. Le ranger après chaque usage.",
+       etapes:["Poser la signalisation","Repérer les zones à protéger","Poser les bâches et plaques"],
        epi:["gants"], risques:["coactivite"]},
       {id:"desamiantage", nom:"Déplombage / désamiantage",
-       nature:"Retrait ou encapsulage de matériaux contenant plomb ou amiante, selon procédure réglementaire spécifique.",
+       nature:"Retirer ou recouvrir les matériaux contenant du plomb ou de l'amiante, selon la procédure réglementaire.",
        produits:"Produits et matériel du mode opératoire de l'entreprise certifiée",
        outillage:"Aspirateur à filtre spécial et matériel de confinement (selon le mode opératoire de l'entreprise certifiée)",
-       risquesTexte:"## Poussières de plomb ou d'amiante\n- Seule une entreprise certifiée peut faire ce travail, avec son mode opératoire.\n- Zone fermée et balisée. Ne jamais balayer à sec.\n- Combinaison, masque et gants selon le mode opératoire.\n## Déchets\n- Sacs fermés, étiquetés, évacués par l'entreprise certifiée.",
-       etapes:["Selon protocole réglementaire de l'entreprise certifiée (DTA, mode opératoire propre)"],
+       risquesTexte:"## Poussières de plomb ou d'amiante\n- Entreprise certifiée uniquement, avec son mode opératoire.\n- Fermer et baliser la zone. Ne jamais balayer à sec.\n- Combinaison, masque et gants selon le mode opératoire.\n## Déchets\n- Fermer et étiqueter les sacs. L'entreprise certifiée les évacue.",
+       etapes:["Suivre le protocole de l'entreprise certifiée : DTA et mode opératoire."],
        epi:["masque","gants"], risques:["amiante","plomb"]},
       {id:"curage", nom:"Curage / dépose",
-       nature:"Dépose et évacuation des éléments existants (sanitaires, revêtements, cloisons non conservées, appareillages électriques). Curage complet avant travaux.",
+       nature:"Déposer et évacuer l'existant : sanitaires, revêtements, cloisons non conservées, appareillages électriques. Curage complet avant travaux.",
        produits:"",
        outillage:"Disqueuse, perforateur, masse",
-       risquesTexte:"## Poussières\n- Humidifier ou aspirer à la source. Ne pas balayer à sec.\n- Masque FFP2 minimum.\n## Disqueuse et perforateur\n- Le capot de protection de la disqueuse doit toujours être en place. Lunettes et gants.\n- Débrancher avant de changer le disque.\n## Bruit\n- Casque anti-bruit dès qu'il faut élever la voix pour se faire entendre.\n## Réseaux cachés\n- Avant de casser : repérer l'eau, l'électricité et le gaz. Un doute : arrêter et prévenir.\n## Chute d'objets\n- Casque obligatoire. Gravats mis en sac au fur et à mesure.",
-       etapes:["Protection des zones adjacentes","Dépose des éléments","Mise en sac","Évacuation en déchetterie/benne"],
+       risquesTexte:"## Poussières\n- Humidifier ou aspirer à la source. Ne jamais balayer à sec.\n- Masque FFP2 minimum.\n## Disqueuse et perforateur\n- Capot de la disqueuse toujours en place. Lunettes et gants.\n- Débrancher avant de changer le disque.\n## Bruit\n- Casque anti-bruit dès qu'on doit hausser la voix pour se faire entendre.\n## Réseaux cachés\n- Avant de casser : repérer l'eau, l'électricité et le gaz. Doute : arrêter et prévenir.\n## Chute d'objets\n- Casque obligatoire. Mettre les gravats en sac au fur et à mesure.",
+       etapes:["Protéger les zones voisines","Déposer","Mettre en sac","Évacuer en benne ou déchetterie"],
        epi:["casque","gants","masque","lunettes","auditives"], risques:["poussiere","coactivite"]},
       {id:"plomberie", nom:"Plomberie",
-       nature:"Dépose et pose des appareils sanitaires, raccordements eau et évacuation, mise en place des réseaux.",
+       nature:"Déposer et poser les appareils sanitaires. Raccorder l'eau et l'évacuation. Poser les réseaux.",
        produits:"Colle et décapant PVC, produit de brasage",
        outillage:"Chalumeau (brasage), sertisseuse, disqueuse",
-       risquesTexte:"## Colles et solvants\n- Aérer la pièce pendant tout le travail. Gants et lunettes.\n- Refermer le pot après chaque usage. Pas de flamme à côté.\n## Chalumeau (brasage)\n- Protéger le mur avec une plaque. Éloigner ce qui peut brûler.\n- Extincteur à portée de main. Surveiller la zone pendant 1 heure après la fin, puis la revérifier 3 heures plus tard.\n- Gaz en service : chalumeau interdit près des tuyaux de gaz.\n## Eau\n- Couper l'eau et prévenir les autres entreprises avant de démonter.\n- Sol mouillé : essuyer tout de suite.",
-       etapes:["Coupure des arrivées d'eau","Dépose des anciens appareils","Pose des réseaux","Pose des appareils","Essais d'étanchéité"],
+       risquesTexte:"## Colles et solvants\n- Fenêtre ouverte pendant tout le travail. Gants et lunettes.\n- Refermer le pot après chaque usage. Pas de flamme à côté.\n## Chalumeau (brasage)\n- Protéger le mur avec une plaque. Éloigner ce qui peut brûler.\n- Extincteur à portée de main. Surveiller la zone 1 heure après la fin. Revérifier 3 heures plus tard.\n- Gaz en service : pas de chalumeau près des tuyaux.\n## Eau\n- Couper l'eau. Prévenir les autres entreprises avant de démonter.\n- Sol mouillé : essuyer tout de suite.",
+       etapes:["Couper l'eau","Déposer les anciens appareils","Poser les réseaux","Poser les appareils","Tester l'étanchéité"],
        epi:["gants","lunettes"], risques:["chimique","coactivite"]},
       {id:"electricite", nom:"Électricité",
-       nature:"Dépose de l'ancienne installation, reprise et mise aux normes (tableau, circuits, prises, éclairage).",
+       nature:"Déposer l'ancienne installation. Refaire et mettre aux normes : tableau, circuits, prises, éclairage.",
        produits:"",
        outillage:"Perforateur, rainureuse, tournevis isolés, détecteur de tension",
-       risquesTexte:"## Courant électrique\n- Couper le courant, mettre un cadenas, vérifier qu'il n'y a plus de courant. Seul un électricien habilité le fait.\n- Outils isolés. Rallonges en bon état.\n## Perçage et rainure dans le mur\n- Avant de percer ou de casser : chercher où passent les fils et les tuyaux.\n- Lunettes et gants.\n## Poussières\n- Aspirer à la source. Masque pour les rainures dans le mur.",
-       etapes:["Coupure générale / consignation","Dépose de l'ancien réseau","Tirage des câbles","Pose de l'appareillage","Tests et mise en service"],
+       risquesTexte:"## Courant électrique\n- Couper. Cadenasser. Vérifier l'absence de courant. Électricien habilité uniquement.\n- Outils isolés. Rallonges en bon état.\n## Perçage et rainure dans le mur\n- Avant de percer ou de casser : repérer les fils et les tuyaux.\n- Lunettes et gants.\n## Poussières\n- Aspirer à la source. Masque pour rainurer.",
+       etapes:["Couper le courant et cadenasser","Déposer l'ancien réseau","Tirer les câbles","Poser l'appareillage","Tester et mettre en service"],
        epi:["gants","casque","lunettes"], risques:["electrique","coactivite"]},
       {id:"platrerie", nom:"Plâtrerie / placo",
-       nature:"Pose de cloisons, doublages, faux-plafonds, enduits ; encapsulage ponctuel de l'amiante par placo collé ou enduits si signalé.",
+       nature:"Poser cloisons, doublages, faux-plafonds et enduits. Si amiante signalé : recouvrir ponctuellement avec du placo collé ou un enduit.",
        produits:"Enduit et plâtre en poudre, colle",
        outillage:"Ponceuse, scie cloche, malaxeur électrique",
-       risquesTexte:"## Poussières\n- Poncer avec un aspirateur branché. Masque FFP2 minimum. Ne pas balayer à sec.\n## Charges lourdes\n- Plaque de plâtre : porter à deux. Dos droit, genoux fléchis.\n## Travail en hauteur\n- Escabeau interdit. Utiliser une gazelle ou un échafaudage roulant.\n## Projections\n- Lunettes pour poncer, percer ou visser au plafond.",
-       etapes:["Traçage","Pose de l'ossature","Pose des plaques","Traitement des joints/enduit","Ponçage"],
+       risquesTexte:"## Poussières\n- Poncer avec un aspirateur branché. Masque FFP2 minimum. Ne jamais balayer à sec.\n## Charges lourdes\n- Plaque de plâtre : porter à deux. Dos droit, genoux fléchis.\n## Travail en hauteur\n- Escabeau interdit. Utiliser une gazelle ou un échafaudage roulant.\n## Projections\n- Lunettes pour poncer, percer ou visser au plafond.",
+       etapes:["Tracer","Poser l'ossature","Poser les plaques","Traiter les joints et enduire","Poncer"],
        epi:["masque","lunettes","gants"], risques:["poussiere"]},
       {id:"carrelage", nom:"Carrelage / Faïence",
-       nature:"Pose de carrelage au sol et de faïence murale (salles de bain, sanitaires).",
+       nature:"Poser le carrelage au sol et la faïence au mur : salles de bain, sanitaires.",
        produits:"Colle et mortier, joint ciment",
        outillage:"Disqueuse, malaxeur électrique",
-       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Ces produits irritent la peau et les yeux. Gants et lunettes.\n- Projection dans l'œil : rincer à l'eau au moins 15 minutes, puis voir un médecin.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
-       etapes:["Préparation et nettoyage du support","Pose de la colle et des carreaux","Réalisation des joints","Nettoyage et finition"],
+       risquesTexte:"## Poussières\n- Couper à l'eau ou avec un aspirateur à la source. Masque FFP2 minimum.\n## Disqueuse\n- Capot toujours en place. Lunettes, gants, casque anti-bruit.\n- Vérifier que le disque n'est pas fendu.\n## Colle et mortier\n- Irritant pour la peau et les yeux. Gants et lunettes.\n- Produit dans l'œil : rincer à l'eau 15 minutes minimum. Puis voir un médecin.\n## Charges lourdes\n- Sacs de colle et cartons de carrelage : porter à deux.",
+       etapes:["Préparer et nettoyer le support","Poser la colle et les carreaux","Faire les joints","Nettoyer et finir"],
        epi:["gants","lunettes","masque"], risques:["poussiere"]},
       {id:"peinture", nom:"Peinture",
-       nature:"Préparation des supports (rebouchage, ponçage léger) et mise en peinture des logements.",
+       nature:"Préparer les supports : reboucher, poncer léger. Peindre les logements.",
        produits:"Peinture, sous-couche, enduit de rebouchage, solvants",
        outillage:"Ponceuse",
-       risquesTexte:"## Produits\n- Aérer la pièce pendant tout le travail. Gants. Masque si solvant.\n- Pas de flamme ni d'étincelle près des solvants.\n- Chiffons gras dans un bac fermé.\n## Poussières de ponçage\n- Aspirateur branché sur la ponceuse. Masque FFP2 minimum.\n## Travail en hauteur\n- Escabeau interdit. Utiliser une gazelle.\n## Glissade\n- Bâches bien fixées. Essuyer tout de suite une flaque de peinture.",
-       etapes:["Protection des sols et du mobilier","Rebouchage et ponçage léger des supports","Application de la sous-couche","Application de la peinture de finition","Nettoyage du matériel"],
+       risquesTexte:"## Produits\n- Fenêtre ouverte pendant tout le travail. Gants. Masque si solvant.\n- Pas de flamme ni d'étincelle près des solvants.\n- Ranger les chiffons gras dans un bac fermé.\n## Poussières de ponçage\n- Brancher l'aspirateur sur la ponceuse. Masque FFP2 minimum.\n## Travail en hauteur\n- Escabeau interdit. Utiliser une gazelle.\n## Glissade\n- Fixer les bâches. Essuyer tout de suite une flaque de peinture.",
+       etapes:["Protéger sols et mobilier","Reboucher et poncer léger","Appliquer la sous-couche","Appliquer la peinture de finition","Nettoyer le matériel"],
        epi:["gants","masque"], risques:[]},
       {id:"serrurerie", nom:"Serrurerie",
-       nature:"Dépose et pose de portes, serrures, garde-corps et éléments métalliques.",
+       nature:"Déposer et poser portes, serrures, garde-corps et éléments métalliques.",
        produits:"",
        outillage:"Disqueuse, perceuse, poste de soudure",
-       risquesTexte:"## Soudure et étincelles\n- Éloigner ce qui peut brûler ou le protéger. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux de gaz.\n- Surveiller la zone pendant 1 heure après la fin, puis la revérifier 3 heures plus tard.\n## Disqueuse\n- Le capot de protection doit toujours être en place. Lunettes, gants et casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
-       etapes:["Dépose des éléments existants","Ajustement et pose des nouveaux éléments","Réglages"],
+       risquesTexte:"## Soudure et étincelles\n- Éloigner ou protéger ce qui peut brûler. Extincteur à portée de main.\n- Gaz en service : pas de soudure près des tuyaux.\n- Surveiller la zone 1 heure après la fin. Revérifier 3 heures plus tard.\n## Disqueuse\n- Capot toujours en place. Lunettes, gants, casque anti-bruit.\n## Charges lourdes\n- Portes et garde-corps : porter à deux.\n## Perçage\n- Avant de percer : chercher où passent les fils et les tuyaux.",
+       etapes:["Déposer l'existant","Ajuster et poser les nouveaux éléments","Régler"],
        epi:["gants","lunettes","casque","auditives"], risques:["poussiere","coactivite"]},
       {id:"nettoyage", nom:"Nettoyage",
-       nature:"Nettoyage de fin de chantier des logements et des parties communes.",
+       nature:"Nettoyer les logements et les parties communes en fin de chantier.",
        produits:"Produits d'entretien et produits toxiques (vitres, décapants)",
        outillage:"",
-       risquesTexte:"## Produits d'entretien\n- Lire l'étiquette. Ne jamais mélanger deux produits.\n- Gants. Aérer la pièce pendant tout le travail.\n## Fenêtres\n- Escabeau interdit. Ne pas se pencher à l'extérieur. Utiliser une gazelle.\n## Sol mouillé\n- Mettre un panneau « sol glissant ». Essuyer ensuite.",
-       etapes:["Évacuation des gravats résiduels","Nettoyage des surfaces","Nettoyage des parties communes"],
+       risquesTexte:"## Produits d'entretien\n- Lire l'étiquette. Ne jamais mélanger deux produits.\n- Gants. Fenêtre ouverte pendant tout le travail.\n## Fenêtres\n- Escabeau interdit. Utiliser une gazelle. Ne pas se pencher à l'extérieur.\n## Sol mouillé\n- Poser un panneau « sol glissant ». Essuyer ensuite.",
+       etapes:["Évacuer les derniers gravats","Nettoyer les surfaces","Nettoyer les parties communes"],
        epi:["gants"], risques:["chimique"]}
     ],
     socleQuartHeure: [],
     textes: {
       contraintesSite:
-        "Aucun élément ne doit bloquer le passage pour accéder à la résidence.\n"+
-        "Le code d'accès est : [variable]. (Porte d'entrée du chantier)\n"+
-        "Stockage limité des matériaux sur site (interdit après la clôture du chantier).\n"+
-        "Pour la coordination avec les autres corps d'état, voir les chefs d'équipe et le conducteur de travaux.\n"+
-        "Gravats et déchets évacués toutes les semaines.\n"+
-        "Les ouvriers doivent être habilités et formés à l'utilisation des échafaudages et au travail en hauteur, aptes à utiliser les équipements de travail en toute sécurité et disposer des autorisations nécessaires.",
+        "Rien ne doit bloquer l'accès à la résidence.\n"+
+        "Code d'accès, porte d'entrée du chantier : [variable].\n"+
+        "Stockage limité sur site. Interdit après la clôture du chantier.\n"+
+        "Coordination avec les autres entreprises : voir le chef d'équipe ou le conducteur de travaux.\n"+
+        "Évacuer les gravats et déchets chaque semaine.\n"+
+        "Échafaudage et travail en hauteur : formation et habilitation obligatoires. Pas d'autorisation, pas de travail.",
       precautions:
-        "Maintien d'un poste de travail propre et dégagé (limiter le risque de chute).\n"+
-        "Avant chaque utilisation, regarder l'outil : fil sans coupure, prise non cassée, capot de protection en place, disque non fendu. Un outil abîmé ne s'utilise pas : le signaler.\n"+
-        "Utiliser chaque outil seulement pour le travail prévu.\n"+
-        "Aérer la pièce pendant tout le travail (fenêtre ouverte), pas seulement à la fin.",
+        "Garder le poste de travail propre. Rien au sol.\n"+
+        "Avant chaque usage, vérifier : fil, prise, capot, disque. Outil abîmé : ne pas l'utiliser. Prévenir le chef d'équipe.\n"+
+        "Utiliser chaque outil pour son usage prévu, rien d'autre.\n"+
+        "Fenêtre ouverte pendant tout le travail.",
       attestation:
-        "Je soussigné(e) ......................................................, atteste avoir reçu et compris les consignes techniques et de sécurité liées à cette intervention."
+        "Je soussigné(e) ......................................................, atteste avoir lu et compris les consignes de sécurité de cette intervention."
     }
   };
 }
@@ -1029,52 +1029,52 @@ const DOTS = "...................................";
 const QH_GROUPS = [
   { nom:"Chute de hauteur et chute d'objets", lines:[
     "## Risque de chute de hauteur",
-    "- Escabeau interdit. Utiliser en priorité une gazelle (plateforme individuelle roulante) ou un échafaudage roulant.",
-    "- Échafaudage roulant : bloquer les freins, vérifier le montage avec la notice, montage fait par une personne formée, procès-verbal (PV) de réception affiché.",
-    "- Trémie de moins de 1 m² : la fermer avec un contreplaqué. Trémie plus grande : installer des garde-corps.",
+    "- Escabeau interdit. Utiliser d'abord une gazelle (plateforme roulante individuelle) ou un échafaudage roulant.",
+    "- Échafaudage roulant : bloquer les freins. Vérifier le montage avec la notice. Montage par une personne formée uniquement. PV de réception affiché.",
+    "- Trémie de moins de 1 m² : la fermer avec un contreplaqué. Trémie plus grande : poser des garde-corps.",
     "## Risque de chute d'objets et de heurts",
     "- Casque obligatoire.",
-    "- Ne pas passer sous une zone où quelqu'un travaille en hauteur. Cette zone est balisée.",
-    "- Outils et matériaux posés au sol ou calés. Obstacle bas ou saillant : le signaler avec du ruban."
+    "- Ne jamais passer sous une zone de travail en hauteur. Elle est balisée.",
+    "- Poser ou caler les outils et matériaux. Obstacle bas ou qui dépasse : le signaler avec du ruban."
   ]},
   { nom:"Risque électrique et chute de plain-pied", lines:[
     "## Risque électrique",
-    "- Ne jamais intervenir sous tension : couper, consigner, vérifier l'absence de tension. Personnel habilité uniquement.",
-    "- Rallonges et outils en bon état. Jamais de rallonge rafistolée ou raccordée avec des dominos/Wago.",
-    "- Rallonge déroulée en entier (risque de surchauffe).",
+    "- Ne jamais intervenir sous tension. Couper. Cadenasser. Vérifier l'absence de tension. Personnel habilité uniquement.",
+    "- Rallonges et outils en bon état. Interdit : rallonge rafistolée ou raccordée avec un domino ou un Wago.",
+    "- Dérouler la rallonge en entier : une rallonge enroulée chauffe.",
     "## Risque de chute de plain-pied",
     "- Câbles et rallonges au sol : les passer en hauteur ou les protéger. Les ranger en fin de journée.",
-    "- Gravats et emballages évacués au fur et à mesure. Passages dégagés.",
-    "- Sol mouillé ou poussiéreux : le nettoyer avant de passer."
+    "- Évacuer gravats et emballages au fur et à mesure. Passages dégagés.",
+    "- Sol mouillé ou poussiéreux : nettoyer avant de passer."
   ]},
   { nom:"Outils et machines, poussières", lines:[
     "## Risque lié aux outils et machines",
-    "- Capot de protection toujours en place sur la disqueuse. Vérifier l'état du disque avant usage.",
-    "- Débrancher l'outil avant de changer le disque. Porter lunettes et gants.",
+    "- Capot de la disqueuse toujours en place. Vérifier le disque avant usage.",
+    "- Débrancher l'outil avant de changer le disque. Lunettes et gants.",
     "## Risque poussières",
-    "- En cas de découpe ou de percement : aspirer à la source ou humidifier. Ne pas balayer à sec.",
+    "- Découpe ou percement : aspirer à la source ou humidifier. Ne jamais balayer à sec.",
     "- Masque FFP2 ou FFP3 pour poncer, découper ou carotter.",
-    "- Aérer la pièce pendant tout le travail (fenêtre ouverte), pas seulement après."
+    "- Fenêtre ouverte pendant tout le travail."
   ]},
   { nom:"Incendie, secours et alerte", lines:[
     "## Risque d'incendie et de travaux par point chaud",
-    "- Brasage, soudure, meulage : écarter ou protéger ce qui peut brûler. Extincteur à portée de main.",
-    "- Surveiller la zone après la fin des travaux.",
-    "- Solvants et bombes rangés à l'écart. Chiffons gras dans un bac fermé.",
+    "- Brasage, soudure, meulage : éloigner ou protéger ce qui peut brûler. Extincteur à portée de main.",
+    "- Surveiller la zone 1 heure après la fin. Revérifier 3 heures plus tard.",
+    "- Ranger les solvants et les bombes à l'écart. Chiffons gras dans un bac fermé.",
     "## Secours et alerte",
-    "- Numéros d'urgence : 15 (SAMU), 18 (pompiers), 112.",
+    "- Urgences : 15 (SAMU), 18 (pompiers), 112.",
     "- Adresse du chantier : @ADRESSE@",
-    "- La trousse de secours se trouve : "+DOTS,
-    "- Les extincteurs se trouvent : "+DOTS,
-    "- Accident : protéger, alerter, secourir. Ne pas déplacer le blessé sauf danger immédiat."
+    "- Trousse de secours : "+DOTS,
+    "- Extincteurs : "+DOTS,
+    "- Accident : protéger, alerter, secourir. Ne pas déplacer le blessé, sauf danger immédiat."
   ]},
   { nom:"Manutention et bruit", lines:[
     "## Risque de manutention manuelle",
-    "- Charge lourde ou encombrante : à deux ou avec un chariot.",
-    "- Dos droit, genoux fléchis, charge près du corps. Pas de torsion.",
+    "- Charge lourde ou encombrante : porter à deux ou utiliser un chariot.",
+    "- Dos droit, genoux fléchis, charge près du corps. Ne pas tourner le buste.",
     "- Sacs de colle ou d'enduit : porter à deux.",
     "## Risque bruit",
-    "- Bouchons ou casque anti-bruit dès qu'il faut élever la voix pour se faire entendre.",
+    "- Bouchons ou casque anti-bruit dès qu'on doit hausser la voix pour se faire entendre.",
     "- Une audition perdue ne revient pas."
   ]}
 ];
@@ -1103,20 +1103,20 @@ const QH_SPECIAUX = {
   elecNonConsigne:{ label:"Électricité non consignée", lines:[
     "## Risque électricité non coupée",
     "- Le courant n'est pas coupé : ne pas percer, casser ou couper un mur sans savoir où passent les fils.",
-    "- Ne jamais toucher un fil que l'on ne connaît pas.",
-    "- Seul un électricien habilité travaille sur l'électricité. Outils isolés."
+    "- Ne jamais toucher un fil inconnu.",
+    "- Électricien habilité uniquement. Outils isolés."
   ]},
   gazAlimente:{ label:"Réseau gaz alimenté", lines:[
     "## Risque gaz : le gaz est en service",
     "- Pas de flamme, de soudure, d'étincelle ou de disqueuse près des tuyaux de gaz.",
-    "- Ne pas percer ou casser un mur sans savoir où passent les tuyaux de gaz.",
-    "- Odeur de gaz : ne toucher à aucun interrupteur, ouvrir les fenêtres, sortir, puis appeler le 18 ou l'urgence gaz GRDF : 0 800 47 33 33."
+    "- Ne pas percer ni casser un mur sans savoir où passent les tuyaux.",
+    "- Odeur de gaz : aucun interrupteur. Ouvrir les fenêtres. Sortir. Appeler le 18, puis GRDF : 0 800 47 33 33."
   ]},
   siteOccupe:{ label:"Site occupé", lines:[
     "## Site occupé : des habitants sont présents",
     "- Laisser les passages libres. Fermer les portes derrière soi.",
-    "- Ne jamais laisser sans surveillance un outil, un produit ou un câble.",
-    "- Respecter les horaires de bruit. Prévenir le conducteur de travaux en cas de problème avec un habitant."
+    "- Ne jamais laisser un outil, un produit ou un câble sans surveillance.",
+    "- Respecter les horaires de bruit. Problème avec un habitant : prévenir le conducteur de travaux."
   ]}
 };
 function qhDate(){
