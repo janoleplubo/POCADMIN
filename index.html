@@ -1254,7 +1254,13 @@ class Doc{
     const p=this.pdf;
     try{ p.addImage(LOGO_B64, "PNG", this.margin, this.y, 20, 20); }catch(e){}
     p.setFont("helvetica","bold"); p.setFontSize(SZ.title);
-    p.text(title, this.margin+26, this.y+9);
+    const ex = title.indexOf("ère");
+    if(ex>0){
+      const a = title.slice(0,ex), z = title.slice(ex+3); let x = this.margin+26;
+      p.text(a, x, this.y+9); x += p.getTextWidth(a);
+      p.setFontSize(SZ.title*0.58); p.text("ère", x, this.y+9-2.6); x += p.getTextWidth("ère");
+      p.setFontSize(SZ.title); p.text(z, x, this.y+9);
+    } else p.text(title, this.margin+26, this.y+9);
     if(subtitle){
       p.setFont("helvetica","italic"); p.setFontSize(SZ.subtitle); p.setTextColor(110,110,110);
       const lines = p.splitTextToSize(subtitle, this.contentW-26);
@@ -1268,7 +1274,9 @@ class Doc{
     this.y += 7;
   }
   subheading(text){
-    this.ensureSpace(9); const p=this.pdf;
+    this.ensureSpace(13); const p=this.pdf;
+    if(!this._ab) this.y += 3.5;
+    this._ab = false;
     p.setFont("helvetica","bold"); p.setFontSize(SZ.subhead); p.setTextColor(20,20,20);
     p.text(text, this.margin, this.y);
     const w = p.getTextWidth(text);
@@ -1361,7 +1369,7 @@ class Doc{
     this.y += 5.6;
   }
   banner(text){
-    this.ensureSpace(14); const p=this.pdf;
+    this.ensureSpace(14); const p=this.pdf; this._ab = true;
     p.setFillColor(234,79,0); p.rect(this.margin, this.y, this.contentW, 9.5, "F");
     p.setTextColor(255,255,255); p.setFont("helvetica","bold"); p.setFontSize(SZ.banner);
     p.text(text, this.margin+3.5, this.y+6.6);
@@ -1469,22 +1477,22 @@ function fitThemeFont(pdf, items, maxWidth, availableHeight){
   return THEME_FIT_SIZES[THEME_FIT_SIZES.length-1];
 }
 function drawThemes(D, items, opt){
-  const p = D.pdf, IND = 6, SUB = 4;
+  const p = D.pdf, IND = opt.ind||8, SUB = 4, BASE = opt.base||0;
   let lvl1 = false, inTheme = false;
   items.forEach((it,i)=>{
     if(it.startsWith("# ")){
       lvl1 = true; inTheme = false;
       p.setFont("helvetica","bold"); p.setFontSize(opt.size+1.2); p.setTextColor(0,0,0);
-      if(i>0) D.y += opt.lh*0.7;
-      p.splitTextToSize(it.slice(2), D.contentW).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin, D.y); D.y += opt.lh; });
+      if(i>0) D.y += opt.lh*0.6;
+      p.splitTextToSize(it.slice(2), D.contentW-BASE).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin+BASE, D.y); D.y += opt.lh; });
     } else if(it.startsWith("## ")){
       inTheme = true;
-      const b0 = lvl1 ? IND : 0;
+      const b0 = BASE + (lvl1 ? IND : 0);
       p.setFont("helvetica","bold"); p.setFontSize(opt.size+0.8); p.setTextColor(0,0,0);
-      if(i>0) D.y += opt.lh*0.5;
+      if(i>0) D.y += opt.lh*0.6;
       p.splitTextToSize(it.slice(3), D.contentW-b0).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin+b0, D.y); D.y += opt.lh; });
     } else {
-      const b0 = lvl1 ? IND + (inTheme ? SUB : 0) : 0;
+      const b0 = BASE + (lvl1 ? IND : 0) + (inTheme ? SUB : 0);
       p.setFont("helvetica","normal"); p.setFontSize(opt.size); p.setTextColor(0,0,0);
       const dash = it.startsWith("-");
       p.splitTextToSize(it.replace(/^-\s*/,""), (dash?D.contentW-5:D.contentW)-b0).forEach((l,k)=>{ D.ensureSpace(opt.lh+0.4); if(dash&&k===0) p.text("-", D.margin+b0+1, D.y); p.text(l, D.margin+b0+(dash?5:0), D.y); D.y += opt.lh; });
@@ -1493,7 +1501,7 @@ function drawThemes(D, items, opt){
   });
 }
 
-const FICHE_TH = {size:10, lh:5};
+const FICHE_TH = {size:10, lh:5, base:15, ind:8};
 /* texte "Métier :\nligne" -> "## Métier" + "- ligne" (un seul métier : tirets seuls) */
 function toThemes(text, splitComma){
   const out = [];
@@ -1574,15 +1582,33 @@ function renderFicheIntervention(D, st, index){
     const stock = regles.filter(estStock);
     if(stock.length){ D.subheading("Stockage et gravats"); drawThemes(D, stock.map(l=>"- "+l), FICHE_TH); D.y += 2; } }
 
-  D.ensureSpace(66); // bloc validation + signature toujours d'un seul tenant
+  D.ensureSpace(92); // bloc validation + signatures toujours d'un seul tenant
   D.banner("5. VALIDATION DES CONSIGNES — COMPAGNONS");
   D.paragraph(CONFIG.textes.attestation);
-  D.y += 4;
-  D.keyValue("Entreprise", st.entreprise || "—");
-  D.keyValue("Nom du responsable", "..........................................................");
-  D.y += 8;
-  D.keyValue("Signature", "");
-  D.keyValue("Date", "");
+  D.y += 5;
+  { const p = D.pdf, x0 = D.margin, colW = (D.contentW-10)/2, x1 = D.margin+colW+10, y0 = D.y;
+    const bloc = (x, titre, lignes)=>{
+      let y = y0;
+      p.setFont("helvetica","bold"); p.setFontSize(SZ.label); p.setTextColor(20,20,20);
+      p.text(titre, x, y); p.setDrawColor(20,20,20); p.setLineWidth(0.25); p.line(x, y+1.3, x+p.getTextWidth(titre), y+1.3);
+      y += 8;
+      lignes.forEach(l=>{
+        p.setFont("helvetica","bold"); p.setFontSize(SZ.label); p.text(l[0]+" :", x, y);
+        const lw = p.getTextWidth(l[0]+" :  ");
+        p.setFont("helvetica","normal");
+        if(l[1]) p.text(p.splitTextToSize(l[1], colW-lw)[0], x+lw, y);
+        else { let str=""; while(p.getTextWidth(str+".") < colW-lw-1) str += "."; p.text(str, x+lw, y); }
+        y += 8;
+      });
+      y = y0 + 8 + 8*3;
+      p.setFont("helvetica","bold"); p.text("Signature :", x, y);
+      p.setDrawColor(120,120,120); p.setLineWidth(0.25); p.rect(x, y+2, colW, 24);
+      return y+28;
+    };
+    const ya = bloc(x0, "L'ENTREPRISE (pour ses compagnons)", [["Entreprise", st.entreprise||"—"],["Date", ""]]);
+    const yb = bloc(x1, "LE CONDUCTEUR DE TRAVAUX", [["Société", "Paris Ouest Construction"],["Nom", dossier.cdtNom||""],["Date", ""]]);
+    D.y = Math.max(ya,yb);
+  }
 }
 
 /* Lignes pointillées à remplir à la main */
