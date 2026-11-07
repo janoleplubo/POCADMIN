@@ -1469,16 +1469,25 @@ function fitThemeFont(pdf, items, maxWidth, availableHeight){
   return THEME_FIT_SIZES[THEME_FIT_SIZES.length-1];
 }
 function drawThemes(D, items, opt){
-  const p = D.pdf;
+  const p = D.pdf, IND = 6, SUB = 4;
+  let lvl1 = false, inTheme = false;
   items.forEach((it,i)=>{
-    if(it.startsWith("## ")){
+    if(it.startsWith("# ")){
+      lvl1 = true; inTheme = false;
+      p.setFont("helvetica","bold"); p.setFontSize(opt.size+1.2); p.setTextColor(0,0,0);
+      if(i>0) D.y += opt.lh*0.7;
+      p.splitTextToSize(it.slice(2), D.contentW).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin, D.y); D.y += opt.lh; });
+    } else if(it.startsWith("## ")){
+      inTheme = true;
+      const b0 = lvl1 ? IND : 0;
       p.setFont("helvetica","bold"); p.setFontSize(opt.size+0.8); p.setTextColor(0,0,0);
       if(i>0) D.y += opt.lh*0.5;
-      p.splitTextToSize(it.slice(3), D.contentW).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin, D.y); D.y += opt.lh; });
+      p.splitTextToSize(it.slice(3), D.contentW-b0).forEach(l=>{ D.ensureSpace(opt.lh+0.4); p.text(l, D.margin+b0, D.y); D.y += opt.lh; });
     } else {
+      const b0 = lvl1 ? IND + (inTheme ? SUB : 0) : 0;
       p.setFont("helvetica","normal"); p.setFontSize(opt.size); p.setTextColor(0,0,0);
       const dash = it.startsWith("-");
-      p.splitTextToSize(it.replace(/^-\s*/,""), dash?D.contentW-5:D.contentW).forEach((l,k)=>{ D.ensureSpace(opt.lh+0.4); if(dash&&k===0) p.text("-", D.margin+1, D.y); p.text(l, D.margin+(dash?5:0), D.y); D.y += opt.lh; });
+      p.splitTextToSize(it.replace(/^-\s*/,""), (dash?D.contentW-5:D.contentW)-b0).forEach((l,k)=>{ D.ensureSpace(opt.lh+0.4); if(dash&&k===0) p.text("-", D.margin+b0+1, D.y); p.text(l, D.margin+b0+(dash?5:0), D.y); D.y += opt.lh; });
       if(!dash) D.y += opt.lh*0.3;
     }
   });
@@ -1490,10 +1499,10 @@ function toThemes(text, splitComma){
   const out = [];
   splitLinesArr(text||"").forEach(l=>{
     const t = l.trim(); if(!t || t==="—") return;
-    if(/ :$/.test(t) && !/^[-•\d]/.test(t)) out.push("## "+t.slice(0,-2));
-    else { const x = t.replace(/^[-•]\s*/,"").replace(/^\d+\.\s*/,""); (splitComma ? x.split(/\s*,\s*/) : [x]).forEach(y=>{ if(y) out.push("- "+y); }); }
+    if(/ :$/.test(t) && !/^[-•\d]/.test(t)) out.push("# "+t.slice(0,-2));
+    else { const x = t.replace(/^[-•]\s*/,"").replace(/^\d+\.\s*/,""); (splitComma ? x.split(/\s*,\s*/) : [x]).forEach(y=>{ if(y) out.push("- "+y.charAt(0).toUpperCase()+y.slice(1)); }); }
   });
-  if(out.filter(x=>x.startsWith("## ")).length===1 && out[0].startsWith("## ")) out.shift();
+  if(out.filter(x=>x.startsWith("# ")).length===1 && out[0].startsWith("# ")) out.shift();
   return out;
 }
 function chantierLabel(){
@@ -1533,7 +1542,15 @@ function renderFicheIntervention(D, st, index){
   D.y += 2;
   if((st.preview.risquesMetierText||"").trim()){
     D.subheading("Risques liés à vos travaux");
-    drawThemes(D, splitLinesArr(st.preview.risquesMetierText), FICHE_TH);
+    { const noms = CONFIG.corpsDeMetier.map(m=>m.nom); let cur = null; const out = [];
+      splitLinesArr(st.preview.risquesMetierText).forEach(l=>{
+        if(l.startsWith("## ")){
+          const nm = noms.find(n=>l.slice(3).startsWith(n+" : "));
+          if(nm){ if(cur!==nm){ out.push("# "+nm); cur = nm; } out.push("## "+l.slice(3+nm.length+3)); return; }
+        }
+        out.push(l);
+      });
+      drawThemes(D, out, FICHE_TH); }
     D.y += 2;
   }
   D.subheading("Produits dangereux");
