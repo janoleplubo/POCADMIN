@@ -1268,12 +1268,13 @@ class Doc{
     this.y += 7;
   }
   subheading(text){
-    this.ensureSpace(8); const p=this.pdf;
-    p.setFillColor(234,79,0); p.circle(this.margin+1, this.y-1.6, 1, "F");
-    p.setFont("helvetica","bold"); p.setFontSize(SZ.subhead); p.setTextColor(196,67,0);
-    p.text(text, this.margin+5, this.y);
+    this.ensureSpace(9); const p=this.pdf;
+    p.setFont("helvetica","bold"); p.setFontSize(SZ.subhead); p.setTextColor(20,20,20);
+    p.text(text, this.margin, this.y);
+    const w = p.getTextWidth(text);
+    p.setDrawColor(20,20,20); p.setLineWidth(0.25); p.line(this.margin, this.y+1.3, this.margin+w, this.y+1.3);
     p.setTextColor(30,30,30);
-    this.y += 6;
+    this.y += 6.5;
   }
   paragraph(text, opts){
     opts = opts||{};
