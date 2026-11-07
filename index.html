@@ -651,8 +651,24 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
     .footer-note{padding:0.75rem 1.25rem 1.5rem;}
   }
   .error-msg{color:var(--danger); font-size:13px; margin-top:8px;}
+  .success-msg{color:#1c6b32; font-size:13px; margin-top:8px;}
   .settings-tabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap;}
   .tab-btn{padding:7px 13px; border-radius:7px; border:1px solid var(--border); background:#fff; font-size:13px; cursor:pointer;}
+  .adm-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .adm-body{display:flex;gap:18px;border-top:1px solid var(--border);margin-top:10px;padding-top:14px;}
+  .adm-menu{width:150px;flex:none;border-right:1px solid var(--border);padding-right:8px;}
+  .adm-menu div{padding:8px 10px;cursor:pointer;font-size:14px;border-left:3px solid transparent;}
+  .adm-menu div.on{font-weight:bold;border-left-color:var(--ink);background:#f4f1ec;}
+  .adm-main{flex:1;min-width:0;}
+  .adm-cols{display:flex;gap:16px;align-items:flex-start;}
+  .adm-list{width:200px;flex:none;border:1px solid var(--border);}
+  .adm-list div{padding:7px 9px;border-bottom:1px solid #eee;cursor:pointer;font-size:13px;}
+  .adm-list div.on{background:#e9e5de;font-weight:bold;}
+  .adm-form{flex:1;min-width:0;}
+  .adm-form textarea,.adm-form input[type=text]{width:100%;box-sizing:border-box;}
+  .mod{font-size:10px;background:#fff3cd;border:1px solid #e0b300;color:#7a5a00;border-radius:8px;padding:0 5px;margin-left:4px;font-weight:normal;}
+  .adm-bar{position:sticky;bottom:0;background:var(--bg,#fff);padding:10px 0;}
+  @media(max-width:760px){.adm-body,.adm-cols{flex-direction:column}.adm-menu,.adm-list{width:auto}.adm-menu{border-right:0;display:flex;flex-wrap:wrap}}
   .tab-btn.active{background:var(--ink); color:#fff; border-color:var(--ink);}
   table.cfg{width:100%; border-collapse:collapse; margin-bottom:14px;}
   table.cfg th{text-align:left; font-size:11.5px; color:var(--muted); padding:4px 6px; border-bottom:1px solid var(--border);}
@@ -1874,11 +1890,11 @@ function newDossier(){
     dossier = makeDossier(); currentStep = "select"; genMessage=null; render();
   }
 }
-function toggleSettings(){ settingsOpen = !settingsOpen; render(); }
+function toggleSettings(){ settingsOpen = !settingsOpen; if(!settingsOpen){ adminOk=false; settingsMsg=null; } render(); }
 function setSettingsTab(tab){ settingsTab = tab; render(); }
 
 /* --- Réglages : Corps de métier --- */
-function addMetierRow(){ CONFIG.corpsDeMetier.push({id:uid("cm"), nom:"Nouveau métier", nature:"", produits:"", outillage:"", risquesTexte:"", etapes:[], epi:[], risques:[]}); render(); }
+function addMetierRow(){ const id=uid("cm"); CONFIG.corpsDeMetier.push({id:id, nom:"Nouveau métier", nature:"", produits:"", outillage:"", risquesTexte:"", etapes:[], epi:[], risques:[]}); settingsSel.metiers=id; render(); }
 function updateMetierField(id, field, value){
   const m = CONFIG.corpsDeMetier.find(x=>x.id===id); if(!m) return;
   if(field==="etapes") m.etapes = splitLinesArr(value);
@@ -1889,7 +1905,7 @@ function updateMetierField(id, field, value){
 function deleteMetierRow(id){ if(confirm("Supprimer ce corps de métier ?")){ CONFIG.corpsDeMetier = CONFIG.corpsDeMetier.filter(x=>x.id!==id); render(); } }
 
 /* --- Réglages : Risques --- */
-function addRisqueRow(){ CONFIG.risques.push({id:uid("rq"), nom:"Nouveau risque", declencheSi:"", epi:[], equipements:"", consignes:"", themeQuartHeure:""}); render(); }
+function addRisqueRow(){ const id=uid("rq"); CONFIG.risques.push({id:id, nom:"Nouveau risque", declencheSi:"", epi:[], equipements:"", consignes:"", themeQuartHeure:""}); settingsSel.risques=id; render(); }
 function updateRisqueField(id, field, value){
   const r = CONFIG.risques.find(x=>x.id===id); if(!r) return;
   if(field==="epi") r.epi = namesToIds(value, CONFIG.epi);
@@ -1907,9 +1923,119 @@ function updateTexteFixe(field, value){ CONFIG.textes[field] = value; }
 function updateSocle(value){ CONFIG.socleQuartHeure = splitLinesArr(value); }
 function updateAccessCode(value){ CONFIG.accessCode = value; }
 
-function saveSettings(){
-  genMessage = {type:"success", text:"Réglages appliqués pour votre session en cours."};
-  settingsOpen = false; render();
+/* --- Réglages partagés : chargement, enregistrement, retour à l'origine --- */
+const SETTINGS_REPO = "janoleplubo/POCADMIN", SETTINGS_FILE = "reglages.json", SETTINGS_CACHE_KEY = "poc_reglages_v1", SETTINGS_TOKEN_KEY = "poc_gh_token";
+let adminOk = false, adminError = "", settingsMsg = null, settingsSel = {};
+let SETTINGS_INFO = {updated:""};
+let SETTINGS_DEFAULTS = {};
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function snapshotDefaults(){
+  SETTINGS_DEFAULTS = {
+    corpsDeMetier: clone(CONFIG.corpsDeMetier), risques: clone(CONFIG.risques), epi: clone(CONFIG.epi),
+    textes: clone(CONFIG.textes), socleQuartHeure: clone(CONFIG.socleQuartHeure),
+    qhGroups: clone(QH_GROUPS), qhSpeciaux: clone(QH_SPECIAUX), accessCode: CONFIG.accessCode
+  };
+}
+function buildSettings(){
+  return { version:1, updated:new Date().toISOString(), adminCodeHash: CONFIG.adminCodeHash||"", accessCode: CONFIG.accessCode,
+    corpsDeMetier: CONFIG.corpsDeMetier, risques: CONFIG.risques, epi: CONFIG.epi, textes: CONFIG.textes,
+    socleQuartHeure: CONFIG.socleQuartHeure, qhGroups: QH_GROUPS, qhSpeciaux: QH_SPECIAUX };
+}
+function applySettings(o){
+  if(!o || typeof o!=="object") return;
+  ["corpsDeMetier","risques","epi","textes","socleQuartHeure"].forEach(k=>{ if(o[k]!==undefined) CONFIG[k] = clone(o[k]); });
+  if(o.accessCode!==undefined && o.accessCode!=="") CONFIG.accessCode = o.accessCode;
+  CONFIG.adminCodeHash = o.adminCodeHash || CONFIG.adminCodeHash || "";
+  if(Array.isArray(o.qhGroups)){ QH_GROUPS.length = 0; clone(o.qhGroups).forEach(g=>QH_GROUPS.push(g)); }
+  if(o.qhSpeciaux && typeof o.qhSpeciaux==="object"){ Object.keys(QH_SPECIAUX).forEach(k=>delete QH_SPECIAUX[k]); Object.assign(QH_SPECIAUX, clone(o.qhSpeciaux)); }
+  SETTINGS_INFO.updated = o.updated || "";
+}
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+async function loadSharedSettings(){
+  try{
+    const c = lsGet(SETTINGS_CACHE_KEY); if(c){ applySettings(JSON.parse(c)); render(); }
+  }catch(e){}
+  try{
+    const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 4000);
+    const r = await fetch(SETTINGS_FILE+"?t="+Date.now(), {cache:"no-store", signal:ctl.signal}); clearTimeout(t);
+    if(!r.ok) return;
+    const txt = await r.text(); const o = JSON.parse(txt);
+    if(o.updated && o.updated===SETTINGS_INFO.updated) return;
+    applySettings(o); lsSet(SETTINGS_CACHE_KEY, txt);
+    if(!settingsOpen) render();
+  }catch(e){ /* hors ligne ou fichier absent : on garde la version en cache ou d'origine */ }
+}
+async function sha256Hex(str){
+  try{
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("poc|"+str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  }catch(e){ let h=5381; for(const ch of "poc|"+str) h=((h<<5)+h+ch.charCodeAt(0))|0; return "x"+(h>>>0).toString(16); }
+}
+async function submitAdminCode(){
+  const el = document.getElementById("adm-code"); const typed = (el?el.value:"").trim();
+  if(!CONFIG.adminCodeHash){
+    if(typed.length<4){ adminError = "Le code doit faire au moins 4 caractères."; render(); return; }
+    CONFIG.adminCodeHash = await sha256Hex(typed); adminOk = true; adminError = "";
+    settingsMsg = {type:"success", text:"Code administrateur défini. Il sera enregistré pour tout le monde avec le bouton « Enregistrer pour tout le monde »."};
+  } else if(await sha256Hex(typed)===CONFIG.adminCodeHash){ adminOk = true; adminError = ""; }
+  else { adminError = "Code incorrect."; }
+  render();
+}
+async function updateAdminCode(v){
+  v = (v||"").trim(); if(!v) return;
+  if(v.length<4){ settingsMsg = {type:"error", text:"Le code doit faire au moins 4 caractères."}; render(); return; }
+  CONFIG.adminCodeHash = await sha256Hex(v);
+  settingsMsg = {type:"success", text:"Nouveau code administrateur pris en compte. Pensez à « Enregistrer pour tout le monde »."}; render();
+}
+function closeSettings(){ settingsOpen = false; adminOk = false; settingsMsg = null; render(); }
+function qhModified(x){
+  try{
+    if(x.kind==="g") return JSON.stringify(SETTINGS_DEFAULTS.qhGroups[x.i])!==JSON.stringify(QH_GROUPS[x.i]);
+    return JSON.stringify(SETTINGS_DEFAULTS.qhSpeciaux[x.k])!==JSON.stringify(QH_SPECIAUX[x.k]);
+  }catch(e){ return false; }
+}
+function updateQh(id, field, value){
+  if(id.startsWith("g")){ const g = QH_GROUPS[Number(id.slice(1))]; if(!g) return; if(field==="nom") g.nom = value; else g.lines = splitLinesArr(value); }
+  else { const o = QH_SPECIAUX[id.slice(2)]; if(!o) return; if(field==="nom") o.label = value; else o.lines = splitLinesArr(value); }
+}
+function resetSettingsTab(){
+  if(!confirm("Revenir au réglage d'origine pour cet onglet ? Vos modifications de cet onglet seront perdues (tant que vous n'avez pas enregistré).")) return;
+  const D = SETTINGS_DEFAULTS, t = settingsTab;
+  if(t==="metiers") CONFIG.corpsDeMetier = clone(D.corpsDeMetier);
+  if(t==="risques") CONFIG.risques = clone(D.risques);
+  if(t==="epi") CONFIG.epi = clone(D.epi);
+  if(t==="textes"){ CONFIG.textes = clone(D.textes); CONFIG.socleQuartHeure = clone(D.socleQuartHeure); }
+  if(t==="qh"){ QH_GROUPS.length = 0; clone(D.qhGroups).forEach(g=>QH_GROUPS.push(g)); Object.keys(QH_SPECIAUX).forEach(k=>delete QH_SPECIAUX[k]); Object.assign(QH_SPECIAUX, clone(D.qhSpeciaux)); }
+  if(t==="code") CONFIG.accessCode = D.accessCode;
+  settingsMsg = {type:"success", text:"Réglage d'origine rétabli pour cet onglet. Faites « Enregistrer pour tout le monde » pour le publier."}; render();
+}
+function forgetGithubToken(){ lsDel(SETTINGS_TOKEN_KEY); settingsMsg = {type:"success", text:"Clé GitHub oubliée sur cet appareil."}; render(); }
+function b64utf8(str){ const bytes = new TextEncoder().encode(str); let bin = ""; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin); }
+async function saveShared(){
+  let token = lsGet(SETTINGS_TOKEN_KEY);
+  if(!token){
+    token = (prompt("Pour publier pour tout le monde, collez la clé d'accès GitHub (une seule fois sur cet appareil) :")||"").trim();
+    if(!token){ settingsMsg = {type:"error", text:"Publication annulée : aucune clé saisie. Vos modifications restent actives sur cet appareil."}; render(); return; }
+  }
+  const payload = buildSettings(); const txt = JSON.stringify(payload, null, 1);
+  const api = "https://api.github.com/repos/"+SETTINGS_REPO+"/contents/"+SETTINGS_FILE;
+  const hdr = {"Authorization":"Bearer "+token, "Accept":"application/vnd.github+json"};
+  try{
+    let sha; const g = await fetch(api+"?ref=main&t="+Date.now(), {headers:hdr, cache:"no-store"});
+    if(g.status===401||g.status===403){ lsDel(SETTINGS_TOKEN_KEY); throw new Error("Clé GitHub refusée (401/403). Elle a été oubliée : recommencez avec une clé valide."); }
+    if(g.ok){ sha = (await g.json()).sha; }
+    const body = {message:"Réglages mis à jour depuis l'appli", content:b64utf8(txt), branch:"main"}; if(sha) body.sha = sha;
+    const r = await fetch(api, {method:"PUT", headers:Object.assign({"Content-Type":"application/json"},hdr), body:JSON.stringify(body)});
+    if(!r.ok){ const e = await r.text(); throw new Error("GitHub a refusé l'enregistrement ("+r.status+"). "+e.slice(0,160)); }
+    lsSet(SETTINGS_TOKEN_KEY, token); lsSet(SETTINGS_CACHE_KEY, txt); SETTINGS_INFO.updated = payload.updated;
+    settingsMsg = {type:"success", text:"Enregistré pour tout le monde. Les autres le recevront à la réouverture de l'appli (compter 1 à 2 minutes)."};
+  }catch(e){
+    lsSet(SETTINGS_CACHE_KEY, txt);
+    settingsMsg = {type:"error", text:"Non publié : "+(e.message||e)+" Vos modifications restent actives sur cet appareil."};
+  }
+  render();
 }
 
 /* --- Gate --- */
@@ -2615,68 +2741,95 @@ function renderStep4(){
   return h;
 }
 
+function renderAdminGate(){
+  const first = !CONFIG.adminCodeHash;
+  return '<div class="card" style="max-width:420px;margin:30px auto;"><h2>Réglages</h2>'+
+    '<p class="hint">'+(first ? 'Aucun code administrateur n\'est encore défini. Choisissez-en un (4 caractères ou plus). Il sera demandé à chaque ouverture des réglages.' : 'Saisissez le code administrateur.')+'</p>'+
+    '<div class="field"><input type="password" id="adm-code" placeholder="Code administrateur" onkeydown="if(event.key===\'Enter\')submitAdminCode()" autocomplete="off"></div>'+
+    (adminError? '<div class="error-msg">'+esc(adminError)+'</div>' : '')+
+    '<div class="row-actions"><button class="btn secondary" onclick="toggleSettings()">Annuler</button><button class="btn" onclick="submitAdminCode()">'+(first?'Définir le code':'Entrer')+'</button></div></div>';
+}
+function selId(list, key){ return (list.find(x=>x.id===settingsSel[key]) || list[0] || {}).id; }
+function setSel(key, id){ settingsSel[key] = id; render(); }
+function isModified(section, item){
+  try{ const d = (SETTINGS_DEFAULTS[section]||[]).find(x=>x.id===item.id); return !d || JSON.stringify(d)!==JSON.stringify(item); }catch(e){ return false; }
+}
+function listCol(section, list, key, labelFn){
+  const cur = selId(list,key);
+  return '<div class="adm-list">'+list.map(x=>'<div class="'+(x.id===cur?'on':'')+'" onclick="setSel(\''+key+'\',\''+x.id+'\')">'+esc(labelFn(x))+(isModified(section,x)?' <span class="mod">modifié</span>':'')+'</div>').join('')+'</div>';
+}
+function admField(label, inner){ return '<div class="field"><label>'+label+'</label>'+inner+'</div>'; }
 function renderSettings(){
-  const tabs = [["metiers","Corps de métier"],["risques","Risques"],["epi","EPI"],["textes","Textes fixes"],["code","Code d'accès"]];
-  let h = '<div class="card"><h2>Réglages</h2><p class="hint">Ces modifications s\'appliquent immédiatement pour votre session en cours, mais ne sont pas partagées avec vos collègues ni conservées après fermeture de l\'onglet. Pour un changement permanent pour toute l\'équipe, transmettez-le pour mise à jour du fichier.</p>';
-  h += '<div class="settings-tabs">'+tabs.map(t=>'<button class="tab-btn '+(settingsTab===t[0]?"active":"")+'" onclick="setSettingsTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
+  if(!adminOk) return renderAdminGate();
+  const tabs = [["metiers","Métiers"],["risques","Risques"],["epi","EPI"],["qh","1/4h sécurité"],["textes","Textes communs"],["code","Codes"]];
+  let h = '<div class="card adm"><div class="adm-top"><h2>Réglages</h2><span class="hint" style="margin:0">'+(SETTINGS_INFO.updated?('Dernière mise à jour partagée : '+esc(SETTINGS_INFO.updated.slice(0,10))):'Aucune mise à jour partagée')+'</span></div>';
+  h += '<div class="adm-body"><div class="adm-menu">'+tabs.map(t=>'<div class="'+(settingsTab===t[0]?'on':'')+'" onclick="setSettingsTab(\''+t[0]+'\')">'+t[1]+'</div>').join('')+'</div><div class="adm-main">';
 
   if(settingsTab==="metiers"){
-    h += '<table class="cfg"><tr><th>Nom</th><th>Nature</th><th>Produits</th><th>Outillage</th><th>Risques et consignes (## titre, - consigne)</th><th>Étapes (1/ligne)</th><th>EPI (noms, virgules)</th><th>Risques (noms, virgules)</th><th></th></tr>';
-    CONFIG.corpsDeMetier.forEach(m=>{
-      h += '<tr>'+
-        td('<input type="text" value="'+esc(m.nom)+'" oninput="updateMetierField(\''+m.id+'\',\'nom\',this.value)">')+
-        td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'nature\',this.value)">'+esc(m.nature)+'</textarea>')+
-        td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'produits\',this.value)">'+esc(m.produits)+'</textarea>')+
-        td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'outillage\',this.value)">'+esc(m.outillage)+'</textarea>')+
-        td('<textarea rows="4" oninput="updateMetierField(\''+m.id+'\',\'risquesTexte\',this.value)">'+esc(m.risquesTexte||"")+'</textarea>')+
-        td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'etapes\',this.value)">'+esc((m.etapes||[]).join("\n"))+'</textarea>')+
-        td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'epi\',this.value)">'+esc(idsToNames(m.epi,CONFIG.epi))+'</textarea>')+
-        td('<textarea rows="2" oninput="updateMetierField(\''+m.id+'\',\'risques\',this.value)">'+esc(idsToNames(m.risques,CONFIG.risques))+'</textarea>')+
-        td('<button class="btn ghost" onclick="deleteMetierRow(\''+m.id+'\')">✕</button>')+
-      '</tr>';
-    });
-    h += '</table><button class="btn secondary" onclick="addMetierRow()">＋ Ajouter un métier</button>';
+    const list = CONFIG.corpsDeMetier, cur = list.find(x=>x.id===selId(list,"metiers"));
+    h += '<div class="adm-cols">'+listCol("corpsDeMetier", list, "metiers", x=>x.nom)+'<div class="adm-form">';
+    if(cur){
+      const q = "'"+cur.id+"'";
+      h += admField('Nom','<input type="text" value="'+esc(cur.nom)+'" oninput="updateMetierField('+q+',\'nom\',this.value)">');
+      h += admField('Nature des travaux','<textarea rows="2" oninput="updateMetierField('+q+',\'nature\',this.value)">'+esc(cur.nature)+'</textarea>');
+      h += admField('Étapes (une par ligne)','<textarea rows="5" oninput="updateMetierField('+q+',\'etapes\',this.value)">'+esc((cur.etapes||[]).join("\n"))+'</textarea>');
+      h += admField('Risques et consignes (## titre, - consigne)','<textarea rows="8" oninput="updateMetierField('+q+',\'risquesTexte\',this.value)">'+esc(cur.risquesTexte||"")+'</textarea>');
+      h += admField('Produits dangereux (séparés par des virgules)','<textarea rows="2" oninput="updateMetierField('+q+',\'produits\',this.value)">'+esc(cur.produits)+'</textarea>');
+      h += admField('Outils dangereux (séparés par des virgules)','<textarea rows="2" oninput="updateMetierField('+q+',\'outillage\',this.value)">'+esc(cur.outillage)+'</textarea>');
+      h += admField('EPI du métier (noms, virgules)','<textarea rows="2" oninput="updateMetierField('+q+',\'epi\',this.value)">'+esc(idsToNames(cur.epi,CONFIG.epi))+'</textarea>');
+      h += admField('Risques liés (noms, virgules)','<textarea rows="2" oninput="updateMetierField('+q+',\'risques\',this.value)">'+esc(idsToNames(cur.risques,CONFIG.risques))+'</textarea>');
+    }
+    h += '<div><button class="btn secondary" onclick="addMetierRow()">＋ Ajouter un métier</button> <button class="btn ghost" onclick="deleteMetierRow(\''+(cur?cur.id:'')+'\')">Retirer ce métier</button></div></div></div>';
   }
   if(settingsTab==="risques"){
-    h += '<table class="cfg"><tr><th>Nom</th><th>Se déclenche si</th><th>EPI ajoutés</th><th>Équipements</th><th>Consignes</th><th>Thème 1/4h</th><th></th></tr>';
-    CONFIG.risques.forEach(r=>{
-      h += '<tr>'+
-        td('<input type="text" value="'+esc(r.nom)+'" oninput="updateRisqueField(\''+r.id+'\',\'nom\',this.value)">')+
-        td('<textarea rows="2" oninput="updateRisqueField(\''+r.id+'\',\'declencheSi\',this.value)">'+esc(r.declencheSi)+'</textarea>')+
-        td('<textarea rows="2" oninput="updateRisqueField(\''+r.id+'\',\'epi\',this.value)">'+esc(idsToNames(r.epi,CONFIG.epi))+'</textarea>')+
-        td('<input type="text" value="'+esc(r.equipements)+'" oninput="updateRisqueField(\''+r.id+'\',\'equipements\',this.value)">')+
-        td('<textarea rows="2" oninput="updateRisqueField(\''+r.id+'\',\'consignes\',this.value)">'+esc(r.consignes)+'</textarea>')+
-        td('<textarea rows="2" oninput="updateRisqueField(\''+r.id+'\',\'themeQuartHeure\',this.value)">'+esc(r.themeQuartHeure||"")+'</textarea>')+
-        td('<button class="btn ghost" onclick="deleteRisqueRow(\''+r.id+'\')">✕</button>')+
-      '</tr>';
-    });
-    h += '</table><button class="btn secondary" onclick="addRisqueRow()">＋ Ajouter un risque</button>';
+    const list = CONFIG.risques, cur = list.find(x=>x.id===selId(list,"risques"));
+    h += '<div class="adm-cols">'+listCol("risques", list, "risques", x=>x.nom)+'<div class="adm-form">';
+    if(cur){
+      const q = "'"+cur.id+"'";
+      h += admField('Nom','<input type="text" value="'+esc(cur.nom)+'" oninput="updateRisqueField('+q+',\'nom\',this.value)">');
+      h += admField('Se déclenche si','<textarea rows="2" oninput="updateRisqueField('+q+',\'declencheSi\',this.value)">'+esc(cur.declencheSi)+'</textarea>');
+      h += admField('Consignes (une par ligne)','<textarea rows="5" oninput="updateRisqueField('+q+',\'consignes\',this.value)">'+esc(cur.consignes)+'</textarea>');
+      h += admField('EPI ajoutés (noms, virgules)','<textarea rows="2" oninput="updateRisqueField('+q+',\'epi\',this.value)">'+esc(idsToNames(cur.epi,CONFIG.epi))+'</textarea>');
+      h += admField('Équipements','<input type="text" value="'+esc(cur.equipements)+'" oninput="updateRisqueField('+q+',\'equipements\',this.value)">');
+    }
+    h += '<div><button class="btn secondary" onclick="addRisqueRow()">＋ Ajouter un risque</button> <button class="btn ghost" onclick="deleteRisqueRow(\''+(cur?cur.id:'')+'\')">Retirer ce risque</button></div></div></div>';
   }
   if(settingsTab==="epi"){
     h += '<table class="cfg"><tr><th>Nom</th><th>Statut</th><th></th></tr>';
     CONFIG.epi.forEach(e=>{
-      h += '<tr>'+
-        td('<input type="text" value="'+esc(e.nom)+'" oninput="updateEpiField(\''+e.id+'\',\'nom\',this.value)">')+
-        td('<select onchange="updateEpiField(\''+e.id+'\',\'statut\',this.value)">'+
-            '<option value="systematique" '+(e.statut==="systematique"?"selected":"")+'>Systématique</option>'+
-            '<option value="conditionnel" '+(e.statut==="conditionnel"?"selected":"")+'>Conditionnel</option>'+
-          '</select>')+
-        td('<button class="btn ghost" onclick="deleteEpiRow(\''+e.id+'\')">✕</button>')+
-      '</tr>';
+      h += '<tr>'+td('<input type="text" value="'+esc(e.nom)+'" oninput="updateEpiField(\''+e.id+'\',\'nom\',this.value)">')+
+        td('<select onchange="updateEpiField(\''+e.id+'\',\'statut\',this.value)"><option value="systematique" '+(e.statut==="systematique"?"selected":"")+'>Systématique</option><option value="conditionnel" '+(e.statut==="conditionnel"?"selected":"")+'>Conditionnel</option></select>')+
+        td('<button class="btn ghost" onclick="deleteEpiRow(\''+e.id+'\')">✕</button>')+'</tr>';
     });
     h += '</table><button class="btn secondary" onclick="addEpiRow()">＋ Ajouter un EPI</button>';
   }
+  if(settingsTab==="qh"){
+    const items = QH_GROUPS.map((g,i)=>({id:"g"+i, nom:"Groupe "+(i+1)+" — "+g.nom, kind:"g", i:i}))
+      .concat(Object.keys(QH_SPECIAUX).map(k=>({id:"s_"+k, nom:"Spécial — "+QH_SPECIAUX[k].label, kind:"s", k:k})));
+    const cur = items.find(x=>x.id===settingsSel.qh) || items[0];
+    h += '<div class="adm-cols"><div class="adm-list">'+items.map(x=>'<div class="'+(x.id===cur.id?'on':'')+'" onclick="setSel(\'qh\',\''+x.id+'\')">'+esc(x.nom)+(qhModified(x)?' <span class="mod">modifié</span>':'')+'</div>').join('')+'</div><div class="adm-form">';
+    const obj = cur.kind==="g" ? QH_GROUPS[cur.i] : QH_SPECIAUX[cur.k];
+    h += admField(cur.kind==="g"?'Nom du groupe':'Nom du risque spécial','<input type="text" value="'+esc(cur.kind==="g"?obj.nom:obj.label)+'" oninput="updateQh(\''+cur.id+'\',\'nom\',this.value)">');
+    h += admField('Phrases (## titre, - phrase)','<textarea rows="14" oninput="updateQh(\''+cur.id+'\',\'lines\',this.value)">'+esc(obj.lines.join("\n"))+'</textarea>');
+    h += '</div></div>';
+  }
   if(settingsTab==="textes"){
-    h += '<div class="field"><label>Contraintes de site (utiliser [variable] pour le code d\'accès chantier)</label><textarea rows="6" oninput="updateTexteFixe(\'contraintesSite\',this.value)">'+esc(CONFIG.textes.contraintesSite)+'</textarea></div>';
-    h += '<div class="field"><label>Précautions particulières (fixe, une par ligne)</label><textarea rows="4" oninput="updateTexteFixe(\'precautions\',this.value)">'+esc(CONFIG.textes.precautions)+'</textarea></div>';
-    h += '<div class="field"><label>Texte d\'attestation</label><textarea rows="3" oninput="updateTexteFixe(\'attestation\',this.value)">'+esc(CONFIG.textes.attestation)+'</textarea></div>';
-    h += '<div class="field"><label>Socle fixe du 1/4h sécurité (un thème par ligne)</label><textarea rows="6" oninput="updateSocle(this.value)">'+esc(CONFIG.socleQuartHeure.join("\n"))+'</textarea></div>';
+    h += admField('Contraintes de site (une par ligne ; [variable] = code d\'accès du chantier)','<textarea rows="8" oninput="updateTexteFixe(\'contraintesSite\',this.value)">'+esc(CONFIG.textes.contraintesSite)+'</textarea>');
+    h += admField('Précautions générales (une par ligne)','<textarea rows="5" oninput="updateTexteFixe(\'precautions\',this.value)">'+esc(CONFIG.textes.precautions)+'</textarea>');
+    h += admField('Texte d\'attestation','<textarea rows="3" oninput="updateTexteFixe(\'attestation\',this.value)">'+esc(CONFIG.textes.attestation)+'</textarea>');
+    h += admField('Socle fixe du 1/4h sécurité (un thème par ligne)','<textarea rows="5" oninput="updateSocle(this.value)">'+esc(CONFIG.socleQuartHeure.join("\n"))+'</textarea>');
   }
   if(settingsTab==="code"){
-    h += '<div class="field" style="max-width:220px;"><label>Code d\'accès à l\'application</label><input type="text" value="'+esc(CONFIG.accessCode)+'" oninput="updateAccessCode(this.value)"></div>';
+    h += admField('Code d\'accès à l\'application','<input type="text" style="max-width:220px" value="'+esc(CONFIG.accessCode)+'" oninput="updateAccessCode(this.value)">');
+    h += admField('Nouveau code administrateur (laisser vide pour ne pas changer)','<input type="password" style="max-width:220px" placeholder="••••" onchange="updateAdminCode(this.value)" autocomplete="off">');
+    h += '<p class="hint">Le code administrateur protège l\'écran Réglages. Pour publier pour tout le monde, il faut en plus la clé d\'accès GitHub, demandée une seule fois sur cet appareil.</p>';
+    h += '<div><button class="btn ghost" onclick="forgetGithubToken()">Oublier la clé GitHub de cet appareil</button></div>';
   }
-
-  h += '<div class="row-actions"><button class="btn secondary" onclick="toggleSettings()">Fermer sans enregistrer</button><button class="btn" onclick="saveSettings()">Enregistrer les réglages</button></div>';
+  h += '</div></div>';
+  if(settingsMsg) h += '<div class="'+(settingsMsg.type==="error"?"error-msg":"success-msg")+'" style="margin:10px 0;">'+esc(settingsMsg.text)+'</div>';
+  h += '<div class="row-actions adm-bar"><button class="btn secondary" onclick="closeSettings()">Fermer</button>'+
+       '<button class="btn secondary" onclick="resetSettingsTab()">Revenir au réglage d\'origine (cet onglet)</button>'+
+       '<button class="btn" onclick="saveShared()">Enregistrer pour tout le monde</button></div>';
   h += '</div>';
   return h;
 }
@@ -2746,7 +2899,9 @@ window.onerror = function(msg, src, line){
 
 function init(){
   setupPWATags();
+  snapshotDefaults();
   render();
+  loadSharedSettings();
 }
 init();
 </script>
