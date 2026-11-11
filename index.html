@@ -1239,9 +1239,8 @@ class Doc{
     p.setFont("helvetica","normal"); p.setFontSize(7); p.setTextColor(130,130,130);
     p.text("SOCIÉTÉ ANONYME AU CAPITAL DE 2.000.000 € - R.C.S. PARIS 542 062 617 B - SIRET 542 062 617 00031 - CODE APE : 452 B", this.margin, this.pageH-14);
     p.text("TVA intracommunautaire : FR 32 542 062 617", this.margin, this.pageH-10);
-    p.setFillColor(234,79,0); p.circle(this.pageW-this.margin-3, this.pageH-11.3, 3.6, "F");
-    p.setFont("helvetica","bold"); p.setFontSize(8); p.setTextColor(255,255,255);
-    p.text(String(this.pageNum), this.pageW-this.margin-3, this.pageH-10.1, {align:"center"});
+    p.setFont("helvetica","normal"); p.setFontSize(9); p.setTextColor(90,90,90);
+    p.text(String(this.pageNum), this.pageW-this.margin, this.pageH-10.5, {align:"right"});
     p.setTextColor(30,30,30);
   }
   ensureSpace(h){ if(this.y + h > this.pageH - 20){ this.newPage(); } }
