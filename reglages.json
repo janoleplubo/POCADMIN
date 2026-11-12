@@ -386,7 +386,7 @@
   }
  ],
  "textes": {
-  "contraintesSite": "Rien ne doit bloquer l'accès à la résidence.\nCode d'accès, porte d'entrée du chantier : [variable].\nAucun stockage dans les parties communes. Stockage limité à la zone de stockage.\nCoordination avec les autres entreprises : voir les chefs d'équipe et le conducteur de travaux.\nÉvacuer les gravats et déchets chaque semaine.\nÉchafaudage et travail en hauteur : formation obligatoire.",
+  "contraintesSite": "Rien ne doit bloquer l'accès à la résidence.\nCode d'accès, porte d'entrée du chantier : [variable].\nAucun stockage dans les parties communes. Stockage limité à la zone de stockage.\nCoordination avec les autres entreprises : voir les chefs d'équipe et le conducteur de travaux.\nÉvacuer les gravats et déchets chaque semaine.",
   "precautions": "Garder le poste de travail propre. Rien au sol.\nAvant chaque usage, vérifier : fil, prise, capot, disque. Outil abîmé : ne pas l'utiliser. Prévenir le chef d'équipe.\nUtiliser chaque outil pour son usage prévu, rien d'autre.",
   "attestation": "En signant, l'entreprise et le conducteur de travaux attestent avoir pris connaissance des consignes de sécurité de cette intervention et les avoir validées."
  },
