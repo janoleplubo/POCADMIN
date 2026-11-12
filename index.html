@@ -683,7 +683,18 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
   a.link-btn{color:var(--accent); text-decoration:none; font-weight:600; font-size:13px; cursor:pointer;}
 .rs-row{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;margin:.3rem 0}.rs-item{display:flex;align-items:center;gap:.4rem;font-weight:500;cursor:pointer}.rs-item input{width:1.15rem;height:1.15rem}
 </style>
-</head>
+<style>
+.card,.pick-card,label.tile,.menu-btn,.menu-pop,.inline-ai,.err-banner,.success-banner,.gate-card,.btn,.st-card{border-radius:5px!important}
+.pick-card,.menu-pop,.gate-card{box-shadow:none!important}
+.hero-band{border-top:none!important}
+label.tile{border-radius:0!important;background:#fff!important;border:1px solid var(--border)!important;box-shadow:none!important}
+label.tile.sel{background:#FFF3EC!important;border:1px solid var(--border)!important;border-left:7px solid var(--accent)!important}
+.tile-ico{background:transparent!important;color:var(--accent)!important;width:30px!important;height:30px!important}
+.tile-ico svg{width:26px!important;height:26px!important}
+label.tile.sel .tile-ico{background:transparent!important;color:var(--accent)!important}
+.tile-chk{display:none!important}
+.stepper{display:none!important}.stepper-m{display:block!important}
+</style></head>
 <body>
 <div id="app">Chargement…</div>
 <script>
@@ -841,8 +852,7 @@ function defaultConfig(){
         "Code d'accès, porte d'entrée du chantier : [variable].\n"+
         "Aucun stockage dans les parties communes. Stockage limité à la zone de stockage.\n"+
         "Coordination avec les autres entreprises : voir les chefs d'équipe et le conducteur de travaux.\n"+
-        "Évacuer les gravats et déchets chaque semaine.\n"+
-        "Échafaudage et travail en hauteur : formation obligatoire.",
+        "Évacuer les gravats et déchets chaque semaine.",
       precautions:
         "Garder le poste de travail propre. Rien au sol.\n"+
         "Avant chaque usage, vérifier : fil, prise, capot, disque. Outil abîmé : ne pas l'utiliser. Prévenir le chef d'équipe.\n"+
@@ -2109,9 +2119,9 @@ function renderTopbar(){
     '<div class="brand"><img src="data:image/png;base64,'+LOGO_BOX_B64+'" alt="Démarrage de chantier" style="cursor:pointer;height:28px;width:auto;" title="Retour au menu" onclick="goStep(\'select\')">'+
       '<div><div class="brand-text">Démarrage de chantier</div><div class="brand-sub">Paris Ouest Construction</div></div>'+
     '</div>'+
-    (unlocked? '<div class="tb-actions" style="display:flex;gap:8px;"><button class="icon-btn" onclick="toggleSettings()">⚙ Réglages</button><button class="icon-btn" onclick="newDossier()">＋ Nouveau dossier</button></div>'+
+    (unlocked? '<div class="tb-actions" style="display:flex;gap:8px;"><button class="icon-btn" onclick="toggleSettings()">⚙ Réglages</button><button class="icon-btn" onclick="newDossier()">Nouveau dossier</button></div>'+
       '<div class="tb-menu"><button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">⋯</button>'+
-      (menuOpen? '<div class="menu-pop"><button onclick="menuOpen=false;toggleSettings()">⚙ Réglages</button><button onclick="menuOpen=false;newDossier()">＋ Nouveau dossier</button></div>' : '')+
+      (menuOpen? '<div class="menu-pop"><button onclick="menuOpen=false;toggleSettings()">⚙ Réglages</button><button onclick="menuOpen=false;newDossier()">Nouveau dossier</button></div>' : '')+
       '</div>' : '')+
   '</div>';
 }
@@ -2903,7 +2913,7 @@ function render(){
     if(currentStep==="pdf") html += renderStep4();
     if(currentStep==="materiel") html += renderStepMateriel();
     html += '</main>';
-    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version 7.3 · web et mobile · 12/10/2026</span></div>';
+    html += '<div class="footer-note">Paris Ouest Construction — outil interne créé par Jean Bourdel pour l\'équipe CASVP. Ne pas diffuser en dehors de l\'équipe. <span style="opacity:.7">Version 7.4 · web et mobile · 12/11/2026</span></div>';
   }
   app.innerHTML = html;
 }
